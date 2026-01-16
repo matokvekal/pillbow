@@ -1,0 +1,161 @@
+/* Detail Sheet */
+.detail-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  z-index: 50;
+}
+
+.detail-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(0 0 0 / 0.4);
+  cursor: pointer;
+}
+
+.detail-sheet-content {
+  position: relative;
+  background-color: white;
+  border-radius: 1.5rem 1.5rem 0 0;
+  width: 100%;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1.5rem;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.detail-sheet-handle {
+  width: 2.5rem;
+  height: 0.25rem;
+  background-color: #e2e8f0;
+  border-radius: 9999px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.detail-sheet-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-sheet-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.75rem;
+}
+
+.detail-sheet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detail-sheet-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.detail-sheet-company {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #94a3b8;
+  display: block;
+}
+
+.detail-sheet-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  background-color: #f1f5f9;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  width: fit-content;
+  margin-top: 0.25rem;
+}
+
+.detail-sheet-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-sheet-instructions {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.detail-sheet-schedule {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.detail-sheet-action-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #334155;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: inherit;
+}
+
+.detail-sheet-action-btn:hover {
+  background-color: #1e293b;
+}
+
+/* Color variants */
+.detail-sheet-icon.bg-blue-300 {
+  background-color: #93c5fd;
+}
+
+.detail-sheet-icon.bg-green-300 {
+  background-color: #86efac;
+}
+
+.detail-sheet-icon.bg-yellow-300 {
+  background-color: #fcd34d;
+}
+
+.detail-sheet-icon.bg-red-300 {
+  background-color: #fca5a5;
+}
+
+.detail-sheet-icon.bg-purple-300 {
+  background-color: #d8b4fe;
+}
+
+.detail-sheet-icon.bg-pink-300 {
+  background-color: #f472b6;
+}
+
+.detail-sheet-icon.bg-orange-300 {
+  background-color: #fdba74;
+}
+
+.detail-sheet-icon.bg-indigo-300 {
+  background-color: #a5b4fc;
+}
