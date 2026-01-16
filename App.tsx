@@ -6,6 +6,7 @@ import { AppHeader } from "./components/AppHeader/AppHeader";
 import { TimelineContainer } from "./components/TimelineContainer/TimelineContainer";
 import { FloatingActionButtons } from "./components/FloatingActionButtons/FloatingActionButtons";
 import { DetailSheet } from "./components/DetailSheet/DetailSheet";
+import { ManageView } from "./components/ManageView/ManageView";
 import { useModalStore } from "./store/useModalStore";
 import { extractMedicationFromImage } from "./services/geminiService";
 import {
@@ -166,6 +167,14 @@ const App: React.FC = () => {
             onTodayClick={scrollToToday}
           />
         </>
+      )}
+
+      {view === "manage" && (
+        <ManageView
+          medications={medications}
+          onMedicationClick={(m) => openModal(m)}
+          onBack={() => setView("timeline")}
+        />
       )}
 
       {selectedMed && isOpen && (

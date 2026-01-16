@@ -2,10 +2,11 @@
 .fab-container {
   position: fixed;
   bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 1.5rem;
+  right: 1.5rem;
   display: flex;
-  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
   z-index: 40;
   pointer-events: none;
 }
