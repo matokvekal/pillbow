@@ -1,0 +1,342 @@
+/* Main Container */
+.app-container {
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(248 250 252);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+.app-header {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 3rem;
+  padding-bottom: 1.5rem;
+  background-color: rgb(255 255 255 / 0.4);
+  backdrop-filter: blur(24px);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgb(255 255 255 / 0.2);
+}
+
+.app-header-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.app-header-logo {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #334155;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.app-header-logo-text {
+  font-weight: 900;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-style: italic;
+}
+
+.app-header-title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 900;
+  color: rgb(30 41 59);
+  letter-spacing: -0.05em;
+}
+
+.app-header-menu-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background-color: white;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(71 85 105);
+  border: 1px solid rgb(241 245 249);
+}
+
+.app-header-menu-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Main Timeline */
+.timeline-container {
+  flex: 1;
+  overflow-y: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+  background-color: #fdfdfd;
+  padding-top: 35vh;
+  padding-bottom: 45vh;
+}
+
+.timeline-days {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.day-container {
+  scroll-snap-align: center;
+  transition: all 0.7s;
+}
+
+/* FAB Container */
+.fab-container {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.fab-today-btn {
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: white;
+  border: 1px solid rgb(241 245 249);
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  transition: all 0.15s;
+}
+
+.fab-today-btn:active {
+  transform: scale(0.9);
+}
+
+.fab-today-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fab-today-text {
+  font-size: 8px;
+  font-weight: 900;
+  color: rgb(148 163 184);
+}
+
+.fab-today-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: rgb(59 130 246);
+  margin-top: 0.125rem;
+}
+
+.fab-add-container {
+  position: relative;
+  pointer-events: auto;
+}
+
+.fab-add-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.fab-add-btn {
+  width: 4rem;
+  height: 4rem;
+  background-color: #334155;
+  color: white;
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.fab-add-btn:hover {
+  transform: scale(1.05);
+}
+
+.fab-add-btn:active {
+  transform: scale(0.95);
+}
+
+.fab-add-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Detail Sheet */
+.detail-sheet-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+}
+
+.detail-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(15 23 42 / 0.6);
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+}
+
+.detail-sheet-content {
+  position: relative;
+  width: 100%;
+  background-color: white;
+  border-top-left-radius: 3rem;
+  border-top-right-radius: 3rem;
+  padding: 2rem;
+  pointer-events: auto;
+  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+.detail-sheet-handle {
+  width: 3rem;
+  height: 0.25rem;
+  background-color: rgb(226 232 240);
+  border-radius: 9999px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2rem;
+}
+
+.detail-sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.detail-sheet-icon {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.detail-sheet-icon-emoji {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.detail-sheet-info {
+  flex: 1;
+}
+
+.detail-sheet-title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 900;
+  color: rgb(15 23 42);
+  line-height: 1.25;
+}
+
+.detail-sheet-company {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgb(100 116 139);
+  margin-bottom: 0.25rem;
+}
+
+.detail-sheet-badge {
+  display: inline-block;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  background-color: rgb(239 246 255);
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 900;
+  color: rgb(37 99 235);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detail-sheet-details {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: rgb(248 250 252);
+  border-radius: 1rem;
+  border: 1px solid rgb(241 245 249);
+}
+
+.detail-sheet-instructions {
+  font-size: 0.875rem;
+  color: rgb(71 85 105);
+  margin-bottom: 0.5rem;
+}
+
+.detail-sheet-schedule {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgb(100 116 139);
+}
+
+.detail-sheet-action-btn {
+  width: 100%;
+  background-color: #334155;
+  color: white;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-radius: 1rem;
+  font-weight: 900;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  transition: all 0.15s;
+}
+
+.detail-sheet-action-btn:active {
+  transform: scale(0.98);
+}
+
+/* Animations */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
