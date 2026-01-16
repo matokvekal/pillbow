@@ -1,0 +1,252 @@
+/* Inactive Pillbox Card */
+.inactive-pillbox-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: white;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+  margin: 0;
+  font-family: inherit;
+  overflow: hidden;
+}
+
+.inactive-pillbox-card:hover {
+  background-color: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+
+.inactive-pillbox-card__bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.inactive-pillbox-card__left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.inactive-pillbox-card__date-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem;
+}
+
+.inactive-pillbox-card__day-short {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.inactive-pillbox-card__day-num {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.inactive-pillbox-card__pills-preview {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.inactive-pillbox-card__pill-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inactive-pillbox-card__pill-preview-circle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
+  position: relative;
+}
+
+.inactive-pillbox-card__pill-preview-dot {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+.inactive-pillbox-card__pill-preview-check {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(34, 197, 94, 0.1);
+  border-radius: 50%;
+}
+
+.inactive-pillbox-card__pill-preview-check-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #22c55e;
+  stroke-width: 4;
+}
+
+.inactive-pillbox-card__right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.inactive-pillbox-card__pill-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.inactive-pillbox-card__chevron-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #cbd5e1;
+  flex-shrink: 0;
+}
+
+/* Past day styling */
+.inactive-pillbox-card--past {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  opacity: 0.85;
+}
+
+.inactive-pillbox-card--past .inactive-pillbox-card__day-short {
+  color: #94a3b8;
+}
+
+.inactive-pillbox-card--past .inactive-pillbox-card__day-num {
+  color: #64748b;
+}
+
+.inactive-pillbox-card--past .inactive-pillbox-card__pill-count {
+  color: #94a3b8;
+}
+
+.inactive-pillbox-card--past .inactive-pillbox-card__pill-preview-circle {
+  background-color: #e2e8f0;
+}
+
+/* Today card styling */
+.inactive-pillbox-card--today {
+  background: linear-gradient(135deg, #f8f7ff 0%, #fff 100%);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.inactive-pillbox-card--today .inactive-pillbox-card__day-short {
+  color: #6366f1;
+  font-weight: 700;
+}
+
+.inactive-pillbox-card--today .inactive-pillbox-card__day-num {
+  color: #6366f1;
+}
+
+/* Future day styling */
+.inactive-pillbox-card--future {
+  background: linear-gradient(135deg, #fff 0%, #f0fdf4 100%);
+  border-left: 3px solid #86efac;
+}
+
+.inactive-pillbox-card--future .inactive-pillbox-card__day-short {
+  color: #22c55e;
+}
+
+.inactive-pillbox-card--future .inactive-pillbox-card__day-num {
+  color: #16a34a;
+}
+
+.inactive-pillbox-card--future .inactive-pillbox-card__pill-count {
+  color: #22c55e;
+}
+
+/* Status badge base */
+.inactive-pillbox-card__status-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 2;
+}
+
+/* Ending soon - amber/warning */
+.inactive-pillbox-card__status-badge--ending-soon {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #b45309;
+  border: 1px solid #fcd34d;
+}
+
+.inactive-pillbox-card--ending-soon {
+  border-top: 2px solid #f59e0b;
+}
+
+/* Last day - orange/urgent */
+.inactive-pillbox-card__status-badge--last-day {
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  color: #c2410c;
+  border: 1px solid #fdba74;
+  animation: pulse-badge 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.inactive-pillbox-card--last-day {
+  border-top: 2px solid #ea580c;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+}
+
+/* Ended/Completed - green/success */
+.inactive-pillbox-card__status-badge--ended {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.inactive-pillbox-card--ended {
+  opacity: 0.7;
+}
+
+.inactive-pillbox-card--ended .inactive-pillbox-card__pill-preview-dot {
+  filter: grayscale(50%);
+}

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Medication } from "../../types";
+import { useModalStore } from "../../store/useModalStore";
 import "./DetailSheet.css";
 
 interface DetailSheetProps {
@@ -7,7 +8,24 @@ interface DetailSheetProps {
   onClose: () => void;
 }
 
-export const DetailSheet: React.FC<DetailSheetProps> = ({ medication, onClose }) => {
+export const DetailSheet: React.FC<DetailSheetProps> = ({
+  medication,
+  onClose,
+}) => {
+  useEffect(() => {
+    // Prevent background scroll when modal is open
+    const appContainer = document.querySelector(".app-container");
+    if (appContainer) {
+      (appContainer as HTMLElement).style.overflow = "hidden";
+    }
+
+    return () => {
+      // Restore background scroll on close
+      if (appContainer) {
+        (appContainer as HTMLElement).style.overflow = "hidden";
+      }
+    };
+  }, []);
   return (
     <div className="detail-sheet-overlay">
       <div className="detail-sheet-backdrop" onClick={onClose} />
@@ -20,7 +38,9 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({ medication, onClose })
           </div>
           <div className="detail-sheet-info">
             <h3 className="detail-sheet-title">{medication.name}</h3>
-            {medication.company && <span className="detail-sheet-company">{medication.company}</span>}
+            {medication.company && (
+              <span className="detail-sheet-company">{medication.company}</span>
+            )}
             <span className="detail-sheet-badge">
               {medication.dosage} - {medication.strength}
             </span>
@@ -30,7 +50,8 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({ medication, onClose })
         <div className="detail-sheet-details">
           <p className="detail-sheet-instructions">{medication.instructions}</p>
           <p className="detail-sheet-schedule">
-            {medication.dosesPerDay || 1}x daily at {(medication.timesOfDay || []).join(", ") || "Not scheduled"}
+            {medication.dosesPerDay || 1}x daily at{" "}
+            {(medication.timesOfDay || []).join(", ") || "Not scheduled"}
           </p>
         </div>
 

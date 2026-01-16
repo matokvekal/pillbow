@@ -1,0 +1,15 @@
+/* Active Pillbox Card */
+.active-pillbox-card {
+  background-color: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+}
+
+.active-pillbox-card--readonly {
+  opacity: 0.95;
+}
+
+.active-pillbox-card__inner {
+  padding: 1.5rem;
+}
