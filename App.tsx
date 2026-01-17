@@ -1,7 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { addDays, subDays, startOfDay, format } from "date-fns";
-import { ViewState, Medication, DoseStatus } from "./types";
-import { MOCK_MEDICATIONS } from "./constants";
+import { ViewState, Medication, DoseStatus, DayLog } from "./types";
+import {
+  MOCK_MEDICATIONS,
+  INITIAL_SCROLL_DELAY,
+  NOTIFICATION_SOUND_URL,
+  DAYS_BACK,
+  DAYS_FORWARD,
+  TOTAL_DAYS,
+} from "./constants";
 import { AppHeader } from "./components/AppHeader/AppHeader";
 import { TimelineContainer } from "./components/TimelineContainer/TimelineContainer";
 import { FloatingActionButtons } from "./components/FloatingActionButtons/FloatingActionButtons";
@@ -17,16 +24,20 @@ import {
   isDateEditable,
   getMedicationsForDate,
 } from "./services/dataService";
+import {
+  playNotificationSound,
+  readFileAsBase64,
+} from "./utils/audioAndFileUtils";
 import "./App.css";
 
 // Calendar range: 5 years back, 1 year forward
-const DAYS_BACK = 365 * 5; // 5 years
-const DAYS_FORWARD = 365; // 1 year
-const TOTAL_DAYS = DAYS_BACK + DAYS_FORWARD + 1;
+// DAYS_BACK, DAYS_FORWARD, and TOTAL_DAYS are now imported from constants
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>("timeline");
-  const [selectedDate, setSelectedDate] = useState<Date | null>(startOfDay(new Date())); // Start with today open
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    startOfDay(new Date()),
+  ); // Start with today open
   const [medications, setMedications] = useState<Medication[]>([]);
   const [isScanning, setIsScanning] = useState(false);
   const [updateKey, setUpdateKey] = useState(0); // Force re-render on dose status change
@@ -58,15 +69,22 @@ const App: React.FC = () => {
   useEffect(() => {
     if (view !== "timeline") return;
 
-    // Just scroll to today on initial load (box is already open via initial state)
+    scrollToTodayOnMount();
+  }, [view]);
+
+  /**
+   * Scrolls to today's date on component mount or view change
+   * Uses a delay to ensure DOM is ready before scrolling
+   */
+  const scrollToTodayOnMount = useCallback(() => {
     setTimeout(() => {
       const today = startOfDay(new Date());
       const element = document.getElementById(`day-${today.getTime()}`);
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "center" });
       }
-    }, 200);
-  }, [view]);
+    }, INITIAL_SCROLL_DELAY);
+  }, []);
 
   const handleStatusChange = (
     dateStr: string,
@@ -84,11 +102,8 @@ const App: React.FC = () => {
     // Force re-render to show updated status
     setUpdateKey((prev) => prev + 1);
 
-    // Play sound if enabled
-    const audio = new Audio(
-      "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3",
-    );
-    audio.play().catch(() => {});
+    // Play notification sound
+    playNotificationSound(NOTIFICATION_SOUND_URL);
   };
 
   const scrollToToday = () => {
@@ -119,16 +134,40 @@ const App: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       setIsScanning(true);
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        const base64 = (event.target?.result as string).split(",")[1];
+      try {
+        const base64 = await readFileAsBase64(file);
         const extracted = await extractMedicationFromImage(base64);
         if (extracted) setView("review");
+      } catch (error) {
+        console.error("Failed to process scanned file:", error);
+      } finally {
         setIsScanning(false);
-      };
-      reader.readAsDataURL(file);
+      }
     }
   };
+
+  /**
+   * Memoized map of day logs indexed by date string
+   * Prevents unnecessary recalculation on each render
+   */
+  const dayLogsMap = useMemo(() => {
+    const logsEntries = days
+      .map((day) => format(day, "yyyy-MM-dd"))
+      .map((dateStr) => [dateStr, getDayLog(dateStr)])
+      .filter(([, log]) => log !== undefined) as [string, DayLog][];
+    return new Map(logsEntries);
+  }, [days, updateKey]);
+
+  /**
+   * Memoized set of editable dates
+   * Prevents unnecessary recalculation on each render
+   */
+  const editableDatesSet = useMemo(() => {
+    const editableDateStrings = days
+      .map((day) => format(day, "yyyy-MM-dd"))
+      .filter((dateStr) => isDateEditable(dateStr));
+    return new Set(editableDateStrings);
+  }, [days]);
 
   return (
     <div className="app-container">
@@ -140,23 +179,10 @@ const App: React.FC = () => {
             days={days}
             selectedDate={selectedDate}
             medications={medications}
-            dayLogs={
-              new Map(
-                days
-                  .map((day) => format(day, "yyyy-MM-dd"))
-                  .map((dateStr) => [dateStr, getDayLog(dateStr)])
-                  .filter(([, log]) => log !== undefined) as [string, any][],
-              )
-            }
-            editableDates={
-              new Set(
-                days
-                  .map((day) => format(day, "yyyy-MM-dd"))
-                  .filter((dateStr) => isDateEditable(dateStr)),
-              )
-            }
+            dayLogs={dayLogsMap}
+            editableDates={editableDatesSet}
             onStatusChange={handleStatusChange}
-            onPillClick={(m) => openModal(m)}
+            onPillClick={(medication) => openModal(medication)}
             onDayClick={handleDayClick}
             onCloseBox={handleCloseBox}
           />
@@ -172,7 +198,7 @@ const App: React.FC = () => {
       {view === "manage" && (
         <ManageView
           medications={medications}
-          onMedicationClick={(m) => openModal(m)}
+          onMedicationClick={(medication) => openModal(medication)}
           onBack={() => setView("timeline")}
         />
       )}

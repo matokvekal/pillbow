@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { format, parseISO, differenceInDays, startOfDay } from "date-fns";
 import { Medication } from "../../types";
 import { useModalStore } from "../../store/useModalStore";
+import { MedicationEdit } from "../MedicationEdit";
 import "./DetailSheet.css";
 
 interface DetailSheetProps {
@@ -26,6 +27,7 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
   medication,
   onClose,
 }) => {
+  const [showEdit, setShowEdit] = useState(false);
   const status = getMedStatus(medication);
 
   useEffect(() => {
@@ -39,6 +41,11 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
       }
     };
   }, []);
+
+  const handleEditSave = (action: "stop" | "change", data: any) => {
+    console.log("Edit action:", action, data);
+    // TODO: Update medication in data store
+  };
 
   const handleOrderClick = () => {
     const searchQuery = encodeURIComponent(`${medication.name} ${medication.strength} buy online pharmacy`);
@@ -160,20 +167,29 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
           </div>
         )}
 
+        {/* BIG EDIT Button */}
+        <button
+          className="detail-sheet-edit-btn"
+          onClick={() => setShowEdit(true)}
+        >
+          <span className="detail-sheet-edit-btn__icon">✏️</span>
+          <span className="detail-sheet-edit-btn__text">EDIT</span>
+        </button>
+
         {/* Action Links */}
         <div className="detail-sheet-actions">
           <button className="detail-sheet-action detail-sheet-action--order" onClick={handleOrderClick}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span>Order Online</span>
+            <span>Order</span>
           </button>
 
           <button className="detail-sheet-action detail-sheet-action--info" onClick={handleInfoClick}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span>Drug Info</span>
+            <span>Info</span>
           </button>
 
           <button className="detail-sheet-action detail-sheet-action--ai" onClick={handleAskAIClick}>
@@ -188,6 +204,15 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
           Close
         </button>
       </div>
+
+      {/* Edit Flow */}
+      {showEdit && (
+        <MedicationEdit
+          medication={medication}
+          onClose={() => setShowEdit(false)}
+          onSave={handleEditSave}
+        />
+      )}
     </div>
   );
 };

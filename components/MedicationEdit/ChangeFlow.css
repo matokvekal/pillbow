@@ -1,0 +1,209 @@
+/* Change Flow */
+.change-flow {
+  position: fixed;
+  inset: 0;
+  background: white;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.change-flow__header {
+  padding: 1rem;
+}
+
+.change-flow__back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: #f1f5f9;
+  border-radius: 2rem;
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.change-flow__back-btn:hover {
+  background: #e2e8f0;
+}
+
+.change-flow__back-btn:active {
+  transform: scale(0.95);
+}
+
+.change-flow__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 1.5rem 2rem;
+  overflow-y: auto;
+}
+
+/* Icon */
+.change-flow__icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Title */
+.change-flow__title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #22c55e;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.change-flow__med-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0.5rem 0 2rem 0;
+}
+
+/* Control */
+.change-flow__control {
+  width: 100%;
+  max-width: 20rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.change-flow__label {
+  font-size: 1.125rem;
+  color: #64748b;
+  margin: 0 0 1rem 0;
+}
+
+/* Adjuster */
+.change-flow__adjuster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.change-flow__adj-btn {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  border: 3px solid #e2e8f0;
+  background: white;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.change-flow__adj-btn:hover:not(:disabled) {
+  border-color: #6366f1;
+  background: #eef2ff;
+  transform: scale(1.05);
+}
+
+.change-flow__adj-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.change-flow__adj-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.change-flow__value {
+  min-width: 6rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  text-align: center;
+}
+
+.change-flow__change-hint {
+  font-size: 0.875rem;
+  color: #f59e0b;
+  margin: 0.5rem 0 0 0;
+}
+
+/* Save Button */
+.change-flow__save-btn {
+  width: 100%;
+  max-width: 20rem;
+  min-height: 4rem;
+  border: none;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  font-family: inherit;
+  margin-top: 1rem;
+}
+
+.change-flow__save-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
+}
+
+.change-flow__save-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.change-flow__save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.change-flow__save-icon {
+  font-size: 1.5rem;
+}
+
+.change-flow__save-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.change-flow__no-changes {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+/* Color variants for icon */
+.change-flow__icon.bg-blue-300 { background-color: #93c5fd; }
+.change-flow__icon.bg-green-300 { background-color: #86efac; }
+.change-flow__icon.bg-yellow-300 { background-color: #fcd34d; }
+.change-flow__icon.bg-red-300 { background-color: #fca5a5; }
+.change-flow__icon.bg-purple-300 { background-color: #d8b4fe; }
+.change-flow__icon.bg-pink-300 { background-color: #f472b6; }
+.change-flow__icon.bg-orange-300 { background-color: #fdba74; }
+.change-flow__icon.bg-indigo-300 { background-color: #a5b4fc; }
+.change-flow__icon.bg-teal-300 { background-color: #5eead4; }
+.change-flow__icon.bg-cyan-300 { background-color: #67e8f9; }

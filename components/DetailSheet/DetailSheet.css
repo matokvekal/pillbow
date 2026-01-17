@@ -212,6 +212,45 @@
   margin: 0;
 }
 
+/* BIG Edit Button */
+.detail-sheet-edit-btn {
+  width: 100%;
+  min-height: 4rem;
+  border: none;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  font-family: inherit;
+}
+
+.detail-sheet-edit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+.detail-sheet-edit-btn:active {
+  transform: scale(0.98);
+}
+
+.detail-sheet-edit-btn__icon {
+  font-size: 1.5rem;
+}
+
+.detail-sheet-edit-btn__text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
 /* Action Links */
 .detail-sheet-actions {
   display: flex;
