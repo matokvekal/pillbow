@@ -14,20 +14,18 @@ import { TimelineContainer } from "./components/TimelineContainer/TimelineContai
 import { FloatingActionButtons } from "./components/FloatingActionButtons/FloatingActionButtons";
 import { DetailSheet } from "./components/DetailSheet/DetailSheet";
 import { ManageView } from "./components/ManageView/ManageView";
+import { AddMedication } from "./components/AddMedication/AddMedication";
 import { useModalStore } from "./store/useModalStore";
-import { extractMedicationFromImage } from "./services/geminiService";
 import {
   loadAppData,
   saveAppData,
+  addMedication,
   updateDoseStatus,
   getDayLog,
   isDateEditable,
   getMedicationsForDate,
 } from "./services/dataService";
-import {
-  playNotificationSound,
-  readFileAsBase64,
-} from "./utils/audioAndFileUtils";
+import { playNotificationSound } from "./utils/audioAndFileUtils";
 import "./App.css";
 
 // Calendar range: 5 years back, 1 year forward
@@ -39,7 +37,7 @@ const App: React.FC = () => {
     startOfDay(new Date()),
   ); // Start with today open
   const [medications, setMedications] = useState<Medication[]>([]);
-  const [isScanning, setIsScanning] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [updateKey, setUpdateKey] = useState(0); // Force re-render on dose status change
   const { selectedMed, isOpen, openModal, closeModal } = useModalStore();
 
@@ -130,20 +128,45 @@ const App: React.FC = () => {
     setSelectedDate(null);
   };
 
-  const handleScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setIsScanning(true);
-      try {
-        const base64 = await readFileAsBase64(file);
-        const extracted = await extractMedicationFromImage(base64);
-        if (extracted) setView("review");
-      } catch (error) {
-        console.error("Failed to process scanned file:", error);
-      } finally {
-        setIsScanning(false);
-      }
-    }
+  const handleAddMedication = (medData: Partial<Medication>) => {
+    // Generate full medication with defaults
+    const newMed: Medication = {
+      id: medData.id || `med-${Date.now()}`,
+      name: medData.name || "Unknown",
+      strength: medData.strength || "100mg",
+      dosage: medData.dosage || "1 tablet",
+      dosesPerDay: medData.dosesPerDay || 1,
+      timesOfDay: medData.timesOfDay || ["06:00"],
+      instructions: medData.instructions || "",
+      color: medData.color || "bg-blue-300",
+      company: medData.company,
+      pillImageUrl: medData.pillImageUrl,
+      startDate: medData.startDate || new Date().toISOString().split("T")[0],
+      endDate: medData.endDate,
+      notes: medData.notes,
+    };
+
+    // Save to localStorage
+    addMedication(newMed);
+
+    // Update local state
+    setMedications((prev) => [...prev, newMed]);
+
+    // Force re-render
+    setUpdateKey((prev) => prev + 1);
+
+    // Close the modal
+    setShowAddModal(false);
+  };
+
+  const handleMedicationUpdate = (updatedMed: Medication) => {
+    // Update the medication in local state
+    setMedications((prev) =>
+      prev.map((med) => (med.id === updatedMed.id ? updatedMed : med))
+    );
+
+    // Force re-render
+    setUpdateKey((prev) => prev + 1);
   };
 
   /**
@@ -188,8 +211,7 @@ const App: React.FC = () => {
           />
 
           <FloatingActionButtons
-            isScanning={isScanning}
-            onScan={handleScan}
+            onAddClick={() => setShowAddModal(true)}
             onTodayClick={scrollToToday}
           />
         </>
@@ -204,7 +226,18 @@ const App: React.FC = () => {
       )}
 
       {selectedMed && isOpen && (
-        <DetailSheet medication={selectedMed} onClose={closeModal} />
+        <DetailSheet
+          medication={selectedMed}
+          onClose={closeModal}
+          onMedicationUpdate={handleMedicationUpdate}
+        />
+      )}
+
+      {showAddModal && (
+        <AddMedication
+          onClose={() => setShowAddModal(false)}
+          onAdd={handleAddMedication}
+        />
       )}
     </div>
   );

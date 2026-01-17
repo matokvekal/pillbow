@@ -8,48 +8,19 @@ interface ScanScreenProps {
   onManualFallback: () => void;
 }
 
-type ScanState = "ready" | "scanning" | "processing" | "done";
+type ScanState = "camera" | "scanning" | "result";
 
-// Demo AI function - simulates OCR reading pill box
-const demoAIReadPillBox = async (): Promise<Partial<Medication>> => {
-  // Simulate AI processing time
-  await new Promise(resolve => setTimeout(resolve, 2000));
+// Demo AI function - simulates reading pill box
+const simulateAIRead = async (): Promise<Partial<Medication>> => {
+  await new Promise(resolve => setTimeout(resolve, 1500));
 
-  // Demo medications that AI might "detect"
   const demoMeds: Partial<Medication>[] = [
-    {
-      name: "Aspirin",
-      strength: "100mg",
-      dosage: "1 tablet",
-      dosesPerDay: 1,
-      timesOfDay: ["Morning"],
-      color: "bg-blue-300",
-      company: "Bayer",
-      instructions: "Take with food",
-    },
-    {
-      name: "Metformin",
-      strength: "500mg",
-      dosage: "1 tablet",
-      dosesPerDay: 2,
-      timesOfDay: ["Morning", "Evening"],
-      color: "bg-green-300",
-      company: "Generic",
-      instructions: "Take with meals",
-    },
-    {
-      name: "Lisinopril",
-      strength: "10mg",
-      dosage: "1 tablet",
-      dosesPerDay: 1,
-      timesOfDay: ["Morning"],
-      color: "bg-purple-300",
-      company: "Zestril",
-      instructions: "Take at same time daily",
-    },
+    { name: "Aspirin", strength: "100mg", color: "bg-blue-300" },
+    { name: "Metformin", strength: "500mg", color: "bg-green-300" },
+    { name: "Lisinopril", strength: "10mg", color: "bg-purple-300" },
+    { name: "Vitamin D", strength: "1000 IU", color: "bg-yellow-300" },
   ];
 
-  // Return random demo medication
   return demoMeds[Math.floor(Math.random() * demoMeds.length)];
 };
 
@@ -58,13 +29,12 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({
   onScanComplete,
   onManualFallback,
 }) => {
-  const [scanState, setScanState] = useState<ScanState>("ready");
+  const [state, setState] = useState<ScanState>("camera");
   const [hasCamera, setHasCamera] = useState(true);
   const [detectedMed, setDetectedMed] = useState<Partial<Medication> | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Start camera on mount
   useEffect(() => {
     startCamera();
     return () => stopCamera();
@@ -79,165 +49,116 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-    } catch (err) {
-      console.log("Camera not available:", err);
+    } catch {
       setHasCamera(false);
     }
   };
 
   const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-    }
+    streamRef.current?.getTracks().forEach(track => track.stop());
   };
 
   const handleCapture = async () => {
-    setScanState("scanning");
-
-    // Animate radar for 1.5 seconds
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    setScanState("processing");
-
-    // Call demo AI
+    setState("scanning");
     try {
-      const medication = await demoAIReadPillBox();
-      setDetectedMed(medication);
-      setScanState("done");
-    } catch (err) {
-      console.error("AI processing failed:", err);
-      setScanState("ready");
+      const med = await simulateAIRead();
+      setDetectedMed(med);
+      setState("result");
+    } catch {
+      setState("camera");
     }
   };
 
   const handleConfirm = () => {
     if (detectedMed) {
-      onScanComplete(detectedMed);
+      onScanComplete({
+        ...detectedMed,
+        id: `med-${Date.now()}`,
+        dosesPerDay: 1,
+        timesOfDay: ["08:00"],
+        dosage: "1 dose",
+        startDate: new Date().toISOString().split("T")[0],
+      });
     }
   };
 
   const handleRetry = () => {
     setDetectedMed(null);
-    setScanState("ready");
+    setState("camera");
   };
 
   return (
-    <div className="scan-screen">
-      {/* Header */}
-      <div className="scan-screen__header">
-        <button className="scan-screen__back-btn" onClick={onBack}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-            <path d="M15 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span>BACK</span>
-        </button>
-      </div>
-
-      {/* Camera View */}
-      <div className="scan-screen__camera-area">
+    <div className="scan">
+      {/* Camera view */}
+      <div className="scan__camera">
         {hasCamera ? (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="scan-screen__video"
-          />
+          <video ref={videoRef} autoPlay playsInline muted className="scan__video" />
         ) : (
-          <div className="scan-screen__no-camera">
-            <span className="scan-screen__no-camera-icon">📷</span>
+          <div className="scan__no-camera">
+            <span>📷</span>
             <p>Camera not available</p>
           </div>
         )}
 
-        {/* Radar overlay */}
-        {scanState === "scanning" && (
-          <div className="scan-screen__radar">
-            <div className="scan-screen__radar-ring scan-screen__radar-ring--1" />
-            <div className="scan-screen__radar-ring scan-screen__radar-ring--2" />
-            <div className="scan-screen__radar-ring scan-screen__radar-ring--3" />
-            <div className="scan-screen__radar-sweep" />
+        {/* Scan frame overlay */}
+        {state === "camera" && (
+          <div className="scan__frame">
+            <div className="scan__corner scan__corner--tl" />
+            <div className="scan__corner scan__corner--tr" />
+            <div className="scan__corner scan__corner--bl" />
+            <div className="scan__corner scan__corner--br" />
           </div>
         )}
 
-        {/* Processing overlay */}
-        {scanState === "processing" && (
-          <div className="scan-screen__processing">
-            <div className="scan-screen__spinner" />
-            <p className="scan-screen__processing-text">AI Reading...</p>
-          </div>
-        )}
-
-        {/* Scan frame */}
-        {scanState === "ready" && (
-          <div className="scan-screen__frame">
-            <div className="scan-screen__corner scan-screen__corner--tl" />
-            <div className="scan-screen__corner scan-screen__corner--tr" />
-            <div className="scan-screen__corner scan-screen__corner--bl" />
-            <div className="scan-screen__corner scan-screen__corner--br" />
+        {/* Scanning animation */}
+        {state === "scanning" && (
+          <div className="scan__scanning">
+            <div className="scan__pulse" />
+            <p>Reading...</p>
           </div>
         )}
       </div>
 
-      {/* Bottom area */}
-      <div className="scan-screen__bottom">
-        {scanState === "ready" && (
+      {/* Back button - always visible */}
+      <button className="scan__back" onClick={onBack}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <path d="M15 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {/* Bottom panel */}
+      <div className="scan__panel">
+        {state === "camera" && (
           <>
-            <p className="scan-screen__hint">
-              Point camera at pill box
-            </p>
-            <button
-              className="scan-screen__capture-btn"
-              onClick={handleCapture}
-            >
-              <div className="scan-screen__capture-inner" />
+            <p className="scan__hint">Point at the medicine box</p>
+            <button className="scan__capture" onClick={handleCapture}>
+              <div className="scan__capture-inner" />
             </button>
-            <button
-              className="scan-screen__manual-btn"
-              onClick={onManualFallback}
-            >
-              ✍️ Fill by hand instead
+            <button className="scan__fallback" onClick={onManualFallback}>
+              Type it instead
             </button>
           </>
         )}
 
-        {scanState === "scanning" && (
-          <p className="scan-screen__hint scan-screen__hint--scanning">
-            Scanning...
-          </p>
+        {state === "scanning" && (
+          <p className="scan__hint scan__hint--scanning">Analyzing image...</p>
         )}
 
-        {scanState === "processing" && (
-          <p className="scan-screen__hint">
-            AI is reading the label...
-          </p>
-        )}
-
-        {scanState === "done" && detectedMed && (
-          <div className="scan-screen__result">
-            <div className="scan-screen__detected">
-              <div className={`scan-screen__med-icon ${detectedMed.color}`}>
-                💊
-              </div>
-              <div className="scan-screen__med-info">
-                <h3 className="scan-screen__med-name">{detectedMed.name}</h3>
-                <p className="scan-screen__med-strength">{detectedMed.strength}</p>
+        {state === "result" && detectedMed && (
+          <div className="scan__result">
+            <div className="scan__detected">
+              <div className={`scan__med-icon ${detectedMed.color}`}>💊</div>
+              <div className="scan__med-info">
+                <p className="scan__med-name">{detectedMed.name}</p>
+                <p className="scan__med-strength">{detectedMed.strength}</p>
               </div>
             </div>
-
-            <div className="scan-screen__result-actions">
-              <button
-                className="scan-screen__confirm-btn"
-                onClick={handleConfirm}
-              >
-                <span>✓</span>
-                <span>YES, ADD IT</span>
+            <div className="scan__actions">
+              <button className="scan__confirm" onClick={handleConfirm}>
+                Yes, Add It
               </button>
-              <button
-                className="scan-screen__retry-btn"
-                onClick={handleRetry}
-              >
-                🔄 Scan again
+              <button className="scan__retry" onClick={handleRetry}>
+                Try Again
               </button>
             </div>
           </div>

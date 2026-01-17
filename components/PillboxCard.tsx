@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { format, isToday, isPast, isFuture } from 'date-fns';
-import { Medication, DoseStatus, DayLog} from '../types';
+import { Medication, DoseStatus, DayLog, getShapeIcon } from '../types';
 import { getIconForTime, getLabelForTime } from '../constants';
 import './PillboxCard.css';
 
@@ -16,8 +16,9 @@ interface PillboxCardProps {
   onClick: () => void;
 }
 
-const PillGraphic: React.FC<{ color: string; size?: 'sm' | 'md'; count?: string; strength?: string }> = ({ color, size = 'md', count, strength }) => {
+const PillGraphic: React.FC<{ color: string; size?: 'sm' | 'md'; count?: string; strength?: string; shape?: string }> = ({ color, size = 'md', count, strength, shape }) => {
   const pillSizeClass = size === 'sm' ? 'pill-graphic-pill-sm' : 'pill-graphic-pill-md';
+  const shapeIcon = getShapeIcon(shape);
   return (
     <div className="pill-graphic-container">
       <div className="pill-graphic-label-container">
@@ -25,8 +26,7 @@ const PillGraphic: React.FC<{ color: string; size?: 'sm' | 'md'; count?: string;
         {count && <span className="pill-graphic-count">{count}</span>}
       </div>
       <div className={`pill-graphic-pill ${pillSizeClass} ${color}`}>
-        <div className="pill-graphic-gradient" />
-        <div className="pill-graphic-line" />
+        <span className="pill-graphic-shape">{shapeIcon}</span>
       </div>
     </div>
   );
@@ -158,8 +158,8 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
 
               return (
                 <div key={`${m.id}-${idx}`} className="pillbox-card-pill-preview">
-                  <div className="pillbox-card-pill-preview-circle">
-                    <div className={`pillbox-card-pill-preview-dot ${m.color}`} />
+                  <div className={`pillbox-card-pill-preview-circle ${m.color}`}>
+                    <span className="pillbox-card-pill-preview-shape">{getShapeIcon(m.shape)}</span>
                   </div>
                   {isTaken && (
                     <div className="pillbox-card-pill-preview-check">
@@ -252,6 +252,7 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
                             size="sm"
                             count={m.dosage}
                             strength={m.strength}
+                            shape={m.shape}
                           />
                         </div>
                       ))}
@@ -308,7 +309,7 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
                           className="pillbox-card-list-item"
                         >
                           <div className={`pillbox-card-list-item-icon ${m.color}`}>
-                            <div className="pillbox-card-list-item-pill" />
+                            <span className="pillbox-card-list-item-shape">{getShapeIcon(m.shape)}</span>
                           </div>
                           <div className="pillbox-card-list-item-info">
                             <span className="pillbox-card-list-item-name">{m.name}</span>
@@ -353,7 +354,7 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
                     className="pillbox-card-med-item"
                   >
                     <div className={`pillbox-card-med-icon ${m.color}`}>
-                      <div className="pillbox-card-med-icon-pill" />
+                      <span className="pillbox-card-med-icon-shape">{getShapeIcon(m.shape)}</span>
                     </div>
                     <div className="pillbox-card-med-info">
                       <p className="pillbox-card-med-name">{m.name}</p>

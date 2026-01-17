@@ -12,7 +12,7 @@ export const SuccessScreen: React.FC<SuccessScreenProps> = ({
 }) => {
   // Auto-close after 3 seconds
   useEffect(() => {
-    const timer = setTimeout(onDone, 3000);
+    const timer = setTimeout(onDone, 2000);
     return () => clearTimeout(timer);
   }, [onDone]);
 
@@ -21,10 +21,7 @@ export const SuccessScreen: React.FC<SuccessScreenProps> = ({
       <div className="success-screen__content">
         {/* Success Icon */}
         <div className="success-screen__icon">
-          <svg
-            className="success-screen__checkmark"
-            viewBox="0 0 52 52"
-          >
+          <svg className="success-screen__checkmark" viewBox="0 0 52 52">
             <circle
               className="success-screen__circle"
               cx="26"
@@ -47,17 +44,12 @@ export const SuccessScreen: React.FC<SuccessScreenProps> = ({
         <p className="success-screen__message">{message}</p>
 
         {/* OK Button */}
-        <button
-          className="success-screen__btn"
-          onClick={onDone}
-        >
+        <button className="success-screen__btn" onClick={onDone}>
           OK
         </button>
 
         {/* Auto close hint */}
-        <p className="success-screen__hint">
-          Closing automatically...
-        </p>
+        <p className="success-screen__hint">Closing automatically...</p>
       </div>
     </div>
   );

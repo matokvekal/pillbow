@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { format, parseISO, differenceInDays, startOfDay } from "date-fns";
-import { Medication } from "../../types";
+import { Medication, getShapeIcon } from "../../types";
 import { useModalStore } from "../../store/useModalStore";
 import { MedicationEdit } from "../MedicationEdit";
+import { updateMedication } from "../../services/dataService";
 import "./DetailSheet.css";
 
 interface DetailSheetProps {
   medication: Medication;
   onClose: () => void;
+  onMedicationUpdate?: (updatedMed: Medication) => void;
 }
 
 const getMedStatus = (med: Medication): { label: string; type: string; daysLeft?: number } => {
@@ -26,9 +28,16 @@ const getMedStatus = (med: Medication): { label: string; type: string; daysLeft?
 export const DetailSheet: React.FC<DetailSheetProps> = ({
   medication,
   onClose,
+  onMedicationUpdate,
 }) => {
   const [showEdit, setShowEdit] = useState(false);
-  const status = getMedStatus(medication);
+  const [currentMed, setCurrentMed] = useState(medication);
+  const status = getMedStatus(currentMed);
+
+  // Update currentMed when medication prop changes
+  useEffect(() => {
+    setCurrentMed(medication);
+  }, [medication]);
 
   useEffect(() => {
     const appContainer = document.querySelector(".app-container");
@@ -43,22 +52,65 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
   }, []);
 
   const handleEditSave = (action: "stop" | "change", data: any) => {
-    console.log("Edit action:", action, data);
-    // TODO: Update medication in data store
+    let updates: Partial<Medication> = {};
+
+    if (action === "stop") {
+      // Set end date based on when to stop
+      const today = new Date();
+      if (data.when === "today") {
+        // Set end date to yesterday to mark as completed
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        updates.endDate = format(yesterday, "yyyy-MM-dd");
+      } else {
+        // Set end date to today (stops after today)
+        updates.endDate = format(today, "yyyy-MM-dd");
+      }
+    } else if (action === "change") {
+      // Update strength and times per day
+      updates.strength = data.strength;
+      updates.dosesPerDay = data.timesPerDay;
+
+      // Generate new times based on timesPerDay
+      const timeMap: Record<number, string[]> = {
+        1: ["06:00"],
+        2: ["06:00", "20:00"],
+        3: ["06:00", "12:00", "20:00"],
+        4: ["06:00", "10:00", "15:00", "20:00"],
+        5: ["06:00", "10:00", "12:00", "15:00", "20:00"],
+        6: ["06:00", "09:00", "12:00", "15:00", "18:00", "21:00"],
+      };
+      updates.timesOfDay = timeMap[data.timesPerDay] || ["06:00"];
+    }
+
+    // Save to localStorage
+    updateMedication(medication.id, updates);
+
+    // Update local state
+    const updatedMed = { ...currentMed, ...updates };
+    setCurrentMed(updatedMed);
+
+    // Notify parent component
+    if (onMedicationUpdate) {
+      onMedicationUpdate(updatedMed);
+    }
+
+    // Close the edit sheet
+    setShowEdit(false);
   };
 
   const handleOrderClick = () => {
-    const searchQuery = encodeURIComponent(`${medication.name} ${medication.strength} buy online pharmacy`);
+    const searchQuery = encodeURIComponent(`${currentMed.name} ${currentMed.strength} buy online pharmacy`);
     window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
   };
 
   const handleInfoClick = () => {
-    const searchQuery = encodeURIComponent(`${medication.name} drug information side effects`);
+    const searchQuery = encodeURIComponent(`${currentMed.name} drug information side effects`);
     window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
   };
 
   const handleAskAIClick = () => {
-    const searchQuery = encodeURIComponent(`Tell me about ${medication.name} ${medication.strength} medication`);
+    const searchQuery = encodeURIComponent(`Tell me about ${currentMed.name} ${currentMed.strength} medication`);
     window.open(`https://claude.ai/new?q=${searchQuery}`, "_blank");
   };
 
@@ -70,21 +122,21 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
 
         {/* Header with pill icon and name */}
         <div className="detail-sheet-header">
-          <div className={`detail-sheet-icon ${medication.color}`}>
-            {medication.pillImageUrl ? (
-              <img src={medication.pillImageUrl} alt={medication.name} className="detail-sheet-icon-img" />
+          <div className={`detail-sheet-icon ${currentMed.color}`}>
+            {currentMed.pillImageUrl ? (
+              <img src={currentMed.pillImageUrl} alt={currentMed.name} className="detail-sheet-icon-img" />
             ) : (
-              <span className="detail-sheet-icon-emoji">💊</span>
+              <span className="detail-sheet-icon-emoji">{getShapeIcon(currentMed.shape)}</span>
             )}
           </div>
           <div className="detail-sheet-info">
-            <h3 className="detail-sheet-title">{medication.name}</h3>
-            {medication.company && (
-              <span className="detail-sheet-company">{medication.company}</span>
+            <h3 className="detail-sheet-title">{currentMed.name}</h3>
+            {currentMed.company && (
+              <span className="detail-sheet-company">{currentMed.company}</span>
             )}
             <div className="detail-sheet-badges">
-              <span className="detail-sheet-badge">{medication.strength}</span>
-              <span className="detail-sheet-badge">{medication.dosage}</span>
+              <span className="detail-sheet-badge">{currentMed.strength}</span>
+              <span className="detail-sheet-badge">{currentMed.dosage}</span>
             </div>
           </div>
         </div>
@@ -124,46 +176,46 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
           <div className="detail-sheet-grid__item">
             <span className="detail-sheet-grid__label">Schedule</span>
             <span className="detail-sheet-grid__value">
-              {medication.dosesPerDay || 1}x daily
+              {currentMed.dosesPerDay || 1}x daily
             </span>
           </div>
           <div className="detail-sheet-grid__item">
             <span className="detail-sheet-grid__label">Times</span>
             <span className="detail-sheet-grid__value">
-              {(medication.timesOfDay || []).join(", ") || "Not set"}
+              {(currentMed.timesOfDay || []).join(", ") || "Not set"}
             </span>
           </div>
-          {medication.startDate && (
+          {currentMed.startDate && (
             <div className="detail-sheet-grid__item">
               <span className="detail-sheet-grid__label">Start Date</span>
               <span className="detail-sheet-grid__value">
-                {format(parseISO(medication.startDate), "MMM d, yyyy")}
+                {format(parseISO(currentMed.startDate), "MMM d, yyyy")}
               </span>
             </div>
           )}
-          {medication.endDate && (
+          {currentMed.endDate && (
             <div className="detail-sheet-grid__item">
               <span className="detail-sheet-grid__label">End Date</span>
               <span className="detail-sheet-grid__value">
-                {format(parseISO(medication.endDate), "MMM d, yyyy")}
+                {format(parseISO(currentMed.endDate), "MMM d, yyyy")}
               </span>
             </div>
           )}
         </div>
 
         {/* Instructions */}
-        {medication.instructions && (
+        {currentMed.instructions && (
           <div className="detail-sheet-section">
             <h4 className="detail-sheet-section__title">Instructions</h4>
-            <p className="detail-sheet-section__text">{medication.instructions}</p>
+            <p className="detail-sheet-section__text">{currentMed.instructions}</p>
           </div>
         )}
 
         {/* Notes */}
-        {medication.notes && (
+        {currentMed.notes && (
           <div className="detail-sheet-section">
             <h4 className="detail-sheet-section__title">Notes</h4>
-            <p className="detail-sheet-section__text">{medication.notes}</p>
+            <p className="detail-sheet-section__text">{currentMed.notes}</p>
           </div>
         )}
 
@@ -208,7 +260,7 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
       {/* Edit Flow */}
       {showEdit && (
         <MedicationEdit
-          medication={medication}
+          medication={currentMed}
           onClose={() => setShowEdit(false)}
           onSave={handleEditSave}
         />

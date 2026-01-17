@@ -202,8 +202,8 @@
 .change-flow__icon.bg-yellow-300 { background-color: #fcd34d; }
 .change-flow__icon.bg-red-300 { background-color: #fca5a5; }
 .change-flow__icon.bg-purple-300 { background-color: #d8b4fe; }
-.change-flow__icon.bg-pink-300 { background-color: #f472b6; }
+.change-flow__icon.bg-pink-300 { background-color: #f9a8d4; }
 .change-flow__icon.bg-orange-300 { background-color: #fdba74; }
-.change-flow__icon.bg-indigo-300 { background-color: #a5b4fc; }
-.change-flow__icon.bg-teal-300 { background-color: #5eead4; }
 .change-flow__icon.bg-cyan-300 { background-color: #67e8f9; }
+.change-flow__icon.bg-gray-300 { background-color: #d1d5db; }
+.change-flow__icon.bg-white { background-color: #ffffff; border: 1px solid #e2e8f0; }

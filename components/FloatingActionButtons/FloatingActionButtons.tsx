@@ -3,14 +3,12 @@ import classNames from "classnames";
 import "./FloatingActionButtons.css";
 
 interface FloatingActionButtonsProps {
-  isScanning: boolean;
-  onScan: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onAddClick: () => void;
   onTodayClick: () => void;
 }
 
 export const FloatingActionButtons: React.FC<FloatingActionButtonsProps> = ({
-  isScanning,
-  onScan,
+  onAddClick,
   onTodayClick,
 }) => {
   return (
@@ -26,33 +24,20 @@ export const FloatingActionButtons: React.FC<FloatingActionButtonsProps> = ({
         </div>
       </button>
 
-      <div className={classNames("fab-add-container")}>
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={onScan}
-          className={classNames("fab-add-input")}
-          disabled={isScanning}
-          aria-label="Scan medication from image"
-        />
-        <button
-          className={classNames("fab-add-btn", {
-            "fab-add-btn--scanning": isScanning,
-          })}
-          disabled={isScanning}
-          aria-label="Add medication from image"
+      <button
+        className={classNames("fab-add-btn")}
+        onClick={onAddClick}
+        aria-label="Add new medication"
+      >
+        <svg
+          className={classNames("fab-add-icon")}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-          <svg
-            className={classNames("fab-add-icon")}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 4v16m8-8H4" strokeWidth="3" strokeLinecap="round" />
-          </svg>
-        </button>
-      </div>
+          <path d="M12 4v16m8-8H4" strokeWidth="3" strokeLinecap="round" />
+        </svg>
+      </button>
     </div>
   );
 };

@@ -139,8 +139,8 @@
 .med-edit__icon.bg-yellow-300 { background-color: #fcd34d; }
 .med-edit__icon.bg-red-300 { background-color: #fca5a5; }
 .med-edit__icon.bg-purple-300 { background-color: #d8b4fe; }
-.med-edit__icon.bg-pink-300 { background-color: #f472b6; }
+.med-edit__icon.bg-pink-300 { background-color: #f9a8d4; }
 .med-edit__icon.bg-orange-300 { background-color: #fdba74; }
-.med-edit__icon.bg-indigo-300 { background-color: #a5b4fc; }
-.med-edit__icon.bg-teal-300 { background-color: #5eead4; }
 .med-edit__icon.bg-cyan-300 { background-color: #67e8f9; }
+.med-edit__icon.bg-gray-300 { background-color: #d1d5db; }
+.med-edit__icon.bg-white { background-color: #ffffff; border: 1px solid #e2e8f0; }

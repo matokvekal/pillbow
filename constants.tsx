@@ -107,11 +107,12 @@ export const getLabelForTime = (time: string): string => {
 };
 
 // App Configuration Constants
-export const INITIAL_SCROLL_DELAY = 200; // Delay to ensure DOM is ready before scrolling
+export const INITIAL_SCROLL_DELAY = 100; // Delay to ensure DOM is ready before scrolling
 export const NOTIFICATION_SOUND_URL =
   "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3";
 
 // Calendar Range Configuration
-export const DAYS_BACK = 365 * 5; // 5 years of historical data
-export const DAYS_FORWARD = 365; // 1 year of future data
+// Reduced for better performance - consider implementing virtualization for larger ranges
+export const DAYS_BACK = 30; // 30 days of historical data
+export const DAYS_FORWARD = 60; // 60 days of future data
 export const TOTAL_DAYS = DAYS_BACK + DAYS_FORWARD + 1;

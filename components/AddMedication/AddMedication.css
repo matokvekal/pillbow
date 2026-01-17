@@ -1,0 +1,190 @@
+/* Add Medication - Elderly-Friendly Design */
+/* Single page, no scroll, large touch targets, high contrast */
+
+.add-med {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 1.5rem;
+  padding-top: env(safe-area-inset-top, 1.5rem);
+}
+
+/* Close button - top right, big touch target */
+.add-med__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.add-med__close:active {
+  transform: scale(0.95);
+  background: #f1f5f9;
+}
+
+.add-med__close svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+/* Main content area - centered vertically */
+.add-med__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  max-width: 24rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Header with icon */
+.add-med__header {
+  text-align: center;
+}
+
+.add-med__icon {
+  width: 5rem;
+  height: 5rem;
+  margin: 0 auto 1rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
+}
+
+.add-med__icon span {
+  font-size: 2.5rem;
+}
+
+.add-med__title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.add-med__subtitle {
+  font-size: 1.125rem;
+  color: #64748b;
+  margin: 0.5rem 0 0 0;
+}
+
+/* Action buttons - large, clear, high contrast */
+.add-med__buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-med__btn {
+  width: 100%;
+  min-height: 5.5rem;
+  border: none;
+  border-radius: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  gap: 1.25rem;
+  transition: all 0.2s;
+  font-family: inherit;
+  text-align: left;
+}
+
+.add-med__btn:active {
+  transform: scale(0.98);
+}
+
+/* Camera/Scan button - primary action */
+.add-med__btn--scan {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+}
+
+.add-med__btn--scan:active {
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+/* Manual button - secondary action */
+.add-med__btn--manual {
+  background: white;
+  color: #1e293b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e2e8f0;
+}
+
+.add-med__btn--manual:active {
+  background: #f8fafc;
+}
+
+/* Button icon */
+.add-med__btn-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.add-med__btn--scan .add-med__btn-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.add-med__btn--manual .add-med__btn-icon {
+  background: #f1f5f9;
+}
+
+/* Button text */
+.add-med__btn-content {
+  flex: 1;
+}
+
+.add-med__btn-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.add-med__btn-desc {
+  font-size: 0.9375rem;
+  opacity: 0.8;
+  margin: 0.25rem 0 0 0;
+}
+
+.add-med__btn--manual .add-med__btn-desc {
+  color: #64748b;
+}
+
+/* Arrow indicator */
+.add-med__btn-arrow {
+  font-size: 1.5rem;
+  opacity: 0.6;
+}

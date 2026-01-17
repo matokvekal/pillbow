@@ -21,7 +21,7 @@ export const AddMedication: React.FC<AddMedicationProps> = ({
 
   const handleScanComplete = (medication: Partial<Medication>) => {
     onAdd(medication);
-    setSuccessMessage(`${medication.name} added from scan!`);
+    setSuccessMessage(`${medication.name} added!`);
     setScreen("success");
   };
 
@@ -35,46 +35,51 @@ export const AddMedication: React.FC<AddMedicationProps> = ({
     onClose();
   };
 
-  // Main screen - choose scan or manual
+  // Main screen - two clear options
   if (screen === "main") {
     return (
       <div className="add-med">
-        <div className="add-med__header">
-          <button className="add-med__close-btn" onClick={onClose}>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-              <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        </div>
+        {/* Close button */}
+        <button className="add-med__close" onClick={onClose}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
 
-        <div className="add-med__content">
-          {/* Icon */}
-          <div className="add-med__icon">
-            <span>💊</span>
+        <div className="add-med__main">
+          {/* Header */}
+          <div className="add-med__header">
+            <div className="add-med__icon">
+              <span>💊</span>
+            </div>
+            <h1 className="add-med__title">Add Medicine</h1>
+            <p className="add-med__subtitle">Choose how to add</p>
           </div>
 
-          {/* Title */}
-          <h1 className="add-med__title">ADD NEW</h1>
-          <p className="add-med__subtitle">Medicine</p>
-
-          {/* Action Buttons */}
-          <div className="add-med__actions">
+          {/* Two big buttons */}
+          <div className="add-med__buttons">
             <button
               className="add-med__btn add-med__btn--scan"
               onClick={() => setScreen("scan")}
             >
-              <span className="add-med__btn-icon">📷</span>
-              <span className="add-med__btn-text">SCAN</span>
-              <span className="add-med__btn-hint">take photo of box</span>
+              <div className="add-med__btn-icon">📷</div>
+              <div className="add-med__btn-content">
+                <p className="add-med__btn-title">Take Photo</p>
+                <p className="add-med__btn-desc">Scan the medicine box</p>
+              </div>
+              <span className="add-med__btn-arrow">→</span>
             </button>
 
             <button
               className="add-med__btn add-med__btn--manual"
               onClick={() => setScreen("manual")}
             >
-              <span className="add-med__btn-icon">✍️</span>
-              <span className="add-med__btn-text">FILL BY HAND</span>
-              <span className="add-med__btn-hint">type the details</span>
+              <div className="add-med__btn-icon">✏️</div>
+              <div className="add-med__btn-content">
+                <p className="add-med__btn-title">Type It</p>
+                <p className="add-med__btn-desc">Enter details yourself</p>
+              </div>
+              <span className="add-med__btn-arrow">→</span>
             </button>
           </div>
         </div>
