@@ -247,6 +247,10 @@ const App: React.FC = () => {
         <SettingsView
           onBack={() => setView("timeline")}
           onManageMeds={() => setView("manage")}
+          onAddMedication={() => {
+            setView("timeline");
+            setShowAddModal(true);
+          }}
           medicationCount={medications.length}
         />
       )}

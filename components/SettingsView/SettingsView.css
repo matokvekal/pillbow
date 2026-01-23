@@ -233,6 +233,11 @@
   border: 2px solid #86efac;
 }
 
+.data-card__icon-wrap--purple {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+  border: 2px solid #c4b5fd;
+}
+
 .data-card__content {
   display: flex;
   flex-direction: column;

@@ -8,12 +8,14 @@ import "./SettingsView.css";
 interface SettingsViewProps {
   onBack: () => void;
   onManageMeds: () => void;
+  onAddMedication: () => void;
   medicationCount: number;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
   onBack,
   onManageMeds,
+  onAddMedication,
   medicationCount
 }) => {
   const { users, currentUserId, getCurrentUser } = useUserStore();
@@ -114,7 +116,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </button>
         </div>
       </div>
-      handle
+
       {/* Content */}
       <div className="settings-v2__content">
         {/* Quick Actions */}
@@ -175,6 +177,19 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <div className="data-card__content">
                 <span className="data-card__title">Import</span>
                 <span className="data-card__desc">Restore backup</span>
+              </div>
+            </button>
+
+            <button
+              className="data-card data-card--add"
+              onClick={onAddMedication}
+            >
+              <div className="data-card__icon-wrap data-card__icon-wrap--purple">
+                <span>➕</span>
+              </div>
+              <div className="data-card__content">
+                <span className="data-card__title">Add New</span>
+                <span className="data-card__desc">New medication</span>
               </div>
             </button>
           </div>
