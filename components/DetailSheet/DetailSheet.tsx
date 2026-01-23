@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { format, parseISO, differenceInDays, startOfDay } from "date-fns";
 import { Medication, getShapeIcon } from "../../types";
 import { useModalStore } from "../../store/useModalStore";
-import { MedicationEdit } from "../MedicationEdit";
+import { MedicationEditForm } from "../MedicationEditForm/MedicationEditForm";
 import { updateMedication } from "../../services/dataService";
 import "./DetailSheet.css";
 
@@ -34,7 +34,7 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
   onClose,
   onMedicationUpdate
 }) => {
-  const [showEdit, setShowEdit] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [currentMed, setCurrentMed] = useState(medication);
   const status = getMedStatus(currentMed);
 
@@ -55,38 +55,7 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
     };
   }, []);
 
-  const handleEditSave = (action: "stop" | "change", data: any) => {
-    let updates: Partial<Medication> = {};
-
-    if (action === "stop") {
-      // Set end date based on when to stop
-      const today = new Date();
-      if (data.when === "today") {
-        // Set end date to yesterday to mark as completed
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        updates.endDate = format(yesterday, "yyyy-MM-dd");
-      } else {
-        // Set end date to today (stops after today)
-        updates.endDate = format(today, "yyyy-MM-dd");
-      }
-    } else if (action === "change") {
-      // Update strength and times per day
-      updates.strength = data.strength;
-      updates.dosesPerDay = data.timesPerDay;
-
-      // Generate new times based on timesPerDay
-      const timeMap: Record<number, string[]> = {
-        1: ["06:00"],
-        2: ["06:00", "20:00"],
-        3: ["06:00", "12:00", "20:00"],
-        4: ["06:00", "10:00", "15:00", "20:00"],
-        5: ["06:00", "10:00", "12:00", "15:00", "20:00"],
-        6: ["06:00", "09:00", "12:00", "15:00", "18:00", "21:00"]
-      };
-      updates.timesOfDay = timeMap[data.timesPerDay] || ["06:00"];
-    }
-
+  const handleEditSave = (updates: Partial<Medication>) => {
     // Save to localStorage
     updateMedication(medication.id, updates);
 
@@ -99,8 +68,8 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
       onMedicationUpdate(updatedMed);
     }
 
-    // Close the edit sheet
-    setShowEdit(false);
+    // Close the edit mode
+    setIsEditing(false);
   };
 
   const handleOrderClick = () => {
@@ -124,6 +93,23 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
     window.open(`https://claude.ai/new?q=${searchQuery}`, "_blank");
   };
 
+  // Edit Mode - Show the new unified edit form
+  if (isEditing) {
+    return (
+      <div className="detail-sheet-overlay">
+        <div className="detail-sheet-backdrop" onClick={() => setIsEditing(false)} />
+        <div className="detail-sheet-content detail-sheet-content--edit">
+          <MedicationEditForm
+            medication={currentMed}
+            onSave={handleEditSave}
+            onCancel={() => setIsEditing(false)}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // View Mode - Show medication details
   return (
     <div className="detail-sheet-overlay">
       <div className="detail-sheet-backdrop" onClick={onClose} />
@@ -304,7 +290,7 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
         {/* BIG EDIT Button */}
         <button
           className="detail-sheet-edit-btn"
-          onClick={() => setShowEdit(true)}
+          onClick={() => setIsEditing(true)}
         >
           <span className="detail-sheet-edit-btn__icon">✏️</span>
           <span className="detail-sheet-edit-btn__text">EDIT</span>
@@ -375,20 +361,7 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
             <span>Ask AI</span>
           </button>
         </div>
-
-        {/* <button onClick={onClose} className="detail-sheet-close-btn">
-          Close
-        </button> */}
       </div>
-
-      {/* Edit Flow */}
-      {showEdit && (
-        <MedicationEdit
-          medication={currentMed}
-          onClose={() => setShowEdit(false)}
-          onSave={handleEditSave}
-        />
-      )}
     </div>
   );
 };

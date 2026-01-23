@@ -38,6 +38,13 @@
   z-index: 10;
 }
 
+/* Edit mode - full height content */
+.detail-sheet-content--edit {
+  padding: 0;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
 .detail-sheet-content::-webkit-scrollbar {
   width: 0;
 }
