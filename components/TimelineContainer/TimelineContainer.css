@@ -5,7 +5,8 @@
   scroll-behavior: smooth;
   padding: 1rem;
   gap: 1rem;
-  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .timeline-container::-webkit-scrollbar {
@@ -34,16 +35,9 @@
 
 /* Today styling - highlighted card */
 .timeline-day-item--today {
-  position: relative;
-}
-
-.timeline-day-item--today::before {
-  content: "";
-  position: absolute;
-  inset: -3px;
+  display: flex;
+  box-shadow: 0 0 0 3px #6366f1;
   border-radius: 1.25rem;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
-  z-index: -1;
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
@@ -61,7 +55,10 @@
 /* Day Box Modal Overlay */
 .day-box-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   display: flex;

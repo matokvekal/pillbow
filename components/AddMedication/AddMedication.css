@@ -2,8 +2,8 @@
 /* Single page, no scroll, large touch targets, high contrast */
 
 .add-med {
-  position: fixed;
-  inset: 0;
+  width: 100vw;
+  height: 100vh;
   background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
   z-index: 300;
   display: flex;
@@ -14,10 +14,19 @@
 }
 
 /* Close button - top right, big touch target */
+/* Close button - top right, big touch target */
+.add-med__top-bar {
+  display: flex;
+  justify-content: flex-end;
+  /* Push to right */
+  width: 100%;
+}
+
+.add-med__spacer {
+  flex: 1;
+}
+
 .add-med__close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;

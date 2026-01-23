@@ -1,135 +1,161 @@
-/* App Header */
+/* App Header - Pastel Rainbow Theme */
 .app-header {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-top: 3rem;
-  padding-bottom: 1.5rem;
-  background-color: rgb(255 255 255 / 0.4);
-  backdrop-filter: blur(24px);
-  position: sticky;
-  top: 0;
+  padding: 0.75rem 1rem;
+  padding-top: 2.25rem;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfeff 50%, #fdf4ff 100%);
+  width: 100%;
   z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgb(255 255 255 / 0.2);
+  gap: 0.75rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-bottom: 2px solid rgba(167, 139, 250, 0.2);
+  position: relative;
+  /* Allow dropdown to overflow header */
 }
 
 .app-header__logo-container {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.625rem;
 }
 
-.app-header__logo {
-  width: 2.75rem;
-  height: 2.75rem;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  border-radius: 0.875rem;
+/* ========== PILLBOW LOGO - CAPSULE WITH RAINBOW GRADIENT ========== */
+
+/* Capsule container with gradient border */
+.app-header__capsule-logo {
+  /* Capsule shape - rounded like a pill */
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+
+  /* Rainbow gradient border effect using background */
+  background: linear-gradient(
+    90deg,
+    /* Left half - cool colors (blue → cyan → green) */
+    #3b82f6 0%,
+    #06b6d4 15%,
+    #22c55e 35%,
+    /* Right half - warm colors (yellow → orange → pink → purple) */
+    #eab308 50%,
+    #f97316 65%,
+    #ec4899 80%,
+    #a855f7 100%
+  );
+
+  /* Inner white background for text */
+  position: relative;
+
+  /* Shadow for depth */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+
+  /* Flexbox */
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  box-shadow:
-    0 10px 15px -3px rgba(99, 102, 241, 0.3),
-    0 4px 6px -4px rgba(139, 92, 246, 0.2);
-  position: relative;
-  overflow: hidden;
 }
 
-.app-header__logo::before {
-  content: "";
+/* White inner background (creates border effect) */
+.app-header__capsule-logo::before {
+  content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.2) 50%,
-    transparent 70%
-  );
-  animation: shine 3s ease-in-out infinite;
+  inset: 3px;
+  background: white;
+  border-radius: calc(2rem - 3px);
+  z-index: 0;
 }
 
-@keyframes shine {
-  0%, 100% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(100%);
-  }
-}
-
-.app-header__logo-text {
-  font-size: 1.5rem;
-  font-weight: 800;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  position: relative;
-  z-index: 1;
-}
-
+/* Title inside capsule */
 .app-header__title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.125rem;
+  font-weight: 900;
   margin: 0;
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  gap: 0.05rem;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
+  font-family: 'Inter', 'Segoe UI', -apple-system, sans-serif;
 }
 
+/* Individual letter gradients - Rainbow flow */
 .app-header__letter {
   display: inline-block;
-  font-weight: 700;
-  transition: transform 0.2s ease;
+  background: linear-gradient(180deg, var(--color-start), var(--color-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
 }
 
-.app-header__letter:hover {
-  transform: translateY(-2px);
-}
-
-/* Rainbow colors for each letter */
+/* P - Blue */
 .app-header__letter--p {
-  color: #ef4444; /* red */
+  --color-start: #3b82f6;
+  --color-end: #2563eb;
 }
 
+/* i - Green */
 .app-header__letter--i {
-  color: #f97316; /* orange */
+  --color-start: #22c55e;
+  --color-end: #16a34a;
 }
 
+/* l - Yellow */
 .app-header__letter--l1 {
-  color: #eab308; /* yellow */
+  --color-start: #eab308;
+  --color-end: #ca8a04;
 }
 
+/* l - Orange */
 .app-header__letter--l2 {
-  color: #22c55e; /* green */
+  --color-start: #f97316;
+  --color-end: #ea580c;
 }
 
+/* B - Pink */
 .app-header__letter--b {
-  color: #6366f1; /* indigo */
-  font-weight: 800;
-  font-size: 1.6rem;
+  --color-start: #ec4899;
+  --color-end: #db2777;
 }
 
+/* o - Light Purple */
 .app-header__letter--o {
-  color: #8b5cf6; /* violet */
+  --color-start: #c084fc;
+  --color-end: #a855f7;
 }
 
+/* w - Purple */
 .app-header__letter--w {
-  color: #a855f7; /* purple */
+  --color-start: #a855f7;
+  --color-end: #9333ea;
 }
 
+/* Settings Button */
 .app-header__menu-btn {
-  background: none;
-  border: none;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
   cursor: pointer;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #334155;
-  transition: opacity 0.2s;
+  color: #64748b;
+  transition: all 0.2s;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .app-header__menu-btn:hover {
-  opacity: 0.7;
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.app-header__menu-btn:active {
+  transform: scale(0.95);
 }
 
 .app-header__menu-icon {

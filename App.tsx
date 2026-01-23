@@ -15,7 +15,10 @@ import { FloatingActionButtons } from "./components/FloatingActionButtons/Floati
 import { DetailSheet } from "./components/DetailSheet/DetailSheet";
 import { ManageView } from "./components/ManageView/ManageView";
 import { AddMedication } from "./components/AddMedication/AddMedication";
+import { SettingsView } from "./components/SettingsView/SettingsView";
 import { useModalStore } from "./store/useModalStore";
+import { useUserStore } from "./store/useUserStore";
+import { useDayCardStore } from "./store/useDayCardStore";
 import {
   loadAppData,
   saveAppData,
@@ -51,6 +54,10 @@ const App: React.FC = () => {
 
   // Load data on mount
   useEffect(() => {
+    // Initialize user store (loads users and sets up current user)
+    useUserStore.getState().init();
+
+    // Then load app data as usual (dataService reads from localStorage, which is managed by user store now)
     const data = loadAppData();
     if (data.medications.length > 0) {
       setMedications(data.medications);
@@ -116,6 +123,9 @@ const App: React.FC = () => {
   };
 
   const handleDayClick = (date: Date) => {
+    // Close all expanded slots and manage list when selecting a new day
+    useDayCardStore.getState().closeAll();
+
     setSelectedDate(date);
     // Scroll to the clicked day
     const element = document.getElementById(`day-${date.getTime()}`);
@@ -125,6 +135,8 @@ const App: React.FC = () => {
   };
 
   const handleCloseBox = () => {
+    // Close all expanded slots when closing day box
+    useDayCardStore.getState().closeAll();
     setSelectedDate(null);
   };
 
@@ -194,7 +206,7 @@ const App: React.FC = () => {
 
   return (
     <div className="app-container">
-      <AppHeader onMenuClick={() => setView("manage")} />
+      <AppHeader onMenuClick={() => setView("settings")} />
 
       {view === "timeline" && (
         <>
@@ -222,6 +234,14 @@ const App: React.FC = () => {
           medications={medications}
           onMedicationClick={(medication) => openModal(medication)}
           onBack={() => setView("timeline")}
+        />
+      )}
+
+      {view === "settings" && (
+        <SettingsView
+          onBack={() => setView("timeline")}
+          onManageMeds={() => setView("manage")}
+          medicationCount={medications.length}
         />
       )}
 

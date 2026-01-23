@@ -1,11 +1,14 @@
 /* Inactive Pillbox Card */
 .inactive-pillbox-card {
-  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 1rem;
   padding: 1rem;
   background-color: white;
+  background-image: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0) 100%);
   border: none;
   border-radius: 1rem;
   cursor: pointer;
@@ -22,15 +25,13 @@
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
 }
 
-.inactive-pillbox-card__bg {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.5) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  pointer-events: none;
+/* Removed .inactive-pillbox-card__bg as it is now part of .inactive-pillbox-card background */
+
+.inactive-pillbox-card__content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
 }
 
 .inactive-pillbox-card__left {
@@ -38,7 +39,6 @@
   align-items: center;
   gap: 1rem;
   flex: 1;
-  position: relative;
   z-index: 1;
 }
 
@@ -70,9 +70,8 @@
 }
 
 .inactive-pillbox-card__pill-preview {
-  position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -84,7 +83,6 @@
   align-items: center;
   justify-content: center;
   background-color: #f1f5f9;
-  position: relative;
 }
 
 .inactive-pillbox-card__pill-preview-dot {
@@ -95,13 +93,16 @@
 }
 
 .inactive-pillbox-card__pill-preview-check {
-  position: absolute;
-  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: rgba(34, 197, 94, 0.1);
   border-radius: 50%;
+  margin-left: -2.5rem;
+  /* Pull back to overlap circle */
+  width: 2.5rem;
+  height: 2.5rem;
+  z-index: 10;
 }
 
 .inactive-pillbox-card__pill-preview-check-icon {
@@ -115,7 +116,6 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  position: relative;
   z-index: 1;
 }
 
@@ -191,10 +191,30 @@
 }
 
 /* Status badge base */
+/* Status badge base */
 .inactive-pillbox-card__status-badge {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  align-self: flex-end;
+  /* Align to right */
+  margin-top: -3.5rem;
+  /* Pull up into the padding/header area. Card height is ~6rem, content is centered. */
+  /* This relies on the card content being below. 
+     Construct: 
+     <Card (Flex Col)>
+        <Content (Flex Row)>...</Content>
+        <Badge />
+     </Card> -- Wait, badge is *before* or *after* content? 
+     In current TSX, badge is first child.
+     So:
+     <Card (Flex Col)>
+        <Badge (align-self: flex-end) />
+        <Content />
+     </Card>
+     Badge will push content down. 
+     Margin-bottom: -BadgeHeight?
+  */
+  margin-right: -0.5rem;
+  margin-bottom: -1.75rem;
+  /* Counteract height */
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -204,7 +224,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  z-index: 2;
+  z-index: 3;
 }
 
 /* Ending soon - amber/warning */
@@ -227,8 +247,15 @@
 }
 
 @keyframes pulse-badge {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .inactive-pillbox-card--last-day {

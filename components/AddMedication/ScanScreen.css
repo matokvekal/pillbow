@@ -1,8 +1,8 @@
 /* Scan Screen - Simple Camera UI */
 
 .scan {
-  position: fixed;
-  inset: 0;
+  width: 100vw;
+  height: 100vh;
   background: #000;
   z-index: 300;
   display: flex;
@@ -12,14 +12,16 @@
 /* Camera area */
 .scan__camera {
   flex: 1;
-  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: row;
+  /* Horizontal stack for overlap */
   overflow: hidden;
+  background-color: #000;
 }
 
 .scan__video {
+  flex: 1;
+  min-width: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -43,65 +45,80 @@
 }
 
 /* Scan frame */
+/* Scan frame */
 .scan__frame {
-  position: absolute;
+  width: 100%;
+  margin-left: -100%;
+  /* Overlap video */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.scan__frame-inner {
   width: 75%;
   max-width: 18rem;
   aspect-ratio: 1;
-  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.scan__frame-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .scan__corner {
-  position: absolute;
   width: 2.5rem;
   height: 2.5rem;
   border-color: white;
   border-style: solid;
   border-width: 0;
+  /* Removed absolute positioning logic */
 }
 
 .scan__corner--tl {
-  top: 0;
-  left: 0;
   border-top-width: 4px;
   border-left-width: 4px;
   border-top-left-radius: 0.75rem;
 }
 
 .scan__corner--tr {
-  top: 0;
-  right: 0;
   border-top-width: 4px;
   border-right-width: 4px;
   border-top-right-radius: 0.75rem;
 }
 
 .scan__corner--bl {
-  bottom: 0;
-  left: 0;
   border-bottom-width: 4px;
   border-left-width: 4px;
   border-bottom-left-radius: 0.75rem;
 }
 
 .scan__corner--br {
-  bottom: 0;
-  right: 0;
   border-bottom-width: 4px;
   border-right-width: 4px;
   border-bottom-right-radius: 0.75rem;
 }
 
 /* Scanning animation */
+/* Scanning animation */
 .scan__scanning {
-  position: absolute;
-  inset: 0;
+  width: 100%;
+  margin-left: -100%;
+  /* Overlap video */
+  height: 100%;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1.5rem;
+  z-index: 20;
 }
 
 .scan__scanning p {
@@ -126,10 +143,18 @@
 }
 
 /* Back button */
+/* Header */
+.scan__header {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  /* Ensure header sits above camera if needed, or simply stacked in column */
+  background: black;
+  /* Match camera bg */
+}
+
+/* Back button */
 .scan__back {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
@@ -140,17 +165,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.scan__back:active {
-  transform: scale(0.95);
-}
-
-.scan__back svg {
-  width: 1.5rem;
-  height: 1.5rem;
 }
 
 /* Bottom panel */
@@ -303,13 +318,43 @@
 }
 
 /* Color variants for med icon */
-.scan__med-icon.bg-blue-300 { background-color: #93c5fd; }
-.scan__med-icon.bg-green-300 { background-color: #86efac; }
-.scan__med-icon.bg-yellow-300 { background-color: #fcd34d; }
-.scan__med-icon.bg-red-300 { background-color: #fca5a5; }
-.scan__med-icon.bg-purple-300 { background-color: #d8b4fe; }
-.scan__med-icon.bg-orange-300 { background-color: #fdba74; }
-.scan__med-icon.bg-pink-300 { background-color: #f9a8d4; }
-.scan__med-icon.bg-cyan-300 { background-color: #67e8f9; }
-.scan__med-icon.bg-gray-300 { background-color: #d1d5db; }
-.scan__med-icon.bg-white { background-color: #ffffff; border: 1px solid #e2e8f0; }
+.scan__med-icon.bg-blue-300 {
+  background-color: #93c5fd;
+}
+
+.scan__med-icon.bg-green-300 {
+  background-color: #86efac;
+}
+
+.scan__med-icon.bg-yellow-300 {
+  background-color: #fcd34d;
+}
+
+.scan__med-icon.bg-red-300 {
+  background-color: #fca5a5;
+}
+
+.scan__med-icon.bg-purple-300 {
+  background-color: #d8b4fe;
+}
+
+.scan__med-icon.bg-orange-300 {
+  background-color: #fdba74;
+}
+
+.scan__med-icon.bg-pink-300 {
+  background-color: #f9a8d4;
+}
+
+.scan__med-icon.bg-cyan-300 {
+  background-color: #67e8f9;
+}
+
+.scan__med-icon.bg-gray-300 {
+  background-color: #d1d5db;
+}
+
+.scan__med-icon.bg-white {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+}

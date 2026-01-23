@@ -39,12 +39,15 @@ export const AddMedication: React.FC<AddMedicationProps> = ({
   if (screen === "main") {
     return (
       <div className="add-med">
-        {/* Close button */}
-        <button className="add-med__close" onClick={onClose}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
+        <div className="add-med__top-bar">
+          <div className="add-med__spacer"></div>
+          {/* Close button */}
+          <button className="add-med__close" onClick={onClose}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
 
         <div className="add-med__main">
           {/* Header */}

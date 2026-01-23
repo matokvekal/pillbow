@@ -24,7 +24,6 @@ export const PillGraphic: React.FC<PillGraphicProps> = ({
         {count && <span className="pill-graphic__count">{count}</span>}
       </div>
       <div className={`pill-graphic__pill ${pillSizeClass} ${color}`}>
-        <div className="pill-graphic__gradient" />
         <div className="pill-graphic__line" />
       </div>
     </div>

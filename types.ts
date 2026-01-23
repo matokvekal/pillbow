@@ -58,8 +58,23 @@ export interface DayLog {
   doses: DoseRecord[];
 }
 
+// User Profile for Family Management
+export interface UserProfile {
+  id: string;
+  name: string;
+  relationship: 'self' | 'child' | 'parent' | 'spouse' | 'other';
+  avatar?: string; // emoji or image URL
+  color: string; // for visual distinction
+  createdAt: string;
+}
+
 // Complete app data structure (saved to JSON)
 export interface AppData {
+  // New multi-user fields
+  currentUserId?: string;
+  users?: UserProfile[];
+
+  // Existing data (now associated with currentUserId)
   medications: Medication[];
   dayLogs: DayLog[];
   settings: AppSettings;

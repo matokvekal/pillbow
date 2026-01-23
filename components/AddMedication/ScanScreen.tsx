@@ -89,6 +89,15 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({
 
   return (
     <div className="scan">
+      {/* Header bar */}
+      <div className="scan__header">
+        <button className="scan__back" onClick={onBack}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M15 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
+
       {/* Camera view */}
       <div className="scan__camera">
         {hasCamera ? (
@@ -103,10 +112,16 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({
         {/* Scan frame overlay */}
         {state === "camera" && (
           <div className="scan__frame">
-            <div className="scan__corner scan__corner--tl" />
-            <div className="scan__corner scan__corner--tr" />
-            <div className="scan__corner scan__corner--bl" />
-            <div className="scan__corner scan__corner--br" />
+            <div className="scan__frame-inner">
+              <div className="scan__frame-row">
+                <div className="scan__corner scan__corner--tl" />
+                <div className="scan__corner scan__corner--tr" />
+              </div>
+              <div className="scan__frame-row">
+                <div className="scan__corner scan__corner--bl" />
+                <div className="scan__corner scan__corner--br" />
+              </div>
+            </div>
           </div>
         )}
 
@@ -119,12 +134,7 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({
         )}
       </div>
 
-      {/* Back button - always visible */}
-      <button className="scan__back" onClick={onBack}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-          <path d="M15 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
+
 
       {/* Bottom panel */}
       <div className="scan__panel">

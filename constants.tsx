@@ -1,6 +1,7 @@
 import { Medication, TimeSlot } from "./types";
 
 export const MOCK_MEDICATIONS: Medication[] = [
+  // Morning 06:00 - 5 different pills
   {
     id: "1",
     name: "Metformin",
@@ -27,6 +28,43 @@ export const MOCK_MEDICATIONS: Medication[] = [
     startDate: "2024-06-01",
   },
   {
+    id: "6",
+    name: "Lisinopril",
+    company: "Pfizer",
+    strength: "10 mg",
+    dosage: "1 X",
+    dosesPerDay: 1,
+    timesOfDay: ["06:00"],
+    instructions: "Blood pressure",
+    color: "bg-red-300",
+    startDate: "2024-01-01",
+  },
+  {
+    id: "7",
+    name: "Levothyroxine",
+    company: "Synthroid",
+    strength: "50 mcg",
+    dosage: "1 X",
+    dosesPerDay: 1,
+    timesOfDay: ["06:00"],
+    instructions: "Empty stomach, 30min before food",
+    color: "bg-purple-300",
+    startDate: "2024-01-01",
+  },
+  {
+    id: "8",
+    name: "Omeprazole",
+    company: "AstraZeneca",
+    strength: "20 mg",
+    dosage: "1 X",
+    dosesPerDay: 1,
+    timesOfDay: ["06:00"],
+    instructions: "Before breakfast",
+    color: "bg-orange-300",
+    startDate: "2024-01-01",
+  },
+  // Mid-morning 10:00
+  {
     id: "3",
     name: "Vitamin D3",
     company: "Solgar",
@@ -38,6 +76,7 @@ export const MOCK_MEDICATIONS: Medication[] = [
     color: "bg-yellow-300",
     startDate: "2024-01-01",
   },
+  // Noon 12:00
   {
     id: "4",
     name: "Omega-3",
@@ -47,9 +86,10 @@ export const MOCK_MEDICATIONS: Medication[] = [
     dosesPerDay: 1,
     timesOfDay: ["12:00"],
     instructions: "With lunch",
-    color: "bg-red-300",
+    color: "bg-cyan-300",
     startDate: "2024-01-01",
   },
+  // Evening 20:00
   {
     id: "5",
     name: "Magnesium",
@@ -59,7 +99,7 @@ export const MOCK_MEDICATIONS: Medication[] = [
     dosesPerDay: 1,
     timesOfDay: ["20:00"],
     instructions: "Before bed",
-    color: "bg-purple-300",
+    color: "bg-pink-300",
     startDate: "2024-03-01",
   },
 ];

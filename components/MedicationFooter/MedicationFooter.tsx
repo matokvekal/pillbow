@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { format } from "date-fns";
 import { Medication } from "../../types";
+import { useDayCardStore } from "../../store/useDayCardStore";
 import "./MedicationFooter.css";
 
 interface MedicationFooterProps {
@@ -12,24 +13,24 @@ export const MedicationFooter: React.FC<MedicationFooterProps> = ({
   medications,
   onMedicationClick,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const { isManageListOpen, toggleManageList } = useDayCardStore();
 
   if (medications.length === 0) return null;
 
-  const toggleIconClass = isExpanded ? "medication-footer__toggle-icon medication-footer__toggle-icon--expanded" : "medication-footer__toggle-icon";
+  const toggleIconClass = isManageListOpen ? "medication-footer__toggle-icon medication-footer__toggle-icon--expanded" : "medication-footer__toggle-icon";
 
   return (
     <div className="medication-footer">
-      <button className="medication-footer__toggle" onClick={() => setIsExpanded(!isExpanded)}>
+      <button className="medication-footer__toggle" onClick={toggleManageList}>
         <span className="medication-footer__toggle-text">
-          {isExpanded ? "Hide Details" : "Manage List"}
+          {isManageListOpen ? "Hide Details" : "Manage List"}
         </span>
         <svg className={toggleIconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M19 9l-7 7-7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
-      {isExpanded && (
+      {isManageListOpen && (
         <div className="medication-footer__content">
           {medications.map((m) => (
             <div key={m.id} onClick={() => onMedicationClick(m)} className="medication-footer__med-item">

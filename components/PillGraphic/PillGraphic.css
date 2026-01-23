@@ -30,12 +30,16 @@
 }
 
 .pill-graphic__pill {
-  position: relative;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+  background-image: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0) 50%);
+  overflow: hidden;
+  /* Ensure gradient clips */
 }
 
 .pill-graphic__pill--sm {
@@ -50,23 +54,14 @@
   border-radius: 0.75rem;
 }
 
-.pill-graphic__gradient {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(255, 255, 255, 0) 50%
-  );
-}
+/* Removed .pill-graphic__gradient as it is now part of .pill-graphic__pill background-image */
 
 .pill-graphic__line {
-  position: absolute;
   width: 1px;
   height: 40%;
   background-color: rgba(255, 255, 255, 0.3);
   border-radius: 9999px;
+  margin: auto;
 }
 
 /* Color variants */

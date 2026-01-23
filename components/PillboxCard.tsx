@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { format, isToday, isPast, isFuture } from 'date-fns';
 import { Medication, DoseStatus, DayLog, getShapeIcon } from '../types';
 import { getIconForTime, getLabelForTime } from '../constants';
+import { useTimeSlotStore } from '../store/useTimeSlotStore';
 import './PillboxCard.css';
 
 interface PillboxCardProps {
@@ -16,20 +17,19 @@ interface PillboxCardProps {
   onClick: () => void;
 }
 
-const PillGraphic: React.FC<{ color: string; size?: 'sm' | 'md'; count?: string; strength?: string; shape?: string }> = ({ color, size = 'md', count, strength, shape }) => {
-  const pillSizeClass = size === 'sm' ? 'pill-graphic-pill-sm' : 'pill-graphic-pill-md';
-  const shapeIcon = getShapeIcon(shape);
-  return (
-    <div className="pill-graphic-container">
-      <div className="pill-graphic-label-container">
-        {strength && <span className="pill-graphic-strength">{strength}</span>}
-        {count && <span className="pill-graphic-count">{count}</span>}
-      </div>
-      <div className={`pill-graphic-pill ${pillSizeClass} ${color}`}>
-        <span className="pill-graphic-shape">{shapeIcon}</span>
-      </div>
-    </div>
-  );
+// Helper to check if a time slot is the current one (within 2 hours)
+const isCurrentTimeSlot = (slotTime: string, isToday: boolean): boolean => {
+  if (!isToday) return false;
+  const now = new Date();
+  const [hours, minutes] = slotTime.split(':').map(Number);
+  const slotDate = new Date();
+  slotDate.setHours(hours, minutes, 0, 0);
+
+  const diffMs = now.getTime() - slotDate.getTime();
+  const diffHours = diffMs / (1000 * 60 * 60);
+
+  // Current slot is one that started within last 2 hours or starts within next hour
+  return diffHours >= -1 && diffHours <= 2;
 };
 
 // Get dose status from day log
@@ -54,7 +54,9 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
   onClick
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const dayName = isToday(date) ? 'Today' : format(date, 'EEEE');
+  const { expandedDate, expandedSlot, toggleSlot } = useTimeSlotStore();
+  const isTodayDate = isToday(date);
+  const dayName = isTodayDate ? 'Today' : format(date, 'EEEE');
   const monthYear = format(date, 'MMMM yyyy');
   const dayNum = format(date, 'd');
   const dayShort = format(date, 'EEE').toUpperCase();
@@ -86,9 +88,6 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
 
     return { totalDoses: total, takenCount: taken };
   }, [medications, dayLog]);
-
-  // Determine display mode: 'slots' (1-5 time slots) or 'list' (more than 5)
-  const displayMode = timeSlots.length <= 5 ? 'slots' : 'list';
 
   // Get medications for a specific time slot
   const getMedicationsForTime = (time: string) => {
@@ -142,38 +141,38 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
         onClick={onClick}
         className="pillbox-card-inactive"
       >
-        <div className="pillbox-card-inactive-bg" />
+        <div className="pillbox-card-inactive-content">
+          <div className="pillbox-card-inactive-left">
+            <div className="pillbox-card-date-container">
+              <span className="pillbox-card-day-short">{dayShort}</span>
+              <span className="pillbox-card-day-num">{dayNum}</span>
+            </div>
+            <div className="pillbox-card-pills-preview">
+              {medications.slice(0, 5).map((m, idx) => {
+                const medTimes = m.timesOfDay || [];
+                const firstTime = medTimes[0] || '06:00';
+                const status = getDoseStatusFromLog(dayLog, m.id, firstTime);
+                const isTaken = status === DoseStatus.TAKEN;
 
-        <div className="pillbox-card-inactive-left">
-          <div className="pillbox-card-date-container">
-            <span className="pillbox-card-day-short">{dayShort}</span>
-            <span className="pillbox-card-day-num">{dayNum}</span>
-          </div>
-          <div className="pillbox-card-pills-preview">
-            {medications.slice(0, 5).map((m, idx) => {
-              const medTimes = m.timesOfDay || [];
-              const firstTime = medTimes[0] || '06:00';
-              const status = getDoseStatusFromLog(dayLog, m.id, firstTime);
-              const isTaken = status === DoseStatus.TAKEN;
-
-              return (
-                <div key={`${m.id}-${idx}`} className="pillbox-card-pill-preview">
-                  <div className={`pillbox-card-pill-preview-circle ${m.color}`}>
-                    <span className="pillbox-card-pill-preview-shape">{getShapeIcon(m.shape)}</span>
-                  </div>
-                  {isTaken && (
-                    <div className="pillbox-card-pill-preview-check">
-                      <svg className="pillbox-card-pill-preview-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                return (
+                  <div key={`${m.id}-${idx}`} className="pillbox-card-pill-preview">
+                    <div className={`pillbox-card-pill-preview-circle ${m.color}`}>
+                      <span className="pillbox-card-pill-preview-shape">{getShapeIcon(m.shape)}</span>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                    {isTaken && (
+                      <div className="pillbox-card-pill-preview-check">
+                        <svg className="pillbox-card-pill-preview-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-        <div className="pillbox-card-inactive-right">
-           <span className="pillbox-card-pill-count">{medications.length} PILLS</span>
-           <svg className="pillbox-card-chevron-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <div className="pillbox-card-inactive-right">
+            <span className="pillbox-card-pill-count">{medications.length} PILLS</span>
+            <svg className="pillbox-card-chevron-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </div>
         </div>
       </button>
     );
@@ -184,144 +183,201 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
       <div className="pillbox-card-active-inner">
 
         <div className="pillbox-card-header">
-          <div className="pillbox-card-header-left">
-            <div className="pillbox-card-header-date-box">
-              <span className="pillbox-card-header-day-short">{dayShort}</span>
-              <span className="pillbox-card-header-day-num">{dayNum}</span>
+          <div className="pillbox-card-header-row">
+            <div className="pillbox-card-header-left">
+              <div className="pillbox-card-header-date-box">
+                <span className="pillbox-card-header-day-short">{dayShort}</span>
+                <span className="pillbox-card-header-day-num">{dayNum}</span>
+              </div>
+              <div>
+                <h2 className="pillbox-card-header-title">{dayName}</h2>
+                <p className="pillbox-card-header-subtitle">{monthYear}</p>
+              </div>
             </div>
-            <div>
-              <h2 className="pillbox-card-header-title">{dayName}</h2>
-              <p className="pillbox-card-header-subtitle">{monthYear}</p>
+            <div className="pillbox-card-header-right">
+              <div className={`pillbox-card-header-badge ${getStatusStyle(isPastDay, isFutureDay)}`}>
+                {takenCount}/{totalDoses} {isPastDay ? 'DONE' : isFutureDay ? 'SCHEDULED' : 'DONE'}
+              </div>
+              {!isEditable && (
+                <div className="pillbox-card-lock-icon" title={isPastDay ? "Past days cannot be edited" : "Future days cannot be edited"}>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+              )}
+              <button onClick={onClick} className="pillbox-card-header-close-btn">
+                <svg className="pillbox-card-header-close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="3" strokeLinecap="round" /></svg>
+              </button>
             </div>
-          </div>
-          <div className="pillbox-card-header-right">
-             <div className={`pillbox-card-header-badge ${getStatusStyle(isPastDay, isFutureDay)}`}>
-               {takenCount}/{totalDoses} {isPastDay ? 'DONE' : isFutureDay ? 'SCHEDULED' : 'DONE'}
-             </div>
-             {!isEditable && (
-               <div className="pillbox-card-lock-icon" title={isPastDay ? "Past days cannot be edited" : "Future days cannot be edited"}>
-                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                 </svg>
-               </div>
-             )}
-             <button onClick={onClick} className="pillbox-card-header-close-btn">
-               <svg className="pillbox-card-header-close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="3" strokeLinecap="round"/></svg>
-             </button>
           </div>
           <div className="pillbox-card-header-divider" />
         </div>
 
-        {/* Time Slots View (1-5 slots) */}
-        {displayMode === 'slots' && timeSlots.length > 0 && (
-          <div className={`pillbox-card-slots pillbox-card-slots-${timeSlots.length}`}>
+        {/* Time Slots View - Compact with expandable details */}
+        {timeSlots.length > 0 && (
+          <div className="pillbox-card-slots-compact">
             {timeSlots.map(time => {
               const slotMeds = getMedicationsForTime(time);
               const slotCompleted = isSlotCompleted(time);
               const icon = getIconForTime(time);
               const label = getLabelForTime(time);
+              const isCurrent = isCurrentTimeSlot(time, isTodayDate);
+              const isSlotExpanded = expandedDate === dateStr && expandedSlot === time;
+              const takenInSlot = slotMeds.filter(m => getDoseStatusFromLog(dayLog, m.id, time) === DoseStatus.TAKEN).length;
 
               return (
-                <div
-                  key={time}
-                  className={`pillbox-card-slot ${slotCompleted ? 'slot-completed' : ''}`}
-                >
-                   {/* Slot Checkmark - Click to mark all pills as taken */}
-                   <button
-                     className={`pillbox-card-slot-check-btn ${slotCompleted ? 'slot-check-completed' : ''} ${isEditable ? 'slot-check-editable' : ''}`}
-                     onClick={() => handleSlotClick(time)}
-                     disabled={!isEditable}
-                   >
-                     {slotCompleted ? (
-                       <svg className="pillbox-card-slot-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path d="M5 13l4 4L19 7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-                       </svg>
-                     ) : (
-                       <div className="slot-check-empty" />
-                     )}
-                   </button>
+                <div key={time} className="pillbox-card-slot-wrapper">
+                  {/* Compact slot header - always visible */}
+                  <button
+                    type="button"
+                    className={`pillbox-card-slot-compact ${slotCompleted ? 'slot-compact--completed' : ''} ${isCurrent ? 'slot-compact--current' : ''} ${isSlotExpanded ? 'slot-compact--expanded' : ''}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('Slot button clicked!', dateStr, time);
+                      toggleSlot(dateStr, time);
+                    }}
+                  >
+                    <div className="slot-compact__left">
+                      <span className="slot-compact__icon">{icon}</span>
+                      <div className="slot-compact__info">
+                        <span className="slot-compact__label">{label}</span>
+                        <span className="slot-compact__time">{time}</span>
+                      </div>
+                    </div>
 
-                   <div className="pillbox-card-slot-icon">{icon}</div>
-                   <span className="pillbox-card-slot-time">{time}</span>
+                    <div className="slot-compact__center">
+                      {/* Show first 2 pills as colored dots */}
+                      <div className="slot-compact__pills">
+                        {slotMeds.slice(0, 2).map((m) => (
+                          <div key={m.id} className={`slot-compact__pill ${m.color}`}>
+                            <span className="slot-compact__pill-shape">{getShapeIcon(m.shape)}</span>
+                          </div>
+                        ))}
+                        {slotMeds.length > 2 && (
+                          <span className="slot-compact__more">+{slotMeds.length - 2}</span>
+                        )}
+                      </div>
+                    </div>
 
-                   <div className="pillbox-card-slot-pills">
-                      {slotMeds.map((m) => (
-                        <div key={`${time}-${m.id}`} className="pillbox-card-slot-pill-item">
-                          <PillGraphic
-                            color={m.color}
-                            size="sm"
-                            count={m.dosage}
-                            strength={m.strength}
-                            shape={m.shape}
-                          />
+                    <div className="slot-compact__right">
+                      <span className="slot-compact__count">{takenInSlot}/{slotMeds.length}</span>
+                      {/* Checkmark button */}
+                      <div
+                        className={`slot-compact__check ${slotCompleted ? 'slot-compact__check--done' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (isEditable) handleSlotClick(time);
+                        }}
+                      >
+                        {slotCompleted ? (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        ) : (
+                          <div className="slot-compact__check-empty" />
+                        )}
+                      </div>
+                      <svg className={`slot-compact__chevron ${isSlotExpanded ? 'slot-compact__chevron--up' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  </button>
+
+                  {/* Expanded details */}
+                  {isSlotExpanded && (
+                    <div className={`slot-expanded ${isCurrent ? 'slot-expanded--current' : ''}`}>
+                      {/* Prominent Time Slot Header - Shows clearly what time period user is viewing */}
+                      <div className={`slot-expanded__header ${isCurrent ? 'slot-expanded__header--current' : ''}`}>
+                        <div className="slot-expanded__header-icon">{icon}</div>
+                        <div className="slot-expanded__header-info">
+                          <span className="slot-expanded__header-label">{label} Medicines</span>
+                          <span className="slot-expanded__header-time">
+                            {isCurrent ? '⏰ Take Now!' : `Scheduled for ${time}`}
+                          </span>
                         </div>
-                      ))}
-                   </div>
+                        <div className="slot-expanded__header-count">
+                          {takenInSlot}/{slotMeds.length} taken
+                        </div>
+                      </div>
 
-                   <div className="pillbox-card-slot-label">
-                      <p className="pillbox-card-slot-label-text">{label}</p>
-                   </div>
+                      {slotMeds.map((m) => {
+                        const medStatus = getDoseStatusFromLog(dayLog, m.id, time);
+                        const isTaken = medStatus === DoseStatus.TAKEN;
+
+                        return (
+                          <div
+                            key={m.id}
+                            className={`slot-expanded__med-card ${isTaken ? 'slot-expanded__med-card--taken' : ''}`}
+                          >
+                            {/* Large pill visual */}
+                            <div className="slot-expanded__med-visual">
+                              {m.pillImageUrl ? (
+                                <img
+                                  src={m.pillImageUrl}
+                                  alt={m.name}
+                                  className="slot-expanded__med-image"
+                                />
+                              ) : (
+                                <div className={`slot-expanded__med-icon-large ${m.color}`}>
+                                  <span className="slot-expanded__med-shape-large">{getShapeIcon(m.shape)}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Medicine details */}
+                            <div className="slot-expanded__med-details">
+                              <div className="slot-expanded__med-header">
+                                <span className="slot-expanded__med-name-large">{m.name}</span>
+                                <span className="slot-expanded__med-strength-badge">{m.strength}</span>
+                              </div>
+
+                              {/* Dosage - prominent */}
+                              <div className="slot-expanded__med-dosage-row">
+                                <span className="slot-expanded__med-dosage-label">Take:</span>
+                                <span className="slot-expanded__med-dosage-value">{m.dosage}</span>
+                              </div>
+
+                              {/* Instructions - prominent if exists */}
+                              {m.instructions && (
+                                <div className="slot-expanded__med-instructions">
+                                  <span className="slot-expanded__med-instructions-icon">📋</span>
+                                  <span className="slot-expanded__med-instructions-text">{m.instructions}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Large checkbox on the right */}
+                            <button
+                              className={`slot-expanded__med-checkbox ${isTaken ? 'slot-expanded__med-checkbox--done' : ''}`}
+                              onClick={() => {
+                                if (isEditable) handleDoseClick(m, time);
+                              }}
+                              disabled={!isEditable}
+                            >
+                              {isTaken ? (
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              ) : (
+                                <span className="slot-expanded__med-checkbox-empty">TAP</span>
+                              )}
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         )}
 
-        {/* List View (more than 5 slots or no medications) */}
-        {(displayMode === 'list' || timeSlots.length === 0) && (
-          <div className="pillbox-card-list">
-            {timeSlots.length === 0 ? (
-              <div className="pillbox-card-empty">
-                <span>No medications scheduled for this day</span>
-              </div>
-            ) : (
-              timeSlots.map(time => {
-                const slotMeds = getMedicationsForTime(time);
-                const slotCompleted = isSlotCompleted(time);
-                const icon = getIconForTime(time);
-                const label = getLabelForTime(time);
-
-                return (
-                  <div key={time} className={`pillbox-card-list-group ${slotCompleted ? 'list-group-completed' : ''}`}>
-                    <div className="pillbox-card-list-header">
-                      <span className="pillbox-card-list-icon">{icon}</span>
-                      <span className="pillbox-card-list-time">{time}</span>
-                      <span className="pillbox-card-list-label">{label}</span>
-                      {/* Slot Checkmark Button */}
-                      <button
-                        className={`pillbox-card-list-check-btn ${slotCompleted ? 'list-check-completed' : ''} ${isEditable ? 'list-check-editable' : ''}`}
-                        onClick={() => handleSlotClick(time)}
-                        disabled={!isEditable}
-                      >
-                        {slotCompleted ? (
-                          <svg className="pillbox-card-list-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M5 13l4 4L19 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        ) : (
-                          <div className="list-check-empty" />
-                        )}
-                      </button>
-                    </div>
-                    <div className="pillbox-card-list-items">
-                      {slotMeds.map(m => (
-                        <div
-                          key={`${time}-${m.id}`}
-                          className="pillbox-card-list-item"
-                        >
-                          <div className={`pillbox-card-list-item-icon ${m.color}`}>
-                            <span className="pillbox-card-list-item-shape">{getShapeIcon(m.shape)}</span>
-                          </div>
-                          <div className="pillbox-card-list-item-info">
-                            <span className="pillbox-card-list-item-name">{m.name}</span>
-                            <span className="pillbox-card-list-item-details">{m.dosage} - {m.strength}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })
-            )}
+        {/* Empty state */}
+        {timeSlots.length === 0 && (
+          <div className="pillbox-card-empty">
+            <span>No medications scheduled for this day</span>
           </div>
         )}
 
@@ -341,7 +397,7 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path d="M19 9l-7 7-7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M19 9l-7 7-7-7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
 
@@ -362,11 +418,11 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
                         <span className="pillbox-card-med-company">{m.company}</span>
                       )}
                       <div className="pillbox-card-med-date-range">
-                         <span className="pillbox-card-med-date">
-                           {m.startDate && `From ${format(new Date(m.startDate), 'dd-MM-yy')}`}
-                           {m.endDate && ` to ${format(new Date(m.endDate), 'dd-MM-yy')}`}
-                           {!m.startDate && !m.endDate && 'Ongoing'}
-                         </span>
+                        <span className="pillbox-card-med-date">
+                          {m.startDate && `From ${format(new Date(m.startDate), 'dd-MM-yy')}`}
+                          {m.endDate && ` to ${format(new Date(m.endDate), 'dd-MM-yy')}`}
+                          {!m.startDate && !m.endDate && 'Ongoing'}
+                        </span>
                       </div>
                     </div>
                     <div className="pillbox-card-med-dosage">

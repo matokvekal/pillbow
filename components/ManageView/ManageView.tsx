@@ -94,13 +94,13 @@ export const ManageView: React.FC<ManageViewProps> = ({
   return (
     <div className="manage-view">
       <div className="manage-view__header">
-        <button className="manage-view__back-btn" onClick={onBack}>
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
-            <path d="M15 19l-7-7 7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
         <h1 className="manage-view__title">My Medications</h1>
         <div className="manage-view__count">{medications.length} total</div>
+        <button className="manage-view__close-btn" onClick={onBack} aria-label="Close">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+            <path d="M6 18L18 6M6 6l12 12" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       </div>
 
       <div className="manage-view__content">

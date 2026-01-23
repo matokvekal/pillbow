@@ -1,0 +1,683 @@
+/* ========================================
+   USER SWITCHER - PROFESSIONAL DROPDOWN
+   ======================================== */
+
+/* Container - Provides positioning context for dropdown overlay */
+/* Note: position: relative is required here as the dropdown is an overlay component */
+/* that needs to break out of the header's flexbox flow without affecting layout */
+.user-switcher {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 50;
+}
+
+/* ========== CURRENT USER BUTTON ========== */
+.current-user-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+  border: 2px solid var(--color-primary-700);
+  border-radius: 2rem;
+  cursor: pointer;
+  color: white;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+  font-weight: var(--font-weight-semibold);
+  min-height: var(--touch-target-min);
+  font-family: inherit;
+}
+
+.current-user-btn:hover {
+  background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-800));
+  border-color: var(--color-primary-400);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.current-user-btn:active {
+  background: var(--color-primary-200);
+  transform: scale(0.98);
+  box-shadow: var(--shadow-sm);
+}
+
+.user-avatar {
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-none);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-name {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron-down {
+  transition: transform var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.current-user-btn[aria-expanded="true"] .chevron-down {
+  transform: rotate(180deg);
+}
+
+/* ========== DROPDOWN MENU ========== */
+/* Note: Overlay component - position: absolute is necessary for dropdowns to appear */
+/* above other content without affecting the parent header's flexbox layout */
+.user-dropdown {
+  /* Position as overlay - breaks out of header flow */
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 30%;
+  transform: translateX(-50%);
+
+  /* Layout - Wide with consistent spacing from edges */
+  width: calc(100vw - 2rem);
+  max-width: 28rem;
+  min-width: 22rem;
+
+  /* Appearance */
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+  border: 2px solid var(--color-border-default);
+
+  /* Flexbox for dropdown content */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+
+  /* Animation */
+  animation: dropdownSlideIn 0.2s ease-out;
+
+  /* Ensure it appears above all header content */
+  z-index: 100;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ========== USER OPTION BUTTON ========== */
+.user-option {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
+  min-height: var(--touch-target-comfortable);
+
+  /* Appearance */
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+
+  /* Text */
+  text-align: left;
+  font-family: inherit;
+
+  /* Interaction */
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.user-option:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-200);
+}
+
+.user-option:active {
+  transform: scale(0.98);
+  background: var(--color-gray-100);
+}
+
+/* Active/Selected User */
+.user-option.active {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 1px var(--color-primary-500);
+}
+
+.user-option.active:hover {
+  background: var(--color-primary-100);
+  border-color: var(--color-primary-600);
+}
+
+/* ========== OPTION CONTENT ========== */
+.option-avatar {
+  font-size: var(--font-size-4xl);
+  line-height: var(--line-height-none);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.option-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.option-name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.option-role {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-tight);
+}
+
+.check-icon {
+  color: var(--color-success-500);
+  font-weight: var(--font-weight-black);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-none);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========== DIVIDER ========== */
+.dropdown-divider {
+  height: 1px;
+  background: var(--color-border-light);
+  margin: 0.75rem 0;
+  flex-shrink: 0;
+}
+
+/* ========== ADD USER BUTTON ========== */
+.add-user-btn {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  min-height: var(--touch-target-min);
+
+  /* Appearance */
+  background: transparent;
+  border: 2px dashed var(--color-border-default);
+  border-radius: var(--radius-lg);
+
+  /* Text */
+  color: var(--color-primary-600);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+
+  /* Interaction */
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.add-user-btn:hover {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-500);
+  border-style: solid;
+  color: var(--color-primary-700);
+}
+
+.add-user-btn:active {
+  transform: scale(0.98);
+  background: var(--color-primary-100);
+}
+
+.add-icon {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-none);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   MODAL OVERLAY & ADD USER MODAL
+   ======================================== */
+
+/* Note: Modal overlay MUST use position: fixed to truly float above content */
+/* Without it, the modal would affect page layout and cause shifts */
+.modal-overlay {
+  /* Fixed overlay - doesn't affect document flow */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+
+  /* Appearance */
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+
+  /* Flexbox - centers modal perfectly */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Spacing from edges */
+  padding: var(--space-4);
+
+  /* On top of everything - blocks all clicks underneath */
+  z-index: 1000;
+
+  /* Ensures overlay captures all pointer events */
+  pointer-events: auto;
+}
+
+.add-user-modal {
+  /* Appearance */
+  background: white;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-2xl);
+
+  /* Flexible width with constraints */
+  width: 100%;
+  max-width: 28rem;
+  min-width: 18rem;
+
+  /* Flexible height */
+  max-height: 90vh;
+  overflow-y: auto;
+
+  /* Internal flexbox layout */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+
+  /* Position context for close button */
+  position: relative;
+
+  /* Ensure modal itself also captures pointer events */
+  pointer-events: auto;
+
+  /* Animation */
+  animation: modalPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ========== MODAL CLOSE BUTTON ========== */
+.modal-close-btn {
+  /* Position at top right */
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+
+  /* Size - large touch target for elderly */
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+
+  /* Appearance */
+  background: var(--color-gray-100);
+  border: 2px solid var(--color-border-default);
+  border-radius: 50%;
+  color: var(--color-text-secondary);
+
+  /* Flexbox - centers icon */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  /* Interaction */
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  /* Layer above content */
+  z-index: 10;
+}
+
+.modal-close-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.modal-close-btn:hover {
+  background: var(--color-error-100);
+  border-color: var(--color-error-300);
+  color: var(--color-error-600);
+  transform: scale(1.05);
+}
+
+.modal-close-btn:active {
+  transform: scale(0.95);
+  background: var(--color-error-200);
+}
+
+/* ========== MODAL HEADER ========== */
+.add-user-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-black);
+  text-align: center;
+  margin: 0;
+  padding-right: var(--space-8);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+}
+
+/* ========== FORM ELEMENTS ========== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.form-group label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-tight);
+}
+
+/* Avatar Grid */
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-2);
+}
+
+.avatar-option {
+  font-size: var(--font-size-4xl);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  background: var(--color-gray-50);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.avatar-option:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-300);
+}
+
+.avatar-option.selected {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-500);
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px var(--color-primary-200);
+}
+
+/* Input Fields */
+.user-input,
+.user-select {
+  width: 100%;
+  padding: var(--space-4);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  font-family: inherit;
+  border: 2px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  outline: none;
+  transition: all var(--transition-fast);
+  background: white;
+  color: var(--color-text-primary);
+}
+
+.user-input:focus,
+.user-select:focus {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+.user-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* ========== MODAL ACTIONS ========== */
+.modal-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  min-height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-cancel {
+  background: var(--color-gray-100);
+  border: 2px solid var(--color-border-default);
+  color: var(--color-text-secondary);
+}
+
+.btn-cancel:hover {
+  background: var(--color-gray-200);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+.btn-cancel:active {
+  transform: scale(0.98);
+}
+
+.btn-submit {
+  background: var(--gradient-primary);
+  border: 2px solid var(--color-primary-700);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-submit:disabled {
+  background: var(--color-gray-400);
+  border-color: var(--color-gray-500);
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+/* ========================================
+   MOBILE RESPONSIVE
+   ======================================== */
+
+@media (max-width: 640px) {
+
+  /* Dropdown adjustments */
+  .user-dropdown {
+    width: calc(100vw - 1.5rem);
+    max-width: none;
+    min-width: auto;
+  }
+
+  .user-name {
+    max-width: 80px;
+  }
+
+  /* Modal adjustments for mobile */
+  .modal-overlay {
+    padding: var(--space-3);
+  }
+
+  .add-user-modal {
+    max-width: none;
+    min-width: auto;
+    width: 100%;
+    padding: var(--space-5);
+    max-height: 88vh;
+  }
+
+  .modal-close-btn {
+    top: var(--space-3);
+    right: var(--space-3);
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .modal-close-btn svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .add-user-title {
+    font-size: var(--font-size-2xl);
+    padding-right: var(--space-6);
+  }
+
+  .avatar-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2);
+  }
+
+  .avatar-option {
+    padding: var(--space-2);
+    font-size: var(--font-size-3xl);
+  }
+
+  .form-group {
+    gap: var(--space-2);
+  }
+
+  .form-group label {
+    font-size: var(--font-size-sm);
+  }
+
+  .user-input,
+  .user-select {
+    padding: var(--space-3);
+    font-size: var(--font-size-base);
+  }
+
+  .modal-actions {
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+
+  .modal-actions button {
+    padding: var(--space-3);
+    font-size: var(--font-size-base);
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 375px) {
+  .modal-overlay {
+    padding: var(--space-2);
+  }
+
+  .add-user-modal {
+    padding: var(--space-4);
+  }
+
+  .modal-close-btn {
+    top: var(--space-2);
+    right: var(--space-2);
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .add-user-title {
+    font-size: var(--font-size-xl);
+    padding-right: var(--space-5);
+  }
+
+  .avatar-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY ENHANCEMENTS
+   ======================================== */
+
+/* Focus visible for keyboard navigation */
+.current-user-btn:focus-visible,
+.user-option:focus-visible,
+.add-user-btn:focus-visible {
+  outline: 3px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.user-input:focus-visible,
+.user-select:focus-visible {
+  outline: 3px solid var(--color-primary-500);
+  outline-offset: 0;
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+  .user-dropdown,
+  .add-user-modal,
+  .avatar-option.selected {
+    animation: none;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

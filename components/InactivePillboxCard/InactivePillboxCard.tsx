@@ -83,7 +83,7 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
         "inactive-pillbox-card--ended": medStatus === "ended",
       })}
     >
-      <div className="inactive-pillbox-card__bg" />
+
 
       {/* Medication status badge */}
       {medStatus && medStatus !== "active" && (
@@ -119,68 +119,71 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
         </div>
       )}
 
-      <div className="inactive-pillbox-card__left">
-        <div className="inactive-pillbox-card__date-container">
-          <span className="inactive-pillbox-card__day-short">{dayShort}</span>
-          <span className="inactive-pillbox-card__day-num">{dayNum}</span>
-        </div>
-        <div className="inactive-pillbox-card__pills-preview">
-          {medications.slice(0, 5).map((m, idx) => {
-            const medTimes = m.timesOfDay || [];
-            const firstTime = medTimes[0] || "06:00";
-            const status = getDoseStatusFromLog(dayLog, m.id, firstTime);
-            const isTaken = status === DoseStatus.TAKEN;
+      {/* Content wrapper for Grid stacking */}
+      <div className="inactive-pillbox-card__content">
+        <div className="inactive-pillbox-card__left">
+          <div className="inactive-pillbox-card__date-container">
+            <span className="inactive-pillbox-card__day-short">{dayShort}</span>
+            <span className="inactive-pillbox-card__day-num">{dayNum}</span>
+          </div>
+          <div className="inactive-pillbox-card__pills-preview">
+            {medications.slice(0, 5).map((m, idx) => {
+              const medTimes = m.timesOfDay || [];
+              const firstTime = medTimes[0] || "06:00";
+              const status = getDoseStatusFromLog(dayLog, m.id, firstTime);
+              const isTaken = status === DoseStatus.TAKEN;
 
-            return (
-              <div
-                key={`${m.id}-${idx}`}
-                className="inactive-pillbox-card__pill-preview"
-              >
-                <div className="inactive-pillbox-card__pill-preview-circle">
-                  <div
-                    className={`inactive-pillbox-card__pill-preview-dot ${m.color}`}
-                  />
-                </div>
-                {isTaken && (
-                  <div className="inactive-pillbox-card__pill-preview-check">
-                    <svg
-                      className="inactive-pillbox-card__pill-preview-check-icon"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M5 13l4 4L19 7"
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+              return (
+                <div
+                  key={`${m.id}-${idx}`}
+                  className="inactive-pillbox-card__pill-preview"
+                >
+                  <div className="inactive-pillbox-card__pill-preview-circle">
+                    <div
+                      className={`inactive-pillbox-card__pill-preview-dot ${m.color}`}
+                    />
                   </div>
-                )}
-              </div>
-            );
-          })}
+                  {isTaken && (
+                    <div className="inactive-pillbox-card__pill-preview-check">
+                      <svg
+                        className="inactive-pillbox-card__pill-preview-check-icon"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M5 13l4 4L19 7"
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      <div className="inactive-pillbox-card__right">
-        <span className="inactive-pillbox-card__pill-count">
-          {medications.length} PILLS
-        </span>
-        <svg
-          className="inactive-pillbox-card__chevron-icon"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M9 5l7 7-7 7"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <div className="inactive-pillbox-card__right">
+          <span className="inactive-pillbox-card__pill-count">
+            {medications.length} PILLS
+          </span>
+          <svg
+            className="inactive-pillbox-card__chevron-icon"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 5l7 7-7 7"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
       </div>
     </button>
   );
