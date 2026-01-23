@@ -78,7 +78,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
           <ManageView
             medications={medications}
             onMedicationClick={handleMedicationClick}
-            onBack={handleBack}
+            onBack={handleClose}
           />
         );
       }
@@ -88,7 +88,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
         return (
           <DetailSheet
             medication={medication}
-            onClose={handleBack}
+            onClose={handleClose}
             onMedicationUpdate={onMedicationUpdate}
           />
         );

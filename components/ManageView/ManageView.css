@@ -62,7 +62,7 @@
 
 .manage-view__title {
   flex: 1;
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #1e293b;
   margin: 0;
@@ -256,13 +256,34 @@
 }
 
 /* Color variants for icon */
-.manage-med-card__icon.bg-blue-300 { background-color: #93c5fd; }
-.manage-med-card__icon.bg-green-300 { background-color: #86efac; }
-.manage-med-card__icon.bg-yellow-300 { background-color: #fcd34d; }
-.manage-med-card__icon.bg-red-300 { background-color: #fca5a5; }
-.manage-med-card__icon.bg-purple-300 { background-color: #d8b4fe; }
-.manage-med-card__icon.bg-pink-300 { background-color: #f9a8d4; }
-.manage-med-card__icon.bg-orange-300 { background-color: #fdba74; }
-.manage-med-card__icon.bg-cyan-300 { background-color: #67e8f9; }
-.manage-med-card__icon.bg-gray-300 { background-color: #d1d5db; }
-.manage-med-card__icon.bg-white { background-color: #ffffff; border: 1px solid #e2e8f0; }
+.manage-med-card__icon.bg-blue-300 {
+  background-color: #93c5fd;
+}
+.manage-med-card__icon.bg-green-300 {
+  background-color: #86efac;
+}
+.manage-med-card__icon.bg-yellow-300 {
+  background-color: #fcd34d;
+}
+.manage-med-card__icon.bg-red-300 {
+  background-color: #fca5a5;
+}
+.manage-med-card__icon.bg-purple-300 {
+  background-color: #d8b4fe;
+}
+.manage-med-card__icon.bg-pink-300 {
+  background-color: #f9a8d4;
+}
+.manage-med-card__icon.bg-orange-300 {
+  background-color: #fdba74;
+}
+.manage-med-card__icon.bg-cyan-300 {
+  background-color: #67e8f9;
+}
+.manage-med-card__icon.bg-gray-300 {
+  background-color: #d1d5db;
+}
+.manage-med-card__icon.bg-white {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+}

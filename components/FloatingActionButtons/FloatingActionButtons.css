@@ -3,10 +3,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: calc(100vw - 3rem);
+  /* width: calc(100vw - 3rem); */
   margin-left: 1.5rem;
   margin-right: 1.5rem;
-  margin-bottom: 2rem;
+  /* margin-bottom: 0.5rem; */
   z-index: 40;
   pointer-events: none;
 }
@@ -67,8 +67,15 @@
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(0.8); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.8);
+  }
 }
 
 .fab-add-container {

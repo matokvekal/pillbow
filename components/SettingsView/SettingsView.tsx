@@ -1,5 +1,7 @@
 import React, { useRef } from "react";
 import { useUserStore } from "../../store/useUserStore";
+import { useDayCardStore } from "../../store/useDayCardStore";
+import { useModalStore } from "../../store/useModalStore";
 import { loadAppData, saveAppData } from "../../services/dataService";
 import "./SettingsView.css";
 
@@ -12,11 +14,18 @@ interface SettingsViewProps {
 export const SettingsView: React.FC<SettingsViewProps> = ({
   onBack,
   onManageMeds,
-  medicationCount,
+  medicationCount
 }) => {
   const { users, currentUserId, getCurrentUser } = useUserStore();
+  const { toggleManageList } = useDayCardStore();
+  const { pushModal } = useModalStore();
   const currentUser = getCurrentUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleManageMeds = () => {
+    onBack(); // Close settings view
+    pushModal({ type: "manage" }); // Open manage modal
+  };
 
   const handleExport = () => {
     try {
@@ -52,7 +61,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     reader.onload = (e) => {
       try {
         const importedData = JSON.parse(e.target?.result as string);
-        if (!importedData.medications || !Array.isArray(importedData.medications)) {
+        if (
+          !importedData.medications ||
+          !Array.isArray(importedData.medications)
+        ) {
           throw new Error("Invalid backup file");
         }
         saveAppData(importedData);
@@ -72,34 +84,66 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="settings-v2__header">
         <div className="settings-v2__header-content">
           <div className="settings-v2__user-info">
-            <div className="settings-v2__avatar">{currentUser?.avatar || "👤"}</div>
+            <div className="settings-v2__avatar">
+              {currentUser?.avatar || "👤"}
+            </div>
             <div className="settings-v2__user-details">
-              <span className="settings-v2__user-name">{currentUser?.name || "User"}</span>
+              <span className="settings-v2__user-name">
+                {currentUser?.name || "User"}
+              </span>
               <span className="settings-v2__user-role">
                 {medicationCount} medications
               </span>
             </div>
           </div>
           <button className="settings-v2__close" onClick={onBack}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path
+                d="M6 18L18 6M6 6l12 12"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>
       </div>
-
+      handle
       {/* Content */}
       <div className="settings-v2__content">
         {/* Quick Actions */}
         <div className="settings-v2__quick-actions">
-          <button className="quick-action-card quick-action-card--primary" onClick={onManageMeds}>
+          <button
+            className="quick-action-card quick-action-card--primary"
+            onClick={handleManageMeds}
+          >
             <div className="quick-action-card__icon">💊</div>
             <div className="quick-action-card__text">
               <span className="quick-action-card__title">Medications</span>
-              <span className="quick-action-card__subtitle">{medicationCount} active</span>
+              <span className="quick-action-card__subtitle">
+                {medicationCount} active
+              </span>
             </div>
-            <svg className="quick-action-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg
+              className="quick-action-card__arrow"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                d="M9 18l6-6-6-6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>
@@ -108,7 +152,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="settings-v2__section">
           <h3 className="settings-v2__section-title">Data & Backup</h3>
           <div className="settings-v2__cards">
-            <button className="data-card data-card--export" onClick={handleExport}>
+            <button
+              className="data-card data-card--export"
+              onClick={handleExport}
+            >
               <div className="data-card__icon-wrap data-card__icon-wrap--blue">
                 <span>📤</span>
               </div>
@@ -118,7 +165,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               </div>
             </button>
 
-            <button className="data-card data-card--import" onClick={() => fileInputRef.current?.click()}>
+            <button
+              className="data-card data-card--import"
+              onClick={() => fileInputRef.current?.click()}
+            >
               <div className="data-card__icon-wrap data-card__icon-wrap--green">
                 <span>📥</span>
               </div>

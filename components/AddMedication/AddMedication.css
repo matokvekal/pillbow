@@ -2,7 +2,7 @@
 /* Single page, no scroll, large touch targets, high contrast */
 
 .add-med {
-  width: 100vw;
+  /* width: 100vw; */
   height: 100vh;
   background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
   z-index: 300;

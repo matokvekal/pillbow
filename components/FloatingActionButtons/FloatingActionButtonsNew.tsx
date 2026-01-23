@@ -10,7 +10,7 @@ interface FloatingActionButtonsProps {
 export const FloatingActionButtons: React.FC<FloatingActionButtonsProps> = ({
   isScanning,
   onScan,
-  onTodayClick,
+  onTodayClick
 }) => {
   const fabAddBtnClass = isScanning
     ? "fab-add-btn fab-add-btn--scanning"
@@ -24,7 +24,7 @@ export const FloatingActionButtons: React.FC<FloatingActionButtonsProps> = ({
         aria-label="Scroll to today"
       >
         <div className="fab-today-content">
-          <span className="fab-today-text">TODAY</span>
+          <span className="fab-today-text">TODAY-</span>
           <div className="fab-today-dot" />
         </div>
       </button>

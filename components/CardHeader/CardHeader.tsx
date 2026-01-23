@@ -15,7 +15,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   takenCount,
   totalDoses,
   isEditable,
-  onClose,
+  onClose
 }) => {
   const dayName = isToday(date) ? "Today" : format(date, "EEEE");
   const monthYear = format(date, "MMMM yyyy");
@@ -40,47 +40,71 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   const badgeClass = `card-header__badge ${getStatusStyle()}`;
 
   return (
-    <div className="card-header">
-      <div className="card-header__left">
-        <div className="card-header__date-box">
-          <span className="card-header__day-short">{dayShort}</span>
-          <span className="card-header__day-num">{dayNum}</span>
-        </div>
-        <div>
-          <h2 className="card-header__title">{dayName}</h2>
-          <p className="card-header__subtitle">{monthYear}</p>
-        </div>
-      </div>
-
-      <div className="card-header__right">
-        <div className={badgeClass}>
-          {takenCount}/{totalDoses} {getStatusLabel()}
-        </div>
-
-        {!isEditable && (
-          <div
-            className="card-header__lock-icon"
-            title={isPastDay ? "Past days cannot be edited" : "Future days cannot be edited"}
-          >
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
+    <div className="card-header__container">
+      <button
+        className="card-header__close-btn"
+        onClick={onClose}
+        aria-label="Close card"
+      >
+        <svg
+          className="card-header__close-icon"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M6 18L18 6M6 6l12 12"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
+      <div className="card-header">
+        <div className="card-header__left">
+          <div className="card-header__date-box">
+            <span className="card-header__day-short">{dayShort}</span>
+            <span className="card-header__day-num">{dayNum}</span>
           </div>
-        )}
+          <div>
+            <h2 className="card-header__title">{dayName}</h2>
+            <p className="card-header__subtitle">{monthYear}</p>
+          </div>
+        </div>
 
-        <button className="card-header__close-btn" onClick={onClose} aria-label="Close card">
-          <svg className="card-header__close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path d="M6 18L18 6M6 6l12 12" strokeWidth="3" strokeLinecap="round" />
-          </svg>
-        </button>
+        <div className="card-header__right">
+          <div className={badgeClass}>
+            {takenCount}/{totalDoses} {getStatusLabel()}
+          </div>
+
+          {!isEditable && (
+            <div
+              className="card-header__lock-icon"
+              title={
+                isPastDay
+                  ? "Past days cannot be edited"
+                  : "Future days cannot be edited"
+              }
+            >
+              <svg
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+            </div>
+          )}
+        </div>
+
+        <div className="card-header__divider" />
       </div>
-
-      <div className="card-header__divider" />
     </div>
   );
 };
