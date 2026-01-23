@@ -32,12 +32,10 @@
   /* Rainbow gradient border effect using background */
   background: linear-gradient(
     90deg,
-    /* Left half - cool colors (blue → cyan → green) */
-    #3b82f6 0%,
+    /* Left half - cool colors (blue → cyan → green) */ #3b82f6 0%,
     #06b6d4 15%,
     #22c55e 35%,
-    /* Right half - warm colors (yellow → orange → pink → purple) */
-    #eab308 50%,
+    /* Right half - warm colors (yellow → orange → pink → purple) */ #eab308 50%,
     #f97316 65%,
     #ec4899 80%,
     #a855f7 100%
@@ -53,16 +51,67 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  /* Enable overflow hidden for light sweep effect */
+  overflow: hidden;
 }
 
 /* White inner background (creates border effect) */
 .app-header__capsule-logo::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 3px;
   background: white;
   border-radius: calc(2rem - 3px);
   z-index: 0;
+}
+
+/* ========== LIGHT SWEEP ANIMATION (Glossy Shine Effect) ========== */
+/* Creates a smooth moving highlight across the logo like car advertisements */
+.app-header__capsule-logo::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  z-index: 3;
+  animation: light-sweep 10s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Light sweep keyframe animation - shines border and inner white background every 10 seconds */
+@keyframes light-sweep {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  18% {
+    left: 150%;
+    opacity: 1;
+  }
+  20% {
+    opacity: 0;
+  }
+  100% {
+    left: -100%;
+    opacity: 0;
+  }
+}
+
+/* Pause animation on hover for better interaction */
+.app-header__capsule-logo:hover::after {
+  animation-play-state: paused;
 }
 
 /* Title inside capsule */
@@ -76,7 +125,11 @@
   letter-spacing: -0.02em;
   position: relative;
   z-index: 1;
-  font-family: 'Inter', 'Segoe UI', -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    "Segoe UI",
+    -apple-system,
+    sans-serif;
 }
 
 /* Individual letter gradients - Rainbow flow */
