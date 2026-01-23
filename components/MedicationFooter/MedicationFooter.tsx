@@ -7,13 +7,25 @@ import "./MedicationFooter.css";
 interface MedicationFooterProps {
   medications: Medication[];
   onMedicationClick: (med: Medication) => void;
+  onManageClick?: () => void;
 }
 
 export const MedicationFooter: React.FC<MedicationFooterProps> = ({
   medications,
   onMedicationClick,
+  onManageClick,
 }) => {
   const { isManageListOpen, toggleManageList } = useDayCardStore();
+
+  const handleManageClick = () => {
+    if (onManageClick) {
+      // Use new modal stack system
+      onManageClick();
+    } else {
+      // Fallback to old toggle behavior
+      toggleManageList();
+    }
+  };
 
   if (medications.length === 0) return null;
 
@@ -21,7 +33,7 @@ export const MedicationFooter: React.FC<MedicationFooterProps> = ({
 
   return (
     <div className="medication-footer">
-      <button className="medication-footer__toggle" onClick={toggleManageList}>
+      <button className="medication-footer__toggle" onClick={handleManageClick}>
         <span className="medication-footer__toggle-text">
           {isManageListOpen ? "Hide Details" : "Manage List"}
         </span>

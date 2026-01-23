@@ -69,8 +69,13 @@ export const TimeSlotView: React.FC<TimeSlotViewProps> = ({
 
   if (timeSlots.length === 0) return null;
 
+  const hasExpanded = expandedSlot !== null;
+
   return (
-    <div className="time-slot-view-new">
+    <div
+      className={`time-slot-view-new ${hasExpanded ? 'has-expanded-slot' : ''}`}
+      data-slot-count={timeSlots.length}
+    >
       {timeSlots.map((time) => {
         const slotMeds = getMedicationsForTime(time);
         const slotCompleted = isSlotCompleted(time);
@@ -79,69 +84,39 @@ export const TimeSlotView: React.FC<TimeSlotViewProps> = ({
         const isExpanded = expandedSlot === time;
         const takenCount = slotMeds.filter(m => getDoseStatusFromLog(dayLog, m.id, time) === DoseStatus.TAKEN).length;
 
-        // Single pill - show inline without needing to expand
-        if (slotMeds.length === 1) {
-          const med = slotMeds[0];
-          const isTaken = getDoseStatusFromLog(dayLog, med.id, time) === DoseStatus.TAKEN;
+        // All slots - show compact header with chevron to expand
+        const hour = parseInt(time.split(':')[0], 10);
 
-          return (
-            <div key={time} className="tsv-slot-wrapper">
-              <div className={`tsv-single-slot ${isTaken ? 'tsv-single-slot--taken' : ''}`}>
-                <div className="tsv-single-slot__time">
-                  <span className="tsv-single-slot__icon">{icon}</span>
-                  <div className="tsv-single-slot__time-info">
-                    <span className="tsv-single-slot__label">{label}</span>
-                    <span className="tsv-single-slot__time-text">{time}</span>
-                  </div>
-                </div>
-                <div className={`tsv-single-slot__pill-icon ${med.color}`}>
-                  <span>{getShapeIcon(med.shape)}</span>
-                </div>
-                <div className="tsv-single-slot__info">
-                  <span className="tsv-single-slot__name">{med.name}</span>
-                  <span className="tsv-single-slot__strength">{med.strength}</span>
-                  {med.instructions && (
-                    <span className="tsv-single-slot__instructions">📋 {med.instructions}</span>
-                  )}
-                </div>
-                <button
-                  className={`tsv-single-slot__check ${isTaken ? 'tsv-single-slot__check--done' : ''}`}
-                  onClick={() => isEditable && onSlotClick(time)}
-                  disabled={!isEditable}
-                >
-                  {isTaken ? (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  ) : (
-                    <span>TAP</span>
-                  )}
-                </button>
-              </div>
-            </div>
-          );
-        }
-
-        // Multiple pills - show compact header with chevron to expand
         return (
           <div key={time} className="tsv-slot-wrapper">
             <button
               type="button"
               className={`tsv-slot-header ${slotCompleted ? 'tsv-slot-header--completed' : ''} ${isExpanded ? 'tsv-slot-header--expanded' : ''}`}
+              data-time-hour={hour}
               onClick={() => handleSlotHeaderClick(time)}
             >
               <span className="tsv-slot-header__icon">{icon}</span>
               <span className="tsv-slot-header__label">{label}</span>
 
               <div className="tsv-slot-header__pills">
-                {slotMeds.map((m) => (
-                  <div key={m.id} className={`tsv-slot-header__pill ${m.color}`}>
-                    <span>{getShapeIcon(m.shape)}</span>
-                  </div>
-                ))}
+                {slotMeds.length > 0 && (
+                  <>
+                    <div className={`tsv-slot-header__pill ${slotMeds[0].color}`}>
+                      <span>{getShapeIcon(slotMeds[0].shape)}</span>
+                    </div>
+                    <span className="tsv-slot-header__pills-count">{slotMeds.length}X</span>
+                  </>
+                )}
               </div>
 
-              <span className="tsv-slot-header__count">{takenCount}/{slotMeds.length}</span>
+              <span className="tsv-slot-header__count">
+                {takenCount}/{slotMeds.length}
+                {slotCompleted && (
+                  <svg className="tsv-slot-header__count-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </span>
 
               <div className={`tsv-slot-header__chevron ${isExpanded ? 'tsv-slot-header__chevron--up' : ''}`}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -161,18 +136,22 @@ export const TimeSlotView: React.FC<TimeSlotViewProps> = ({
 
                 {slotMeds.map((med) => {
                   const isTaken = getDoseStatusFromLog(dayLog, med.id, time) === DoseStatus.TAKEN;
+                  // Parse dosage to extract count (e.g., "2 tablets" -> 2)
+                  const dosageMatch = med.dosage.match(/^(\d+)/);
+                  const pillCount = dosageMatch ? dosageMatch[1] : '1';
+
                   return (
                     <div
                       key={med.id}
                       className={`tsv-med-card ${isTaken ? 'tsv-med-card--taken' : ''}`}
                     >
-                      <div className={`tsv-med-card__icon ${med.color}`}>
+                      <div className={`tsv-med-card__icon ${med.color}`} data-count={pillCount}>
                         <span>{getShapeIcon(med.shape)}</span>
                       </div>
                       <div className="tsv-med-card__info">
                         <span className="tsv-med-card__name">{med.name}</span>
                         <span className="tsv-med-card__strength">{med.strength}</span>
-                        <span className="tsv-med-card__dosage">Take: {med.dosage}</span>
+                        <span className="tsv-med-card__dosage">{med.dosage}</span>
                         {med.instructions && (
                           <div className="tsv-med-card__instructions">
                             <span>📋 {med.instructions}</span>
@@ -183,8 +162,6 @@ export const TimeSlotView: React.FC<TimeSlotViewProps> = ({
                         className={`tsv-med-card__check ${isTaken ? 'tsv-med-card__check--done' : ''}`}
                         onClick={() => {
                           if (isEditable) {
-                            // Toggle just this med - we need to call onSlotClick differently
-                            // For now use the parent handler
                             onSlotClick(time);
                           }
                         }}

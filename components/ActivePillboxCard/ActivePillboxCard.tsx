@@ -15,6 +15,7 @@ interface ActivePillboxCardProps {
   onStatusChange: (medId: string, time: string, status: DoseStatus) => void;
   onPillClick: (med: Medication) => void;
   onClick: () => void;
+  onManageClick?: () => void;
 }
 
 const getDoseStatusFromLog = (
@@ -37,6 +38,7 @@ export const ActivePillboxCard: React.FC<ActivePillboxCardProps> = ({
   onStatusChange,
   onPillClick,
   onClick,
+  onManageClick,
 }) => {
   // Get unique time slots from all medications for this day
   const timeSlots = useMemo(() => {
@@ -135,6 +137,7 @@ export const ActivePillboxCard: React.FC<ActivePillboxCardProps> = ({
         <MedicationFooter
           medications={medications}
           onMedicationClick={onPillClick}
+          onManageClick={onManageClick}
         />
       </div>
     </div>

@@ -12,8 +12,7 @@ import {
 import { AppHeader } from "./components/AppHeader/AppHeader";
 import { TimelineContainer } from "./components/TimelineContainer/TimelineContainer";
 import { FloatingActionButtons } from "./components/FloatingActionButtons/FloatingActionButtons";
-import { DetailSheet } from "./components/DetailSheet/DetailSheet";
-import { ManageView } from "./components/ManageView/ManageView";
+import { ModalContainer } from "./components/ModalContainer/ModalContainer";
 import { AddMedication } from "./components/AddMedication/AddMedication";
 import { SettingsView } from "./components/SettingsView/SettingsView";
 import { useModalStore } from "./store/useModalStore";
@@ -36,13 +35,10 @@ import "./App.css";
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>("timeline");
-  const [selectedDate, setSelectedDate] = useState<Date | null>(
-    startOfDay(new Date()),
-  ); // Start with today open
   const [medications, setMedications] = useState<Medication[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [updateKey, setUpdateKey] = useState(0); // Force re-render on dose status change
-  const { selectedMed, isOpen, openModal, closeModal } = useModalStore();
+  const { pushModal } = useModalStore();
 
   // Generate days array: 5 years back to 1 year forward
   const days = useCallback(() => {
@@ -111,10 +107,26 @@ const App: React.FC = () => {
     playNotificationSound(NOTIFICATION_SOUND_URL);
   };
 
+  const getMedicationsForDay = (day: Date) => {
+    return medications.filter((med) => {
+      if (!med.startDate || !med.endDate) return true;
+      const medDate = day.getTime();
+      const startDate = new Date(med.startDate).getTime();
+      const endDate = new Date(med.endDate).getTime();
+      return medDate >= startDate && medDate <= endDate;
+    });
+  };
+
   const scrollToToday = () => {
     const today = startOfDay(new Date());
-    // Open today's box
-    setSelectedDate(today);
+    // Open today's box using modal stack
+    pushModal({
+      type: 'day',
+      data: {
+        date: today,
+        medications: getMedicationsForDay(today),
+      }
+    });
     // Scroll to today
     const element = document.getElementById(`day-${today.getTime()}`);
     if (element) {
@@ -126,18 +138,20 @@ const App: React.FC = () => {
     // Close all expanded slots and manage list when selecting a new day
     useDayCardStore.getState().closeAll();
 
-    setSelectedDate(date);
+    // Open day using modal stack
+    pushModal({
+      type: 'day',
+      data: {
+        date,
+        medications: getMedicationsForDay(date),
+      }
+    });
+
     // Scroll to the clicked day
     const element = document.getElementById(`day-${date.getTime()}`);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  };
-
-  const handleCloseBox = () => {
-    // Close all expanded slots when closing day box
-    useDayCardStore.getState().closeAll();
-    setSelectedDate(null);
   };
 
   const handleAddMedication = (medData: Partial<Medication>) => {
@@ -212,14 +226,14 @@ const App: React.FC = () => {
         <>
           <TimelineContainer
             days={days}
-            selectedDate={selectedDate}
+            selectedDate={null}
             medications={medications}
             dayLogs={dayLogsMap}
             editableDates={editableDatesSet}
             onStatusChange={handleStatusChange}
-            onPillClick={(medication) => openModal(medication)}
+            onPillClick={() => {}}
             onDayClick={handleDayClick}
-            onCloseBox={handleCloseBox}
+            onCloseBox={() => {}}
           />
 
           <FloatingActionButtons
@@ -227,14 +241,6 @@ const App: React.FC = () => {
             onTodayClick={scrollToToday}
           />
         </>
-      )}
-
-      {view === "manage" && (
-        <ManageView
-          medications={medications}
-          onMedicationClick={(medication) => openModal(medication)}
-          onBack={() => setView("timeline")}
-        />
       )}
 
       {view === "settings" && (
@@ -245,13 +251,14 @@ const App: React.FC = () => {
         />
       )}
 
-      {selectedMed && isOpen && (
-        <DetailSheet
-          medication={selectedMed}
-          onClose={closeModal}
-          onMedicationUpdate={handleMedicationUpdate}
-        />
-      )}
+      {/* New Modal Stack Container */}
+      <ModalContainer
+        medications={medications}
+        dayLogs={dayLogsMap}
+        editableDates={editableDatesSet}
+        onStatusChange={handleStatusChange}
+        onMedicationUpdate={handleMedicationUpdate}
+      />
 
       {showAddModal && (
         <AddMedication
