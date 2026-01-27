@@ -96,27 +96,27 @@ export const TimeSlotView: React.FC<TimeSlotViewProps> = ({
               onClick={() => handleSlotHeaderClick(time)}
             >
               <span className="tsv-slot-header__icon">{icon}</span>
+              <span className="tsv-slot-header__time">{time}</span>
               <span className="tsv-slot-header__label">{label}</span>
 
               <div className="tsv-slot-header__pills">
                 {slotMeds.length > 0 && (
                   <>
                     <div className={`tsv-slot-header__pill ${slotMeds[0].color}`}>
-                      <span>{getShapeIcon(slotMeds[0].shape)}</span>
                     </div>
                     <span className="tsv-slot-header__pills-count">{slotMeds.length}X</span>
                   </>
                 )}
               </div>
 
-              <span className="tsv-slot-header__count">
-                {takenCount}/{slotMeds.length}
-                {slotCompleted && (
-                  <svg className="tsv-slot-header__count-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              {/* Show checkmark if completed, nothing if not */}
+              {slotCompleted && (
+                <span className="tsv-slot-header__check-done">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                     <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                )}
-              </span>
+                </span>
+              )}
 
               <div className={`tsv-slot-header__chevron ${isExpanded ? 'tsv-slot-header__chevron--up' : ''}`}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -146,7 +146,6 @@ export const TimeSlotView: React.FC<TimeSlotViewProps> = ({
                       className={`tsv-med-card ${isTaken ? 'tsv-med-card--taken' : ''}`}
                     >
                       <div className={`tsv-med-card__icon ${med.color}`} data-count={pillCount}>
-                        <span>{getShapeIcon(med.shape)}</span>
                       </div>
                       <div className="tsv-med-card__info">
                         <span className="tsv-med-card__name">{med.name}</span>

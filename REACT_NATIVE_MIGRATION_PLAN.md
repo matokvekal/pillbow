@@ -158,7 +158,7 @@ export const saveAppData = async (data: AppData): Promise<void> => {
 # Backend API
 API_BASE_URL=https://your-api.com
 # OR for local development
-API_BASE_URL=http://10.0.2.2:3000  # Android emulator
+API_BASE_URL=http://10.0.2.2:3001  # Android emulator
 # API_BASE_URL=http://localhost:3000  # iOS simulator
 
 # Firebase (if using Firebase)
@@ -561,7 +561,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
@@ -971,7 +971,7 @@ export const realtimeService = {
 import io from "socket.io-client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const SOCKET_URL = process.env.SOCKET_URL || "http://localhost:3000";
+const SOCKET_URL = process.env.SOCKET_URL || "http://localhost:3001";
 
 class SocketService {
   private socket: any = null;

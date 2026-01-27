@@ -9,40 +9,19 @@
   padding: 1rem;
 }
 
-/* .detail-sheet-backdrop {
-  width: 100%;
-  height: 100%;
-  background-color: rgb(0 0 0 / 0.5);
-  backdrop-filter: blur(4px);
-  cursor: pointer;
-} */
+/* 
+ */
 
 .detail-sheet-content {
-  background-color: rgb(241, 229, 229);
-  border-radius: 0 0 1.5rem 1.5rem;
+  background-color: white;
+  border-radius: 1.25rem;
   width: 100%;
   max-width: 26rem;
   max-height: 85vh;
-  padding: 1rem;
+  padding: 1.25rem;
   overflow-y: auto;
   /* animation: slide-up 0.3s ease-out; */
   z-index: 1;
-  position: relative;
-}
-
-/* X close button at top right */
-.detail-sheet__close-x {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  z-index: 10;
-}
-
-/* Edit mode - full height content */
-.detail-sheet-content--edit {
-  padding: 0;
-  max-height: 90vh;
-  overflow: hidden;
 }
 
 .detail-sheet-content::-webkit-scrollbar {
@@ -171,6 +150,7 @@
 }
 
 @keyframes pulse-status {
+
   0%,
   100% {
     opacity: 1;

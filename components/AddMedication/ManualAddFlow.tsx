@@ -47,6 +47,15 @@ const DURATIONS = [
   { label: "Ongoing", days: 0 },
 ];
 
+// Time presets - easy selection
+const TIME_PRESETS = [
+  { id: "morning", label: "Morning", time: "08:00", icon: "🌅" },
+  { id: "noon", label: "Noon", time: "12:00", icon: "☀️" },
+  { id: "afternoon", label: "Afternoon", time: "15:00", icon: "🌤️" },
+  { id: "evening", label: "Evening", time: "19:00", icon: "🌆" },
+  { id: "night", label: "Night", time: "22:00", icon: "🌙" },
+];
+
 export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
   onBack,
   onAdd,
@@ -54,29 +63,45 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
   const [name, setName] = useState("");
   const [strengthValue, setStrengthValue] = useState("100");
   const [strengthUnit, setStrengthUnit] = useState("mg");
-  const [timesPerDay, setTimesPerDay] = useState(1);
+  const [selectedTimes, setSelectedTimes] = useState<string[]>(["08:00"]); // Default morning
+  const [customTime, setCustomTime] = useState("");
+  const [showCustomTime, setShowCustomTime] = useState(false);
   const [durationIndex, setDurationIndex] = useState(3); // Default "Ongoing"
-  const [showCalendar, setShowCalendar] = useState(false);
   const [customEndDate, setCustomEndDate] = useState("");
+  const [showCalendar, setShowCalendar] = useState(false);
   const [colorIndex, setColorIndex] = useState(0);
   const [shapeIndex, setShapeIndex] = useState(0);
 
-  const handleSave = () => {
-    const timeMap: Record<number, string[]> = {
-      1: ["08:00"],
-      2: ["08:00", "20:00"],
-      3: ["08:00", "14:00", "20:00"],
-      4: ["08:00", "12:00", "16:00", "20:00"],
-    };
+  // Toggle time selection
+  const toggleTime = (time: string) => {
+    setSelectedTimes(prev => {
+      if (prev.includes(time)) {
+        // Don't allow removing if it's the last one
+        if (prev.length === 1) return prev;
+        return prev.filter(t => t !== time);
+      }
+      return [...prev, time].sort();
+    });
+  };
 
+  // Add custom time
+  const addCustomTime = () => {
+    if (customTime && !selectedTimes.includes(customTime)) {
+      setSelectedTimes(prev => [...prev, customTime].sort());
+      setCustomTime("");
+      setShowCustomTime(false);
+    }
+  };
+
+  const handleSave = () => {
     const today = new Date();
     const startDate = format(today, "yyyy-MM-dd");
 
     // Calculate end date
     let endDate: string | undefined;
-    if (showCalendar && customEndDate) {
+    if (durationIndex === -1 && customEndDate) {
       endDate = customEndDate;
-    } else if (durationIndex < 3 && DURATIONS[durationIndex].days > 0) {
+    } else if (durationIndex > -1 && durationIndex < 3 && DURATIONS[durationIndex].days > 0) {
       endDate = format(addDays(today, DURATIONS[durationIndex].days), "yyyy-MM-dd");
     }
 
@@ -85,8 +110,8 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
       name: name.trim(),
       strength: `${strengthValue} ${strengthUnit}`,
       dosage: "1 dose",
-      dosesPerDay: timesPerDay,
-      timesOfDay: timeMap[timesPerDay] || ["08:00"],
+      dosesPerDay: selectedTimes.length,
+      timesOfDay: selectedTimes,
       color: COLORS[colorIndex].class,
       shape: SHAPES[shapeIndex].id,
       startDate,
@@ -101,15 +126,15 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
 
   const handleDurationSelect = (index: number) => {
     setDurationIndex(index);
-    setShowCalendar(false);
-    setCustomEndDate("");
+    // Don't clear customEndDate so it's remembered if they switch back
+    // setCustomEndDate(""); 
   };
 
   const getEndDateDisplay = () => {
-    if (showCalendar && customEndDate) {
+    if (durationIndex === -1 && customEndDate) {
       return format(new Date(customEndDate), "MMM d, yyyy");
     }
-    if (durationIndex < 3 && DURATIONS[durationIndex].days > 0) {
+    if (durationIndex > -1 && durationIndex < 3 && DURATIONS[durationIndex].days > 0) {
       return format(addDays(new Date(), DURATIONS[durationIndex].days), "MMM d, yyyy");
     }
     return "No end date";
@@ -170,30 +195,88 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
           </div>
         </div>
 
-        {/* How Often */}
+        {/* When to Take - Time Picker */}
         <div className="manual-add__field">
-          <label className="manual-add__label">How often per day?</label>
-          <div className="manual-add__stepper">
-            <button
-              className="manual-add__stepper-btn"
-              onClick={() => setTimesPerDay(Math.max(1, timesPerDay - 1))}
-              disabled={timesPerDay <= 1}
-            >
-              −
-            </button>
-            <div className="manual-add__stepper-value">
-              <span className="manual-add__stepper-num">{timesPerDay}</span>
-              <span className="manual-add__stepper-text">
-                {timesPerDay === 1 ? "time" : "times"}
-              </span>
+          <label className="manual-add__label">When to take?</label>
+          <p className="manual-add__hint">Tap to select times (can pick multiple)</p>
+
+          <div className="manual-add__time-grid">
+            {TIME_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                className={`manual-add__time-btn ${selectedTimes.includes(preset.time) ? "manual-add__time-btn--active" : ""}`}
+                onClick={() => toggleTime(preset.time)}
+              >
+                <span className="manual-add__time-icon">{preset.icon}</span>
+                <span className="manual-add__time-label">{preset.label}</span>
+                <span className="manual-add__time-value">{preset.time}</span>
+                {selectedTimes.includes(preset.time) && (
+                  <span className="manual-add__time-check">✓</span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Custom Time */}
+          <div className="manual-add__custom-time">
+            {!showCustomTime ? (
+              <button
+                className="manual-add__custom-time-btn"
+                onClick={() => setShowCustomTime(true)}
+              >
+                <span>⏰</span>
+                <span>Add custom time</span>
+              </button>
+            ) : (
+              <div className="manual-add__custom-time-row">
+                <input
+                  type="time"
+                  className="manual-add__time-input"
+                  value={customTime}
+                  onChange={(e) => setCustomTime(e.target.value)}
+                  autoFocus
+                />
+                <button
+                  className="manual-add__custom-time-add"
+                  onClick={addCustomTime}
+                  disabled={!customTime}
+                >
+                  Add
+                </button>
+                <button
+                  className="manual-add__custom-time-cancel"
+                  onClick={() => {
+                    setShowCustomTime(false);
+                    setCustomTime("");
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Selected Times Summary */}
+          <div className="manual-add__selected-times">
+            <span className="manual-add__selected-label">Selected:</span>
+            <div className="manual-add__selected-chips">
+              {selectedTimes.map(time => {
+                const preset = TIME_PRESETS.find(p => p.time === time);
+                return (
+                  <span key={time} className="manual-add__time-chip">
+                    {preset?.icon || "⏰"} {time}
+                    {selectedTimes.length > 1 && (
+                      <button
+                        className="manual-add__time-chip-remove"
+                        onClick={() => toggleTime(time)}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </span>
+                );
+              })}
             </div>
-            <button
-              className="manual-add__stepper-btn"
-              onClick={() => setTimesPerDay(Math.min(4, timesPerDay + 1))}
-              disabled={timesPerDay >= 4}
-            >
-              +
-            </button>
           </div>
         </div>
 
@@ -204,9 +287,8 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
             {DURATIONS.map((duration, index) => (
               <button
                 key={duration.label}
-                className={`manual-add__duration-btn ${
-                  durationIndex === index && !showCalendar ? "manual-add__duration-btn--active" : ""
-                }`}
+                className={`manual-add__duration-btn ${durationIndex === index && !showCalendar ? "manual-add__duration-btn--active" : ""
+                  }`}
                 onClick={() => handleDurationSelect(index)}
               >
                 {duration.label}
@@ -214,30 +296,52 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
             ))}
           </div>
           {/* Calendar option */}
-          <button
-            className={`manual-add__calendar-btn ${showCalendar ? "manual-add__calendar-btn--active" : ""}`}
-            onClick={() => {
-              setShowCalendar(true);
-              setDurationIndex(-1);
-            }}
-          >
-            <span>📅</span>
-            <span>Pick end date</span>
-          </button>
-          {showCalendar && (
-            <input
-              type="date"
-              className="manual-add__date-input"
-              value={customEndDate}
-              onChange={(e) => setCustomEndDate(e.target.value)}
-              min={format(new Date(), "yyyy-MM-dd")}
-            />
-          )}
-          {(durationIndex < 3 || (showCalendar && customEndDate)) && (
-            <p className="manual-add__end-date">
-              Ends: {getEndDateDisplay()}
-            </p>
-          )}
+          <div className="manual-add__date-section">
+            <button
+              className={`manual-add__calendar-btn ${showCalendar ? "manual-add__calendar-btn--active" : ""}`}
+              onClick={() => {
+                if (!showCalendar) {
+                  setShowCalendar(true);
+                  setDurationIndex(-1);
+                  // Attempt to focus the input on the next tick
+                  setTimeout(() => {
+                    const dateInput = document.querySelector('.manual-add__date-input') as HTMLInputElement;
+                    if (dateInput) {
+                      try {
+                        dateInput.showPicker();
+                      } catch (e) {
+                        dateInput.focus();
+                      }
+                    }
+                  }, 0);
+                } else {
+                  setShowCalendar(false);
+                }
+              }}
+            >
+              <span>📅</span>
+              <span>{showCalendar ? "Hide date picker" : "Pick end date"}</span>
+            </button>
+
+            {showCalendar && (
+              <div className="manual-add__date-input-wrapper">
+                <input
+                  type="date"
+                  className="manual-add__date-input"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  min={format(new Date(), "yyyy-MM-dd")}
+                  autoFocus
+                />
+              </div>
+            )}
+
+            {(durationIndex < 3 || (showCalendar && customEndDate)) && (
+              <p className="manual-add__end-date">
+                Ends: {getEndDateDisplay()}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Shape */}

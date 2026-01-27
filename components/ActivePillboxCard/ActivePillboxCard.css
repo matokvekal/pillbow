@@ -11,5 +11,6 @@
 }
 
 .active-pillbox-card__inner {
-  padding: 1rem;
+  padding: 0.625rem 0.75rem;
+  /* Compact padding for thin look */
 }
