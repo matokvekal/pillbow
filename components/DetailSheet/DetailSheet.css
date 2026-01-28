@@ -1,16 +1,10 @@
 /* Detail Sheet */
 .detail-sheet-overlay {
-  /* width: 100vw; */
   height: 100vh;
   display: flex;
-  /* align-items: center; */
-  /* justify-content: center; */
   z-index: 200;
   padding: 1rem;
 }
-
-/* 
- */
 
 .detail-sheet-content {
   background-color: white;
@@ -20,7 +14,6 @@
   max-height: 85vh;
   padding: 1.25rem;
   overflow-y: auto;
-  /* animation: slide-up 0.3s ease-out; */
   z-index: 1;
 }
 
