@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useUserStore } from "../../store/useUserStore";
 import { useDayCardStore } from "../../store/useDayCardStore";
 import { useModalStore } from "../../store/useModalStore";
-import { loadAppData, saveAppData } from "../../services/dataService";
+import { loadAppData, saveAppData, clearAllData } from "../../services/dataService";
 import "./SettingsView.css";
 
 interface SettingsViewProps {
@@ -47,6 +47,45 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     }
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: "PillBow - Medication Tracker",
+      text: "Track your medications easily with PillBow!",
+      url: window.location.href
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: copy to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        alert("✅ Link copied to clipboard!");
+      }
+    } catch (error) {
+      // User cancelled or error
+      console.log("Share cancelled or failed");
+    }
+  };
+
+  const handleClearData = () => {
+    const confirmed = window.confirm(
+      "🗑️ Clear All Data?\n\nThis will delete ALL your medications and history.\n\nYou'll start fresh with a clean slate.\n\nThis cannot be undone!"
+    );
+
+    if (!confirmed) return;
+
+    // Double confirmation for safety
+    const reallyConfirmed = window.confirm(
+      "⚠️ Are you absolutely sure?\n\nAll medications and tracking history will be permanently deleted."
+    );
+
+    if (reallyConfirmed) {
+      clearAllData();
+      window.location.reload();
+    }
+  };
+
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -63,16 +102,21 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     reader.onload = (e) => {
       try {
         const importedData = JSON.parse(e.target?.result as string);
+        // Validate all required fields
         if (
           !importedData.medications ||
-          !Array.isArray(importedData.medications)
+          !Array.isArray(importedData.medications) ||
+          !importedData.dayLogs ||
+          !Array.isArray(importedData.dayLogs) ||
+          !importedData.settings ||
+          typeof importedData.settings !== 'object'
         ) {
-          throw new Error("Invalid backup file");
+          throw new Error("Invalid backup file - missing required fields");
         }
         saveAppData(importedData);
         window.location.reload();
       } catch (error) {
-        alert("❌ Invalid backup file");
+        alert("❌ Invalid backup file. Make sure it's a valid PillBow backup.");
       } finally {
         if (fileInputRef.current) fileInputRef.current.value = "";
       }
@@ -153,9 +197,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         {/* Data Section */}
         <div className="settings-v2__section">
           <h3 className="settings-v2__section-title">Data & Backup</h3>
-          <div className="settings-v2__cards">
+          <div className="settings-v2__cards settings-v2__cards--4col">
             <button
-              className="data-card data-card--export"
+              className="data-card data-card--sm data-card--export"
               onClick={handleExport}
             >
               <div className="data-card__icon-wrap data-card__icon-wrap--blue">
@@ -163,12 +207,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               </div>
               <div className="data-card__content">
                 <span className="data-card__title">Export</span>
-                <span className="data-card__desc">Download backup</span>
               </div>
             </button>
 
             <button
-              className="data-card data-card--import"
+              className="data-card data-card--sm data-card--import"
               onClick={() => fileInputRef.current?.click()}
             >
               <div className="data-card__icon-wrap data-card__icon-wrap--green">
@@ -176,20 +219,30 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               </div>
               <div className="data-card__content">
                 <span className="data-card__title">Import</span>
-                <span className="data-card__desc">Restore backup</span>
               </div>
             </button>
 
             <button
-              className="data-card data-card--add"
+              className="data-card data-card--sm data-card--share"
+              onClick={handleShare}
+            >
+              <div className="data-card__icon-wrap data-card__icon-wrap--pink">
+                <span>📲</span>
+              </div>
+              <div className="data-card__content">
+                <span className="data-card__title">Share</span>
+              </div>
+            </button>
+
+            <button
+              className="data-card data-card--sm data-card--add"
               onClick={onAddMedication}
             >
               <div className="data-card__icon-wrap data-card__icon-wrap--purple">
                 <span>➕</span>
               </div>
               <div className="data-card__content">
-                <span className="data-card__title">Add New</span>
-                <span className="data-card__desc">New medication</span>
+                <span className="data-card__title">Add</span>
               </div>
             </button>
           </div>
@@ -222,6 +275,21 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             </div>
           </div>
         )}
+
+        {/* Reset Section */}
+        <div className="settings-v2__section">
+          <h3 className="settings-v2__section-title">Start Fresh</h3>
+          <button
+            className="reset-card"
+            onClick={handleClearData}
+          >
+            <div className="reset-card__icon">🗑️</div>
+            <div className="reset-card__content">
+              <span className="reset-card__title">Clear All Data</span>
+              <span className="reset-card__desc">Remove all medications & start over</span>
+            </div>
+          </button>
+        </div>
 
         {/* App Info */}
         <div className="settings-v2__footer">
