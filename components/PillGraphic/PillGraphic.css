@@ -1,0 +1,98 @@
+/* Pill Graphic Component */
+.pill-graphic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pill-graphic__label-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+  min-height: 1.5rem;
+  justify-content: center;
+}
+
+.pill-graphic__strength {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pill-graphic__count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.pill-graphic__pill {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+  background-image: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0) 50%);
+  overflow: hidden;
+  /* Ensure gradient clips */
+}
+
+.pill-graphic__pill--sm {
+  width: 1.75rem;
+  height: 1rem;
+  border-radius: 0.5rem;
+}
+
+.pill-graphic__pill--md {
+  width: 2.25rem;
+  height: 1.5rem;
+  border-radius: 0.75rem;
+}
+
+/* Removed .pill-graphic__gradient as it is now part of .pill-graphic__pill background-image */
+
+.pill-graphic__line {
+  width: 1px;
+  height: 40%;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 9999px;
+  margin: auto;
+}
+
+/* Color variants */
+.pill-graphic__pill.bg-blue-300 {
+  background-color: #93c5fd;
+}
+
+.pill-graphic__pill.bg-green-300 {
+  background-color: #86efac;
+}
+
+.pill-graphic__pill.bg-yellow-300 {
+  background-color: #fcd34d;
+}
+
+.pill-graphic__pill.bg-red-300 {
+  background-color: #fca5a5;
+}
+
+.pill-graphic__pill.bg-purple-300 {
+  background-color: #d8b4fe;
+}
+
+.pill-graphic__pill.bg-pink-300 {
+  background-color: #f472b6;
+}
+
+.pill-graphic__pill.bg-orange-300 {
+  background-color: #fdba74;
+}
+
+.pill-graphic__pill.bg-indigo-300 {
+  background-color: #a5b4fc;
+}

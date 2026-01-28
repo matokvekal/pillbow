@@ -1,0 +1,718 @@
+/* ========== TIME SLOT VIEW - ALWAYS 3 COLUMNS HORIZONTAL ========== */
+/* Layout: 1-3 slots in row 1, 4-6 slots adds row 2. Expand opens BELOW */
+
+.time-slot-view-new {
+  display: grid;
+  /* ALWAYS 3 columns - slots next to each other horizontally */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.375rem;
+  padding: 0.375rem;
+  background: linear-gradient(145deg, #e2e8f0 0%, #cbd5e1 100%);
+  border-radius: 0.875rem;
+  position: relative;
+  transition: all 0.25s ease-in-out;
+  overflow: visible;
+}
+
+/* Keep 3 columns even when expanded - slots stay visible */
+.time-slot-view-new.has-expanded-slot {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Slot wrapper removed - using display:contents below */
+
+/* ALL slot wrappers use display:contents so headers are direct grid children */
+.tsv-slot-wrapper {
+  display: contents;
+}
+
+/* All slot headers stay in their grid position with low order */
+.tsv-slot-header {
+  order: 0;
+}
+
+/* Expanded content goes to the END with high order, spans full width */
+.tsv-slot-expanded {
+  order: 999;
+  grid-column: 1 / -1;
+}
+
+/* Slot Header Button - Compact & Clean */
+.tsv-slot-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 0.375rem 0.625rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 0.25rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  /* Compact height - no more tall cards */
+  min-height: 7.5rem;
+}
+
+.tsv-slot-header:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.tsv-slot-header:active {
+  transform: scale(0.98);
+}
+
+.tsv-slot-header--completed {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #86efac;
+}
+
+/* Color-coded time slot backgrounds */
+.tsv-slot-header[data-time-hour="6"],
+.tsv-slot-header[data-time-hour="7"],
+.tsv-slot-header[data-time-hour="8"] {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 50%, #d1fae5 100%);
+  border-color: #34d399;
+}
+
+.tsv-slot-header[data-time-hour="9"],
+.tsv-slot-header[data-time-hour="10"],
+.tsv-slot-header[data-time-hour="11"] {
+  background: linear-gradient(135deg, #fed7aa 0%, #fbbf24 50%, #fed7aa 100%);
+  border-color: #fb923c;
+}
+
+.tsv-slot-header[data-time-hour="12"],
+.tsv-slot-header[data-time-hour="13"],
+.tsv-slot-header[data-time-hour="14"],
+.tsv-slot-header[data-time-hour="15"] {
+  background: linear-gradient(135deg, #fecaca 0%, #fed7aa 50%, #fecaca 100%);
+  border-color: #fb7185;
+}
+
+.tsv-slot-header[data-time-hour="16"],
+.tsv-slot-header[data-time-hour="17"],
+.tsv-slot-header[data-time-hour="18"],
+.tsv-slot-header[data-time-hour="19"],
+.tsv-slot-header[data-time-hour="20"],
+.tsv-slot-header[data-time-hour="21"],
+.tsv-slot-header[data-time-hour="22"],
+.tsv-slot-header[data-time-hour="23"] {
+  background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 50%, #e0e7ff 100%);
+  border-color: #818cf8;
+}
+
+.tsv-slot-header--expanded {
+  /* Keep same size as other slots, just highlight it */
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.tsv-slot-header__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* Expanded icon - no size change, stays same */
+
+/* Time display - prominent */
+.tsv-slot-header__time {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #1e293b;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.tsv-slot-header__label {
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: #64748b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Green checkmark when all pills taken */
+.tsv-slot-header__check-done {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #22c55e;
+  border-radius: 50%;
+  color: white;
+  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.4);
+}
+
+.tsv-slot-header__check-done svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Expanded label - no size change */
+
+.tsv-slot-header__pills {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0.125rem;
+  /* Compact - no fixed heights */
+}
+
+/* Pills visible when expanded */
+
+.tsv-slot-header__pill {
+  width: 2.25rem;
+  height: 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  border: none;
+  position: relative;
+}
+
+/* Pill split line - makes it look like a real pill */
+.tsv-slot-header__pill::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 60%;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 1px;
+  transform: translate(-50%, -50%);
+}
+
+/* Quantity badge on compact header pill */
+.tsv-slot-header__pill::after {
+  content: attr(data-count) 'X';
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  background: #1e293b;
+  color: white;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  display: none;
+  line-height: 1;
+}
+
+/* Show count badge when data-count exists and > 1 */
+.tsv-slot-header__pill[data-count]:not([data-count="1"])::after {
+  display: block;
+}
+
+/* +N more indicator */
+.tsv-slot-header__pills-more {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+}
+
+/* Total count indicator (e.g., "5X") */
+.tsv-slot-header__pills-count {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+/* Old count styles removed - using checkmark only now */
+
+.tsv-slot-header__chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 50%;
+  color: #64748b;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.tsv-slot-header__chevron svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Expanded chevron - no size change, just rotate */
+
+.tsv-slot-header:hover .tsv-slot-header__chevron {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.tsv-slot-header__chevron--up {
+  transform: rotate(180deg);
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+/* Expanded Slot View - Full Width Below Grid */
+.tsv-slot-expanded {
+  background: #f8fafc;
+  border: 2px solid #3b82f6;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  animation: tsvSlideDown 0.15s ease-out;
+  margin-top: 0.375rem;
+  /* Limit height to avoid large scroll */
+  max-height: 35vh;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for expanded slot */
+/* Ultra thin scrollbar - 1px */
+.tsv-slot-expanded::-webkit-scrollbar {
+  width: 1px;
+}
+
+.tsv-slot-expanded::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tsv-slot-expanded::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+}
+
+.tsv-slot-expanded::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Firefox thin scrollbar */
+.tsv-slot-expanded {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 transparent;
+}
+
+@keyframes tsvSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tsv-slot-expanded__header {
+  display: none;
+}
+
+/* Medicine Card - Compact Light Theme */
+.tsv-med-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  background: white;
+  border-radius: 0.625rem;
+  border: 1.5px solid #e2e8f0;
+  border-left: 3px solid #3b82f6;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s;
+}
+
+.tsv-med-card:hover {
+  background: #f8fafc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tsv-med-card--taken {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #86efac;
+  border-left-color: #22c55e;
+}
+
+.tsv-med-card__icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Pill split line - makes it look like a real pill */
+.tsv-med-card__icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 1px;
+  transform: translateY(-50%);
+}
+
+/* Quantity badge on pill icon */
+.tsv-med-card__icon::after {
+  content: attr(data-count) 'X';
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #1e293b;
+  color: white;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  display: none;
+  line-height: 1;
+}
+
+/* Show count badge when data-count exists and > 1 */
+.tsv-med-card__icon[data-count]:not([data-count="1"])::after {
+  display: block;
+}
+
+.tsv-med-card__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tsv-med-card__name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.tsv-med-card__strength {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.tsv-med-card__dosage {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #f59e0b;
+  display: block;
+}
+
+.tsv-med-card__instructions {
+  font-size: 0.5625rem;
+  color: #92400e;
+  background: #fef3c7;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  margin-top: 0.125rem;
+  display: inline-block;
+  width: fit-content;
+  border: 1px solid #fde68a;
+}
+
+.tsv-med-card__check {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.tsv-med-card__check:hover:not(:disabled) {
+  border-color: #22c55e;
+  background: #f0fdf4;
+  color: #22c55e;
+  transform: scale(1.1);
+}
+
+.tsv-med-card__check:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.tsv-med-card__check:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.tsv-med-card__check--done {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border-color: #22c55e;
+  color: white;
+  box-shadow: 0 3px 10px rgba(34, 197, 94, 0.35);
+}
+
+/* In expanded mode - slightly bigger checkmark button */
+.has-expanded-slot .tsv-med-card__check {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-width: 2.5px;
+}
+
+.has-expanded-slot .tsv-med-card__check svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.has-expanded-slot .tsv-med-card__check:not(.tsv-med-card__check--done) {
+  font-size: 0.6875rem;
+}
+
+/* Single Pill Slot - Compact Light Theme */
+.tsv-single-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.375rem;
+  padding: 0.5rem 0.25rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  min-height: 7.5rem;
+  height: 100%;
+}
+
+.tsv-single-slot--taken {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #86efac;
+  border-left-color: #22c55e;
+}
+
+/* Color-coded time slot backgrounds for single slots */
+.tsv-single-slot[data-time-hour="6"],
+.tsv-single-slot[data-time-hour="7"],
+.tsv-single-slot[data-time-hour="8"] {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 50%, #d1fae5 100%);
+  border-color: #34d399;
+}
+
+.tsv-single-slot[data-time-hour="9"],
+.tsv-single-slot[data-time-hour="10"],
+.tsv-single-slot[data-time-hour="11"] {
+  background: linear-gradient(135deg, #fed7aa 0%, #fbbf24 50%, #fed7aa 100%);
+  border-color: #fb923c;
+}
+
+.tsv-single-slot[data-time-hour="12"],
+.tsv-single-slot[data-time-hour="13"],
+.tsv-single-slot[data-time-hour="14"],
+.tsv-single-slot[data-time-hour="15"] {
+  background: linear-gradient(135deg, #fecaca 0%, #fed7aa 50%, #fecaca 100%);
+  border-color: #fb7185;
+}
+
+.tsv-single-slot[data-time-hour="16"],
+.tsv-single-slot[data-time-hour="17"],
+.tsv-single-slot[data-time-hour="18"],
+.tsv-single-slot[data-time-hour="19"],
+.tsv-single-slot[data-time-hour="20"],
+.tsv-single-slot[data-time-hour="21"],
+.tsv-single-slot[data-time-hour="22"],
+.tsv-single-slot[data-time-hour="23"] {
+  background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 50%, #e0e7ff 100%);
+  border-color: #818cf8;
+}
+
+.tsv-single-slot__time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tsv-single-slot__icon {
+  font-size: 2rem;
+}
+
+.tsv-single-slot__time-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tsv-single-slot__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1;
+  text-align: center;
+}
+
+.tsv-single-slot__time-text {
+  font-size: 0.625rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.tsv-single-slot__pill-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: white;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+  margin: 0.5rem 0;
+}
+
+.tsv-single-slot__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+}
+
+.tsv-single-slot__name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.tsv-single-slot__strength {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.tsv-single-slot__instructions {
+  font-size: 0.625rem;
+  color: #f59e0b;
+  margin-top: 0.125rem;
+}
+
+.tsv-single-slot__check {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 3px solid #e2e8f0;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-top: 0.5rem;
+}
+
+.tsv-single-slot__check:hover:not(:disabled) {
+  border-color: #22c55e;
+  background: #f0fdf4;
+  color: #22c55e;
+}
+
+.tsv-single-slot__check:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tsv-single-slot__check--done {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border-color: #22c55e;
+  color: white;
+  box-shadow: 0 3px 10px rgba(34, 197, 94, 0.35);
+}
+
+/* Color classes for pills */
+.tsv-slot-header__pill.bg-blue-300,
+.tsv-med-card__icon.bg-blue-300 {
+  background-color: #93c5fd;
+}
+
+.tsv-slot-header__pill.bg-green-300,
+.tsv-med-card__icon.bg-green-300 {
+  background-color: #86efac;
+}
+
+.tsv-slot-header__pill.bg-yellow-300,
+.tsv-med-card__icon.bg-yellow-300 {
+  background-color: #fcd34d;
+}
+
+.tsv-slot-header__pill.bg-red-300,
+.tsv-med-card__icon.bg-red-300 {
+  background-color: #fca5a5;
+}
+
+.tsv-slot-header__pill.bg-purple-300,
+.tsv-med-card__icon.bg-purple-300 {
+  background-color: #d8b4fe;
+}
+
+.tsv-slot-header__pill.bg-orange-300,
+.tsv-med-card__icon.bg-orange-300 {
+  background-color: #fdba74;
+}
+
+.tsv-slot-header__pill.bg-pink-300,
+.tsv-med-card__icon.bg-pink-300 {
+  background-color: #f9a8d4;
+}
+
+.tsv-slot-header__pill.bg-cyan-300,
+.tsv-med-card__icon.bg-cyan-300 {
+  background-color: #67e8f9;
+}
+
+.tsv-slot-header__pill.bg-gray-300,
+.tsv-med-card__icon.bg-gray-300 {
+  background-color: #d1d5db;
+}
+
+.tsv-slot-header__pill.bg-white,
+.tsv-med-card__icon.bg-white {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+}

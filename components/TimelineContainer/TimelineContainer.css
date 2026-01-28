@@ -1,0 +1,113 @@
+/* Timeline Container */
+.timeline-container {
+  flex: 1;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  padding: 1rem;
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-container::-webkit-scrollbar {
+  width: 0;
+}
+
+.timeline-container::-webkit-scrollbar-track {
+  display: none;
+}
+
+.timeline-container::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+.timeline-days {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0;
+  padding-bottom: 5rem;
+}
+
+.timeline-day-item {
+  transition: all 0.3s ease;
+}
+
+/* Today styling - highlighted card */
+.timeline-day-item--today {
+  display: flex;
+  box-shadow: 0 0 0 3px #6366f1;
+  border-radius: 1.25rem;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.01);
+  }
+}
+
+/* Day Box Modal Overlay */
+.day-box-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+  animation: fade-in 0.2s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.day-box-modal {
+  width: 100%;
+  max-width: 26rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 1rem;
+  animation: slide-up 0.3s ease-out;
+}
+
+.day-box-modal::-webkit-scrollbar {
+  width: 0;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Hide scrollbar */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

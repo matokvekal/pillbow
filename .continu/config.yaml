@@ -1,0 +1,8 @@
+name: Local Config
+version: 1.0.0
+schema: v1
+models:
+  - name: DeepSeek Coder
+    provider: deepseek
+    model: deepseek-coder
+    apiKey: sk-ec8a7b7e1fa5477ba0283079642bc8ad

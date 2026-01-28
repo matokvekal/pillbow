@@ -1,0 +1,8 @@
+
+{
+  "name": "PillBox - Medication Pillbox Timeline",
+  "description": "A high-fidelity medication tracking app featuring a vertical pillbox timeline, AI-powered prescription scanning, and detailed dosage management.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

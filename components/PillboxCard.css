@@ -1,0 +1,1503 @@
+/* Pill Graphic */
+.pill-graphic-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.pill-graphic-label-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 1;
+  min-width: 0;
+}
+
+.pill-graphic-strength {
+  font-size: 6px;
+  font-weight: 900;
+  color: rgb(148 163 184);
+  line-height: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  text-align: right;
+}
+
+.pill-graphic-count {
+  font-size: 8px;
+  font-weight: 900;
+  color: rgb(30 41 59);
+  line-height: 1;
+}
+
+.pill-graphic-pill {
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border-bottom: 2px solid rgb(0 0 0 / 0.1);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pill-graphic-pill-sm {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.pill-graphic-pill-md {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.pill-graphic-shape {
+  font-size: 1rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.pill-graphic-pill-sm .pill-graphic-shape {
+  font-size: 0.75rem;
+}
+
+.pill-graphic-pill-md .pill-graphic-shape {
+  font-size: 1rem;
+}
+
+/* Inactive Card */
+.pillbox-card-inactive {
+  width: 100%;
+  height: 6rem;
+  /* Increased to 96px for comfortable touch target */
+  margin-bottom: 0.75rem;
+  /* More space between cards */
+  border-radius: 1.5rem;
+  background-color: white;
+  border: 1px solid rgb(226 232 240);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  padding: 0.375rem 0.5rem;
+  /* Simulate inset padding */
+  transition: all 0.3s;
+  overflow: hidden;
+}
+
+.pillbox-card-inactive:active {
+  transform: scale(0.95);
+}
+
+.pillbox-card-inactive-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 1.2rem;
+  background-color: rgb(248 250 252 / 0.5);
+  border: 1px solid rgb(241 245 249 / 0.5);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.pillbox-card-inactive-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.pillbox-card-date-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+}
+
+.pillbox-card-day-short {
+  font-size: 10px;
+  /* Increased from 7px */
+  font-weight: 900;
+  color: rgb(100 116 139);
+  /* Darker for better contrast */
+  line-height: 1;
+  margin-bottom: 0.125rem;
+  letter-spacing: 0.05em;
+}
+
+.pillbox-card-day-num {
+  font-size: 1.5rem;
+  /* Increased from 1rem (24px) */
+  font-weight: 900;
+  color: rgb(30 41 59);
+  /* Darker for better contrast */
+  line-height: 1;
+}
+
+.pillbox-card-pills-preview {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.pillbox-card-pill-preview {
+  display: flex;
+  align-items: flex-start;
+  /* Allow overlap */
+}
+
+.pillbox-card-inactive:hover .pillbox-card-pill-preview {
+  transform: scale(1.1);
+}
+
+.pillbox-card-pill-preview-circle {
+  width: 2.5rem;
+  /* Increased to 40px for better visibility */
+  height: 2.5rem;
+  border-radius: 9999px;
+  background-color: rgb(241 245 249);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(226 232 240);
+  box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.pillbox-card-pill-preview-shape {
+  font-size: 1.25rem;
+  /* Increased to 20px */
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.pillbox-card-pill-preview-check {
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: rgb(34 197 94);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid white;
+  margin-left: -0.75rem;
+  /* Pull back to overlap */
+  margin-top: -0.25rem;
+  /* Pull up */
+  margin-right: -0.25rem;
+  /*compensate spacing*/
+  z-index: 10;
+}
+
+.pillbox-card-pill-preview-check-icon {
+  width: 0.5rem;
+  height: 0.5rem;
+  color: white;
+}
+
+.pillbox-card-inactive-right {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  z-index: 10;
+}
+
+.pillbox-card-pill-count {
+  font-size: 12px;
+  /* Increased from 9px */
+  font-weight: 900;
+  color: rgb(100 116 139);
+  /* Darker for better contrast */
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+}
+
+.pillbox-card-chevron-icon {
+  width: 1rem;
+  height: 1rem;
+  color: rgb(203 213 225);
+}
+
+/* Active Card */
+.pillbox-card-active {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-radius: 2.2rem;
+  background-color: rgb(241 245 249);
+  padding: 0.375rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  transition: all 0.5s;
+  box-shadow: 0 0 0 1px rgb(226 232 240);
+}
+
+.pillbox-card-active-inner {
+  background-color: white;
+  border-radius: 1.8rem;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid white;
+}
+
+/* Active Card Header */
+.pillbox-card-header {
+  background: linear-gradient(to right, #1e293b, #334155);
+  padding: 1.25rem;
+  /* Increased from 1rem */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: white;
+}
+
+.pillbox-card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.pillbox-card-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pillbox-card-header-date-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background-color: rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  backdrop-filter: blur(12px);
+}
+
+.pillbox-card-header-day-short {
+  font-size: 11px;
+  /* Increased from 9px */
+  font-weight: 900;
+  color: rgb(203 213 225);
+}
+
+.pillbox-card-header-day-num {
+  font-size: 1.5rem;
+  /* Increased from 1.25rem (24px) */
+  line-height: 1.75rem;
+  font-weight: 900;
+}
+
+.pillbox-card-header-title {
+  font-size: 1.5rem;
+  /* Increased from 1.25rem (24px) */
+  line-height: 1.75rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.pillbox-card-header-subtitle {
+  font-size: 12px;
+  /* Increased from 10px */
+  color: rgb(148 163 184);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.pillbox-card-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pillbox-card-header-badge {
+  background-color: rgb(34 197 94 / 0.2);
+  color: rgb(74 222 128);
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.375rem;
+  /* Increased padding */
+  padding-bottom: 0.375rem;
+  border-radius: 9999px;
+  font-size: 12px;
+  /* Increased from 10px */
+  font-weight: 900;
+  border: 1px solid rgb(34 197 94 / 0.3);
+}
+
+.pillbox-card-header-close-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: rgb(255 255 255 / 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s;
+}
+
+.pillbox-card-header-close-btn:hover {
+  background-color: rgb(255 255 255 / 0.2);
+}
+
+.pillbox-card-header-close-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.pillbox-card-header-divider {
+  width: 4rem;
+  height: 0.25rem;
+  background-color: rgb(255 255 255 / 0.1);
+  border-radius: 9999px;
+  align-self: center;
+}
+
+/* Readonly Card Styles */
+.pillbox-card-readonly {
+  opacity: 0.85;
+}
+
+.pillbox-card-lock-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(148 163 184);
+}
+
+/* Status Badge Styles */
+.status-past {
+  background-color: rgb(148 163 184 / 0.2);
+  color: rgb(148 163 184);
+  border-color: rgb(148 163 184 / 0.3);
+}
+
+.status-future {
+  background-color: rgb(59 130 246 / 0.2);
+  color: rgb(96 165 250);
+  border-color: rgb(59 130 246 / 0.3);
+}
+
+.status-today {
+  background-color: rgb(34 197 94 / 0.2);
+  color: rgb(74 222 128);
+  border-color: rgb(34 197 94 / 0.3);
+}
+
+/* ========== NEW COMPACT TIME SLOTS ========== */
+
+.pillbox-card-slots-compact {
+  padding: 0.75rem;
+  /* Increased from 0.5rem */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  /* Increased from 0.5rem */
+  background-color: rgb(248 250 252);
+}
+
+.pillbox-card-slot-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Compact slot header button */
+.pillbox-card-slot-compact {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  /* Increased from 0.75rem 1rem */
+  background: white;
+  border: 2px solid rgb(226 232 240);
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pillbox-card-slot-compact:active {
+  transform: scale(0.99);
+}
+
+/* Current time slot - BOLD highlight for elderly users */
+.slot-compact--current {
+  border: 4px solid #FF6B35;
+  /* Bold orange border - very noticeable */
+  border-color: var(--border-color-current, #FF6B35);
+  background: linear-gradient(135deg, #FFF3E0 0%, white 100%);
+  /* Warm orange tint */
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2);
+  /* Glow effect */
+  animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2);
+  }
+}
+
+/* Completed slot */
+.slot-compact--completed {
+  background: rgb(240 253 244);
+  border-color: rgb(187 247 208);
+}
+
+/* Expanded slot */
+.slot-compact--expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+/* Left section: icon + label/time */
+.slot-compact__left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 6rem;
+}
+
+.slot-compact__icon {
+  font-size: 2rem;
+  /* Increased from 1.5rem (32px) */
+  line-height: 1;
+}
+
+.slot-compact__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.slot-compact__label {
+  font-size: 1rem;
+  /* Increased from 0.8125rem (16px) */
+  font-weight: 700;
+  color: rgb(30 41 59);
+  line-height: 1.2;
+}
+
+.slot-compact__time {
+  font-size: 0.875rem;
+  /* Increased from 0.6875rem (14px) */
+  font-weight: 600;
+  color: rgb(100 116 139);
+  /* Darker for better contrast */
+}
+
+/* Center section: pill indicators */
+.slot-compact__center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.slot-compact__pills {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.slot-compact__pill {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.slot-compact__pill-shape {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.slot-compact__more {
+  font-size: 0.875rem;
+  /* Increased from 0.6875rem (14px) */
+  font-weight: 700;
+  color: rgb(71 85 105);
+  /* Darker for better contrast */
+  background: rgb(241 245 249);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+/* Right section: count + check + chevron */
+.slot-compact__right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slot-compact__count {
+  font-size: 0.875rem;
+  /* Increased from 0.75rem (14px) */
+  font-weight: 700;
+  color: rgb(71 85 105);
+  /* Darker for better contrast */
+}
+
+.slot-compact__check {
+  width: 3rem;
+  /* 48px - meets minimum touch target */
+  height: 3rem;
+  border-radius: 50%;
+  border: 2px solid rgb(203 213 225);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.slot-compact__check:hover {
+  border-color: rgb(34 197 94);
+  transform: scale(1.1);
+}
+
+.slot-compact__check--done {
+  background: rgb(34 197 94);
+  border-color: rgb(34 197 94);
+  color: white;
+}
+
+.slot-compact__check-empty {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: rgb(203 213 225);
+}
+
+.slot-compact__chevron {
+  color: rgb(148 163 184);
+  transition: transform 0.2s;
+}
+
+.slot-compact__chevron--up {
+  transform: rotate(180deg);
+}
+
+/* ========== EXPANDED SLOT DETAILS ========== */
+
+.slot-expanded {
+  background: white;
+  border: 2px solid rgb(226 232 240);
+  border-top: none;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  padding: 0.75rem;
+  /* Increased from 0.5rem */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  /* Increased from 0.5rem */
+  animation: slideDown 0.2s ease-out;
+}
+
+/* Prominent Time Slot Header - Makes it VERY clear what time period user is viewing */
+.slot-expanded__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  border-radius: 0.75rem;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.slot-expanded__header-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.slot-expanded__header-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.slot-expanded__header-label {
+  font-size: 1.375rem;
+  /* 22px - very large for elderly */
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.slot-expanded__header-time {
+  font-size: 1rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.slot-expanded__header-count {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Current time slot - urgent styling */
+.slot-expanded--current {
+  border-color: #FF6B35;
+  border-width: 3px;
+}
+
+.slot-expanded__header--current {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C5A 100%);
+  animation: urgentPulse 2s infinite;
+}
+
+.slot-expanded__header--current .slot-expanded__header-time {
+  font-weight: 900;
+  font-size: 1.125rem;
+}
+
+@keyframes urgentPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 107, 53, 0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== ENHANCED MEDICINE CARD (for time slot view) ========== */
+
+.slot-expanded__med-card {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: white;
+  border: 2px solid rgb(226 232 240);
+  border-radius: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.slot-expanded__med-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.slot-expanded__med-card--taken {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #86efac;
+  opacity: 0.8;
+}
+
+/* Large pill visual */
+.slot-expanded__med-visual {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot-expanded__med-image {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 1rem;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slot-expanded__med-icon-large {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slot-expanded__med-shape-large {
+  font-size: 2.25rem;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Medicine details section */
+.slot-expanded__med-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.slot-expanded__med-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.slot-expanded__med-name-large {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.slot-expanded__med-strength-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #3b82f6;
+  background: #eff6ff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #bfdbfe;
+}
+
+.slot-expanded__med-dosage-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slot-expanded__med-dosage-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.slot-expanded__med-dosage-value {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #0f172a;
+  background: #fef3c7;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 2px solid #fcd34d;
+}
+
+/* Instructions - prominent box */
+.slot-expanded__med-instructions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid #fbbf24;
+  margin-top: 0.25rem;
+}
+
+.slot-expanded__med-instructions-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.slot-expanded__med-instructions-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #78350f;
+  line-height: 1.4;
+}
+
+/* Large checkbox button */
+.slot-expanded__med-checkbox {
+  flex-shrink: 0;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  border: 3px solid #cbd5e1;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: center;
+}
+
+.slot-expanded__med-checkbox:hover:not(:disabled) {
+  border-color: #22c55e;
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
+}
+
+.slot-expanded__med-checkbox:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.slot-expanded__med-checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.slot-expanded__med-checkbox--done {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border-color: #16a34a;
+  color: white;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+.slot-expanded__med-checkbox-empty {
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+}
+
+/* Legacy styles kept for compatibility */
+.slot-expanded__med {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  /* Increased from 0.75rem */
+  padding: 1rem;
+  /* Increased from 0.75rem */
+  background: rgb(248 250 252);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-height: 5rem;
+  /* Ensure comfortable height */
+}
+
+.slot-expanded__med:hover {
+  background: rgb(241 245 249);
+}
+
+.slot-expanded__med:active {
+  transform: scale(0.99);
+}
+
+.slot-expanded__med--taken {
+  opacity: 0.6;
+  background: rgb(240 253 244);
+}
+
+.slot-expanded__med-icon {
+  width: 3rem;
+  /* Increased from 2.5rem (48px) */
+  height: 3rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slot-expanded__med-shape {
+  font-size: 1.5rem;
+  /* Increased from 1.25rem (24px) */
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.slot-expanded__med-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.slot-expanded__med-name {
+  font-size: 1.125rem;
+  /* Increased from 0.9375rem (18px) */
+  font-weight: 700;
+  color: rgb(30 41 59);
+  line-height: 1.2;
+}
+
+.slot-expanded__med-strength {
+  font-size: 0.875rem;
+  /* Increased from 0.75rem (14px) */
+  font-weight: 600;
+  color: rgb(59 130 246);
+}
+
+.slot-expanded__med-note {
+  font-size: 0.875rem;
+  /* Increased from 0.6875rem (14px) */
+  color: rgb(71 85 105);
+  /* Darker for contrast */
+  font-style: italic;
+  /* Removed truncation - show full instructions */
+  line-height: 1.4;
+}
+
+.slot-expanded__med-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.375rem;
+}
+
+.slot-expanded__med-dosage {
+  font-size: 0.875rem;
+  /* Increased from 0.75rem (14px) */
+  font-weight: 700;
+  color: rgb(71 85 105);
+}
+
+.slot-expanded__med-check {
+  width: 3.75rem;
+  /* 60px - comfortable touch target */
+  height: 3.75rem;
+  border-radius: 50%;
+  border: 2px solid rgb(203 213 225);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot-expanded__med-check--done {
+  background: rgb(34 197 94);
+  border-color: rgb(34 197 94);
+  color: white;
+}
+
+.slot-expanded__med-check-empty {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: rgb(203 213 225);
+}
+
+.pillbox-card-slot-pills {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.pillbox-card-slot-label {
+  width: 100%;
+  background-color: rgb(255 255 255 / 0.6);
+  backdrop-filter: blur(4px);
+  border-radius: 0.75rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  margin-top: 0.25rem;
+  border: 1px solid rgb(255 255 255 / 0.4);
+}
+
+.pillbox-card-slot-label-text {
+  font-size: 7px;
+  font-weight: 900;
+  color: rgb(71 85 105);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Expandable Footer */
+.pillbox-card-footer {
+  background-color: rgb(248 250 252 / 0.5);
+  border-top: 1px solid rgb(241 245 249);
+}
+
+.pillbox-card-footer-toggle {
+  width: 100%;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.15s;
+}
+
+.pillbox-card-footer-toggle:hover {
+  background-color: white;
+}
+
+.pillbox-card-footer-toggle-text {
+  font-size: 10px;
+  font-weight: 900;
+  color: rgb(71 85 105);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.15s;
+}
+
+.pillbox-card-footer-toggle:hover .pillbox-card-footer-toggle-text {
+  color: rgb(15 23 42);
+}
+
+.pillbox-card-footer-toggle-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: rgb(148 163 184);
+  transition: all 0.15s;
+}
+
+.pillbox-card-footer-toggle:hover .pillbox-card-footer-toggle-icon {
+  color: rgb(15 23 42);
+}
+
+.pillbox-card-footer-toggle-icon-expanded {
+  transform: rotate(180deg);
+}
+
+.pillbox-card-footer-content {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pillbox-card-med-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: white;
+  border: 1px solid rgb(226 232 240);
+  border-radius: 1rem;
+  transition: border-color 0.15s;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  cursor: pointer;
+}
+
+.pillbox-card-med-item:hover {
+  border-color: rgb(96 165 250);
+}
+
+.pillbox-card-med-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid white;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.pillbox-card-med-icon-shape {
+  font-size: 1rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.pillbox-card-med-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pillbox-card-med-name {
+  font-size: 11px;
+  font-weight: 900;
+  color: rgb(30 41 59);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.pillbox-card-med-date-range {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pillbox-card-med-date {
+  font-size: 8px;
+  font-weight: 700;
+  color: rgb(148 163 184);
+  background-color: rgb(248 250 252);
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgb(241 245 249);
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+}
+
+.pillbox-card-med-dosage {
+  text-align: right;
+}
+
+.pillbox-card-med-dosage-amount {
+  font-size: 9px;
+  font-weight: 900;
+  color: rgb(37 99 235);
+}
+
+.pillbox-card-med-dosage-strength {
+  font-size: 7px;
+  font-weight: 700;
+  color: rgb(148 163 184);
+}
+
+/* Pill Item */
+.pillbox-card-slot-pill-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+}
+
+/* Slot completed state */
+.slot-completed {
+  opacity: 0.7;
+}
+
+/* Company name in med info */
+.pillbox-card-med-company {
+  font-size: 8px;
+  font-weight: 700;
+  color: rgb(100 116 139);
+  display: block;
+  margin-bottom: 0.125rem;
+}
+
+/* Doses per day in med dosage */
+.pillbox-card-med-dosage-times {
+  font-size: 7px;
+  font-weight: 700;
+  color: rgb(148 163 184);
+  margin-top: 0.125rem;
+}
+
+/* Empty state */
+.pillbox-card-empty {
+  padding: 2rem;
+  text-align: center;
+  color: rgb(148 163 184);
+  font-size: 0.875rem;
+}
+
+/* List View Styles */
+.pillbox-card-list {
+  padding: 0.75rem;
+  background-color: rgb(248 250 252);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.pillbox-card-list-group {
+  margin-bottom: 0.75rem;
+}
+
+.pillbox-card-list-group:last-child {
+  margin-bottom: 0;
+}
+
+.pillbox-card-list-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: rgb(241 245 249);
+  border-radius: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+/* List Group Completed State */
+.list-group-completed .pillbox-card-list-header {
+  background-color: rgb(220 252 231);
+}
+
+.list-group-completed .pillbox-card-list-items {
+  opacity: 0.6;
+}
+
+/* List Checkmark Button */
+.pillbox-card-list-check-btn {
+  margin-left: auto;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid rgb(203 213 225);
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  cursor: not-allowed;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.pillbox-card-list-check-btn.list-check-editable {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.pillbox-card-list-check-btn.list-check-editable:hover {
+  border-color: rgb(34 197 94);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.pillbox-card-list-check-btn.list-check-editable:active {
+  transform: scale(0.9);
+}
+
+.pillbox-card-list-check-btn.list-check-completed {
+  background-color: rgb(34 197 94);
+  border-color: rgb(34 197 94);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.pillbox-card-list-check-btn.list-check-completed.list-check-editable:hover {
+  background-color: rgb(22 163 74);
+  border-color: rgb(22 163 74);
+}
+
+.pillbox-card-list-check-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: white;
+}
+
+.list-check-empty {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background-color: rgb(203 213 225);
+}
+
+.list-check-editable .list-check-empty {
+  background-color: rgb(148 163 184);
+}
+
+.list-check-editable:hover .list-check-empty {
+  background-color: rgb(134 239 172);
+}
+
+.pillbox-card-list-icon {
+  font-size: 1rem;
+}
+
+.pillbox-card-list-time {
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: rgb(51 65 85);
+}
+
+.pillbox-card-list-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: rgb(148 163 184);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pillbox-card-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding-left: 0.5rem;
+}
+
+.pillbox-card-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  background-color: white;
+  border: 1px solid rgb(226 232 240);
+  border-radius: 0.75rem;
+  transition: all 0.15s;
+}
+
+.pillbox-card-list-item.item-clickable {
+  cursor: pointer;
+}
+
+.pillbox-card-list-item.item-clickable:hover {
+  border-color: rgb(96 165 250);
+  background-color: rgb(248 250 252);
+}
+
+.pillbox-card-list-item.item-taken {
+  opacity: 0.6;
+  background-color: rgb(240 253 244);
+  border-color: rgb(187 247 208);
+}
+
+.pillbox-card-list-item-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pillbox-card-list-item-shape {
+  font-size: 1rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.pillbox-card-list-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pillbox-card-list-item-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgb(30 41 59);
+  display: block;
+}
+
+.pillbox-card-list-item-details {
+  font-size: 0.625rem;
+  color: rgb(148 163 184);
+}
+
+
+/* Color variants for pill elements */
+.pillbox-card-pill-preview-circle.bg-blue-300,
+.pillbox-card-med-icon.bg-blue-300,
+.pillbox-card-list-item-icon.bg-blue-300,
+.pill-graphic-pill.bg-blue-300 {
+  background-color: #93c5fd;
+}
+
+.pillbox-card-pill-preview-circle.bg-green-300,
+.pillbox-card-med-icon.bg-green-300,
+.pillbox-card-list-item-icon.bg-green-300,
+.pill-graphic-pill.bg-green-300 {
+  background-color: #86efac;
+}
+
+.pillbox-card-pill-preview-circle.bg-yellow-300,
+.pillbox-card-med-icon.bg-yellow-300,
+.pillbox-card-list-item-icon.bg-yellow-300,
+.pill-graphic-pill.bg-yellow-300 {
+  background-color: #fcd34d;
+}
+
+.pillbox-card-pill-preview-circle.bg-red-300,
+.pillbox-card-med-icon.bg-red-300,
+.pillbox-card-list-item-icon.bg-red-300,
+.pill-graphic-pill.bg-red-300 {
+  background-color: #fca5a5;
+}
+
+.pillbox-card-pill-preview-circle.bg-purple-300,
+.pillbox-card-med-icon.bg-purple-300,
+.pillbox-card-list-item-icon.bg-purple-300,
+.pill-graphic-pill.bg-purple-300 {
+  background-color: #d8b4fe;
+}
+
+.pillbox-card-pill-preview-circle.bg-orange-300,
+.pillbox-card-med-icon.bg-orange-300,
+.pillbox-card-list-item-icon.bg-orange-300,
+.pill-graphic-pill.bg-orange-300 {
+  background-color: #fdba74;
+}
+
+.pillbox-card-pill-preview-circle.bg-pink-300,
+.pillbox-card-med-icon.bg-pink-300,
+.pillbox-card-list-item-icon.bg-pink-300,
+.pill-graphic-pill.bg-pink-300 {
+  background-color: #f9a8d4;
+}
+
+.pillbox-card-pill-preview-circle.bg-cyan-300,
+.pillbox-card-med-icon.bg-cyan-300,
+.pillbox-card-list-item-icon.bg-cyan-300,
+.pill-graphic-pill.bg-cyan-300 {
+  background-color: #67e8f9;
+}
+
+.pillbox-card-pill-preview-circle.bg-gray-300,
+.pillbox-card-med-icon.bg-gray-300,
+.pillbox-card-list-item-icon.bg-gray-300,
+.pill-graphic-pill.bg-gray-300 {
+  background-color: #d1d5db;
+}
+
+.pillbox-card-pill-preview-circle.bg-white,
+.pillbox-card-med-icon.bg-white,
+.pillbox-card-list-item-icon.bg-white,
+.pill-graphic-pill.bg-white {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.pillbox-card-pill-preview-circle.bg-white .pillbox-card-pill-preview-shape,
+.pillbox-card-med-icon.bg-white .pillbox-card-med-icon-shape,
+.pillbox-card-list-item-icon.bg-white .pillbox-card-list-item-shape,
+.pill-graphic-pill.bg-white .pill-graphic-shape {
+  color: #64748b;
+}
+
+/* Animations */
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

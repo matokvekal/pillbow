@@ -1,0 +1,360 @@
+/* Scan Screen - Simple Camera UI */
+
+.scan {
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Camera area */
+.scan__camera {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  /* Horizontal stack for overlap */
+  overflow: hidden;
+  background-color: #000;
+}
+
+.scan__video {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scan__no-camera {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #64748b;
+}
+
+.scan__no-camera span {
+  font-size: 4rem;
+  opacity: 0.5;
+}
+
+.scan__no-camera p {
+  font-size: 1.125rem;
+}
+
+/* Scan frame */
+/* Scan frame */
+.scan__frame {
+  width: 100%;
+  margin-left: -100%;
+  /* Overlap video */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.scan__frame-inner {
+  width: 75%;
+  max-width: 18rem;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.scan__frame-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.scan__corner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-color: white;
+  border-style: solid;
+  border-width: 0;
+  /* Removed absolute positioning logic */
+}
+
+.scan__corner--tl {
+  border-top-width: 4px;
+  border-left-width: 4px;
+  border-top-left-radius: 0.75rem;
+}
+
+.scan__corner--tr {
+  border-top-width: 4px;
+  border-right-width: 4px;
+  border-top-right-radius: 0.75rem;
+}
+
+.scan__corner--bl {
+  border-bottom-width: 4px;
+  border-left-width: 4px;
+  border-bottom-left-radius: 0.75rem;
+}
+
+.scan__corner--br {
+  border-bottom-width: 4px;
+  border-right-width: 4px;
+  border-bottom-right-radius: 0.75rem;
+}
+
+/* Scanning animation */
+/* Scanning animation */
+.scan__scanning {
+  width: 100%;
+  margin-left: -100%;
+  /* Overlap video */
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  z-index: 20;
+}
+
+.scan__scanning p {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.scan__pulse {
+  width: 5rem;
+  height: 5rem;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Back button */
+/* Header */
+.scan__header {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  /* Ensure header sits above camera if needed, or simply stacked in column */
+  background: black;
+  /* Match camera bg */
+}
+
+/* Back button */
+.scan__back {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Bottom panel */
+.scan__panel {
+  background: white;
+  padding: 1.5rem;
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0));
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  min-height: 12rem;
+}
+
+.scan__hint {
+  font-size: 1.125rem;
+  color: #64748b;
+  text-align: center;
+  margin: 0;
+}
+
+.scan__hint--scanning {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+/* Capture button - big and obvious */
+.scan__capture {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  border: 4px solid #1e293b;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  transition: all 0.2s;
+}
+
+.scan__capture:active {
+  transform: scale(0.95);
+}
+
+.scan__capture-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+/* Fallback link */
+.scan__fallback {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 1rem;
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Result display */
+.scan__result {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.scan__detected {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 1rem;
+}
+
+.scan__med-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.scan__med-info {
+  flex: 1;
+}
+
+.scan__med-name {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.scan__med-strength {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0.25rem 0 0 0;
+}
+
+.scan__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.scan__confirm {
+  width: 100%;
+  padding: 1.125rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.scan__confirm:active {
+  transform: scale(0.98);
+}
+
+.scan__retry {
+  width: 100%;
+  padding: 0.875rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.875rem;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.scan__retry:active {
+  background: #f8fafc;
+}
+
+/* Color variants for med icon */
+.scan__med-icon.bg-blue-300 {
+  background-color: #93c5fd;
+}
+
+.scan__med-icon.bg-green-300 {
+  background-color: #86efac;
+}
+
+.scan__med-icon.bg-yellow-300 {
+  background-color: #fcd34d;
+}
+
+.scan__med-icon.bg-red-300 {
+  background-color: #fca5a5;
+}
+
+.scan__med-icon.bg-purple-300 {
+  background-color: #d8b4fe;
+}
+
+.scan__med-icon.bg-orange-300 {
+  background-color: #fdba74;
+}
+
+.scan__med-icon.bg-pink-300 {
+  background-color: #f9a8d4;
+}
+
+.scan__med-icon.bg-cyan-300 {
+  background-color: #67e8f9;
+}
+
+.scan__med-icon.bg-gray-300 {
+  background-color: #d1d5db;
+}
+
+.scan__med-icon.bg-white {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+}

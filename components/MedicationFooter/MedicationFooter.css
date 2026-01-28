@@ -1,0 +1,178 @@
+/* Medication Footer */
+.medication-footer {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
+}
+
+.medication-footer__toggle {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s ease;
+  border-radius: 0.5rem;
+}
+
+.medication-footer__toggle:hover {
+  background-color: #f1f5f9;
+}
+
+.medication-footer__toggle-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.medication-footer__toggle-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #94a3b8;
+  transition: transform 0.2s ease;
+}
+
+.medication-footer__toggle-icon--expanded {
+  transform: rotate(180deg);
+}
+
+.medication-footer__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  max-height: 20rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.medication-footer__med-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.medication-footer__med-item:hover {
+  background-color: #f1f5f9;
+  transform: translateX(2px);
+}
+
+.medication-footer__med-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.medication-footer__med-icon-pill {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.25rem;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.medication-footer__med-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.medication-footer__med-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.medication-footer__med-company {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #94a3b8;
+  display: block;
+}
+
+.medication-footer__med-date-range {
+  margin-top: 0.25rem;
+}
+
+.medication-footer__med-date {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: #cbd5e1;
+}
+
+.medication-footer__med-dosage {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.medication-footer__med-dosage-amount {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.medication-footer__med-dosage-strength {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.medication-footer__med-dosage-times {
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+/* Color variants */
+.medication-footer__med-icon.bg-blue-300 {
+  background-color: #93c5fd;
+}
+
+.medication-footer__med-icon.bg-green-300 {
+  background-color: #86efac;
+}
+
+.medication-footer__med-icon.bg-yellow-300 {
+  background-color: #fcd34d;
+}
+
+.medication-footer__med-icon.bg-red-300 {
+  background-color: #fca5a5;
+}
+
+.medication-footer__med-icon.bg-purple-300 {
+  background-color: #d8b4fe;
+}
+
+.medication-footer__med-icon.bg-pink-300 {
+  background-color: #f472b6;
+}
+
+.medication-footer__med-icon.bg-orange-300 {
+  background-color: #fdba74;
+}
+
+.medication-footer__med-icon.bg-indigo-300 {
+  background-color: #a5b4fc;
+}

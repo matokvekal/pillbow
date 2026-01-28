@@ -1,0 +1,217 @@
+/* App Header - Pastel Rainbow Theme */
+.app-header {
+  padding: 0.75rem 1rem;
+  padding-top: 2.25rem;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfeff 50%, #fdf4ff 100%);
+  width: 100%;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-bottom: 2px solid rgba(167, 139, 250, 0.2);
+  position: relative;
+  /* Allow dropdown to overflow header */
+}
+
+.app-header__logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+/* ========== PILLBOW LOGO - CAPSULE WITH RAINBOW GRADIENT ========== */
+
+/* Capsule container with gradient border */
+.app-header__capsule-logo {
+  /* Capsule shape - rounded like a pill */
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+
+  /* Rainbow gradient border effect using background */
+  background: linear-gradient(
+    90deg,
+    /* Left half - cool colors (blue → cyan → green) */ #3b82f6 0%,
+    #06b6d4 15%,
+    #22c55e 35%,
+    /* Right half - warm colors (yellow → orange → pink → purple) */ #eab308 50%,
+    #f97316 65%,
+    #ec4899 80%,
+    #a855f7 100%
+  );
+
+  /* Inner white background for text */
+  position: relative;
+
+  /* Shadow for depth */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+
+  /* Flexbox */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Enable overflow hidden for light sweep effect */
+  overflow: hidden;
+}
+
+/* White inner background (creates border effect) */
+.app-header__capsule-logo::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  background: white;
+  border-radius: calc(2rem - 3px);
+  z-index: 0;
+}
+
+/* ========== LIGHT SWEEP ANIMATION (Glossy Shine Effect) ========== */
+/* Creates a smooth moving highlight across the logo like car advertisements */
+.app-header__capsule-logo::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  z-index: 3;
+  animation: light-sweep 10s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Light sweep keyframe animation - shines border and inner white background every 10 seconds */
+@keyframes light-sweep {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  18% {
+    left: 150%;
+    opacity: 1;
+  }
+  20% {
+    opacity: 0;
+  }
+  100% {
+    left: -100%;
+    opacity: 0;
+  }
+}
+
+/* Pause animation on hover for better interaction */
+.app-header__capsule-logo:hover::after {
+  animation-play-state: paused;
+}
+
+/* Title inside capsule */
+.app-header__title {
+  font-size: 1.125rem;
+  font-weight: 900;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.05rem;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
+  font-family:
+    "Inter",
+    "Segoe UI",
+    -apple-system,
+    sans-serif;
+}
+
+/* Individual letter gradients - Rainbow flow */
+.app-header__letter {
+  display: inline-block;
+  background: linear-gradient(180deg, var(--color-start), var(--color-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+}
+
+/* P - Blue */
+.app-header__letter--p {
+  --color-start: #3b82f6;
+  --color-end: #2563eb;
+}
+
+/* i - Green */
+.app-header__letter--i {
+  --color-start: #22c55e;
+  --color-end: #16a34a;
+}
+
+/* l - Yellow */
+.app-header__letter--l1 {
+  --color-start: #eab308;
+  --color-end: #ca8a04;
+}
+
+/* l - Orange */
+.app-header__letter--l2 {
+  --color-start: #f97316;
+  --color-end: #ea580c;
+}
+
+/* B - Pink */
+.app-header__letter--b {
+  --color-start: #ec4899;
+  --color-end: #db2777;
+}
+
+/* o - Light Purple */
+.app-header__letter--o {
+  --color-start: #c084fc;
+  --color-end: #a855f7;
+}
+
+/* w - Purple */
+.app-header__letter--w {
+  --color-start: #a855f7;
+  --color-end: #9333ea;
+}
+
+/* Settings Button */
+.app-header__menu-btn {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: all 0.2s;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.app-header__menu-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.app-header__menu-btn:active {
+  transform: scale(0.95);
+}
+
+.app-header__menu-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}

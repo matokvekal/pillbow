@@ -1,0 +1,97 @@
+.data-management {
+    padding: var(--space-large, 1.5rem);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.data-management__title {
+    font-size: var(--text-2xl, 2rem);
+    font-weight: 900;
+    color: var(--text-primary, #1e293b);
+    margin-bottom: var(--space-md, 1rem);
+    text-align: center;
+}
+
+.data-management__description {
+    font-size: var(--text-base, 1.125rem);
+    color: var(--text-secondary, #475569);
+    text-align: center;
+    margin-bottom: var(--space-xl, 2rem);
+    line-height: 1.5;
+}
+
+.data-action-button {
+    width: 100%;
+    min-height: 120px;
+    /* Very large touch target */
+    padding: 1.5rem;
+    background: white;
+    border: var(--border-width-strong, 3px) solid var(--border-color-default, #cbd5e1);
+    border-radius: var(--radius-lg, 1rem);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    box-shadow: var(--shadow-sm);
+}
+
+.data-action-button:hover {
+    border-color: var(--color-info, #3b82f6);
+    background: var(--bg-light, #f8fafc);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.data-action-button:active {
+    transform: scale(0.98);
+}
+
+.data-action-button__icon {
+    font-size: 3rem;
+    /* 48px emoji */
+    flex-shrink: 0;
+    background: var(--bg-light, #f8fafc);
+    width: 5rem;
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.data-action-button__content {
+    flex: 1;
+}
+
+.data-action-button__content h3 {
+    font-size: var(--text-xl, 1.5rem);
+    font-weight: 700;
+    color: var(--text-primary, #1e293b);
+    margin-bottom: 0.5rem;
+}
+
+.data-action-button__content p {
+    font-size: var(--text-sm, 1rem);
+    color: var(--text-secondary, #64748b);
+    line-height: 1.4;
+}
+
+/* Specific button styles */
+.data-action-button--export:hover {
+    border-color: var(--color-info, #3b82f6);
+}
+
+.data-action-button--export .data-action-button__icon {
+    background: #eff6ff;
+}
+
+.data-action-button--import:hover {
+    border-color: var(--color-taken, #22c55e);
+}
+
+.data-action-button--import .data-action-button__icon {
+    background: #f0fdf4;
+}
