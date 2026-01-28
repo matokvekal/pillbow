@@ -16,6 +16,8 @@
 
 ### TC-U02: Add New Family Member
 - **Steps:**
+
+
   1. Click user dropdown in header
   2. Click "Add Family Member"
   3. Select avatar emoji
