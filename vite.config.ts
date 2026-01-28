@@ -5,10 +5,8 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
-  // Use /pillbow/ for GitHub Pages, / for Netlify/other hosts
-  const base = process.env.GITHUB_PAGES === 'true' ? '/pillbow/' : '/';
   return {
-    base,
+    base: '/',
     server: {
       port: 3001,
       host: '0.0.0.0',
