@@ -60,7 +60,7 @@ export const TimelineContainer: React.FC<TimelineContainerProps> = ({
 
   return (
     <main className={classNames("timeline-container")} ref={scrollRef}>
-      {/* Scrollable day list */}
+      {/* Scrollable day list - always show */}
       <div className={classNames("timeline-days")}>
         {days.map((day) => {
           const dateStr = format(day, "yyyy-MM-dd");

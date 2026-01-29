@@ -5,6 +5,78 @@ import { format, addDays } from "date-fns";
 const today = new Date();
 const dateStr = (offset: number) => format(addDays(today, offset), "yyyy-MM-dd");
 
+// ============================================
+// DEMO VITAMINS - Safe sample data for onboarding
+// Only supplements, no real medications
+// ============================================
+export const MOCK_VITAMINS: Medication[] = [
+  {
+    id: "demo-vitc",
+    name: "Vitamin C",
+    company: "NOW Foods",
+    strength: "500 mg",
+    dosage: "1 tablet",
+    dosesPerDay: 1,
+    timesOfDay: ["08:00"],
+    instructions: "With breakfast",
+    color: "bg-orange-300",
+    startDate: dateStr(-7),
+    endDate: dateStr(30),
+  },
+  {
+    id: "demo-vitd",
+    name: "Vitamin D3",
+    company: "Solgar",
+    strength: "1000 IU",
+    dosage: "1 tablet",
+    dosesPerDay: 1,
+    timesOfDay: ["08:00"],
+    instructions: "With food",
+    color: "bg-yellow-300",
+    startDate: dateStr(-7),
+    endDate: dateStr(30),
+  },
+  {
+    id: "demo-zinc",
+    name: "Zinc",
+    company: "Nature Made",
+    strength: "50 mg",
+    dosage: "1 tablet",
+    dosesPerDay: 1,
+    timesOfDay: ["12:00"],
+    instructions: "With lunch",
+    color: "bg-cyan-300",
+    startDate: dateStr(-7),
+    endDate: dateStr(30),
+  },
+  {
+    id: "demo-probiotic",
+    name: "Probiotic",
+    company: "Culturelle",
+    strength: "10B CFU",
+    dosage: "1 capsule",
+    dosesPerDay: 1,
+    timesOfDay: ["08:00"],
+    instructions: "Before breakfast",
+    color: "bg-purple-300",
+    startDate: dateStr(-7),
+    endDate: dateStr(30),
+  },
+  {
+    id: "demo-omega",
+    name: "Omega-3 Fish Oil",
+    company: "Nordic Naturals",
+    strength: "1000 mg",
+    dosage: "1 softgel",
+    dosesPerDay: 2,
+    timesOfDay: ["08:00", "20:00"],
+    instructions: "With meals",
+    color: "bg-blue-300",
+    startDate: dateStr(-7),
+    endDate: dateStr(30),
+  },
+];
+
 export const MOCK_MEDICATIONS: Medication[] = [
   // ============================================
   // SCENARIO A: 1 pill, 1x/day (days -20 to -15)

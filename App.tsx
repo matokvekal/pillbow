@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { addDays, subDays, startOfDay, format } from "date-fns";
 import { ViewState, Medication, DoseStatus, DayLog } from "./types";
 import {
-  MOCK_MEDICATIONS,
   INITIAL_SCROLL_DELAY,
   NOTIFICATION_SOUND_URL,
   DAYS_BACK,
   DAYS_FORWARD,
   TOTAL_DAYS,
+  MOCK_VITAMINS,
 } from "./constants";
 import { AppHeader } from "./components/AppHeader/AppHeader";
 import { TimelineContainer } from "./components/TimelineContainer/TimelineContainer";
@@ -33,10 +33,13 @@ import "./App.css";
 // Calendar range: 5 years back, 1 year forward
 // DAYS_BACK, DAYS_FORWARD, and TOTAL_DAYS are now imported from constants
 
+const ONBOARDING_DISMISSED_KEY = "pillbow_onboarding_dismissed";
+
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>("timeline");
   const [medications, setMedications] = useState<Medication[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [updateKey, setUpdateKey] = useState(0); // Force re-render on dose status change
   const { pushModal } = useModalStore();
 
@@ -53,19 +56,35 @@ const App: React.FC = () => {
     // Initialize user store (loads users and sets up current user)
     useUserStore.getState().init();
 
-    // Then load app data as usual (dataService reads from localStorage, which is managed by user store now)
+    // Load app data - starts empty for new users (no auto-mock data)
     const data = loadAppData();
-    if (data.medications.length > 0) {
-      setMedications(data.medications);
-    } else {
-      // Initialize with mock data if empty
-      setMedications(MOCK_MEDICATIONS);
-      saveAppData({
-        ...data,
-        medications: MOCK_MEDICATIONS,
-      });
+    setMedications(data.medications);
+
+    // Show onboarding if empty and not dismissed before
+    const wasDismissed = localStorage.getItem(ONBOARDING_DISMISSED_KEY) === "true";
+    if (data.medications.length === 0 && !wasDismissed) {
+      setShowOnboarding(true);
     }
   }, []);
+
+  const handleLoadSampleVitamins = () => {
+    // Add sample vitamins to current user's data
+    const data = loadAppData();
+    const updatedData = {
+      ...data,
+      medications: MOCK_VITAMINS,
+      lastUpdated: new Date().toISOString(),
+    };
+    saveAppData(updatedData);
+    setMedications(MOCK_VITAMINS);
+    setShowOnboarding(false);
+    setUpdateKey((prev) => prev + 1);
+  };
+
+  const handleDismissOnboarding = () => {
+    localStorage.setItem(ONBOARDING_DISMISSED_KEY, "true");
+    setShowOnboarding(false);
+  };
 
   useEffect(() => {
     if (view !== "timeline") return;
@@ -269,6 +288,43 @@ const App: React.FC = () => {
           onClose={() => setShowAddModal(false)}
           onAdd={handleAddMedication}
         />
+      )}
+
+      {/* Onboarding Modal - shows when empty and not dismissed */}
+      {showOnboarding && (
+        <div className="onboarding-overlay">
+          <div className="onboarding-modal">
+            <button
+              className="onboarding-close"
+              onClick={handleDismissOnboarding}
+              aria-label="Close"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <div className="onboarding-icon">💊</div>
+            <h2 className="onboarding-title">Welcome to PillBow</h2>
+            <p className="onboarding-text">No medications yet</p>
+            <div className="onboarding-actions">
+              <button
+                className="onboarding-btn onboarding-btn--primary"
+                onClick={handleLoadSampleVitamins}
+              >
+                Try with Sample Vitamins
+              </button>
+              <button
+                className="onboarding-btn onboarding-btn--secondary"
+                onClick={() => {
+                  handleDismissOnboarding();
+                  setShowAddModal(true);
+                }}
+              >
+                Add My Medication
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

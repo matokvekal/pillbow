@@ -70,6 +70,8 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
   // Get medication status for this day
   const medStatus = getDayMedStatus(medications, date);
 
+  const hasNoPills = medications.length === 0;
+
   return (
     <button
       onClick={onClick}
@@ -77,6 +79,7 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
         "inactive-pillbox-card--today": isTodayDate,
         "inactive-pillbox-card--past": isPastDay,
         "inactive-pillbox-card--future": isFutureDay,
+        "inactive-pillbox-card--empty": hasNoPills,
         "inactive-pillbox-card--ending-soon": medStatus === "ending-soon",
         "inactive-pillbox-card--last-day": medStatus === "last-day",
         "inactive-pillbox-card--ended": medStatus === "ended",
@@ -125,107 +128,114 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
             <span className="inactive-pillbox-card__month">{format(date, "MMM")}</span>
           </div>
 
-          {/* Time Slice Preview */}
-          <div className="inactive-pillbox-card__timeline-preview">
-            {(() => {
-              // 1. Get all unique times for active meds on this day
-              const allTimes: string[] = Array.from(new Set(
-                (medications.flatMap(m => m.timesOfDay || ["06:00"]) as string[])
-              )).sort();
+          {/* Time Slice Preview - only show if there are medications */}
+          {!hasNoPills && (
+            <div className="inactive-pillbox-card__timeline-preview">
+              {(() => {
+                // 1. Get all unique times for active meds on this day
+                const allTimes: string[] = Array.from(new Set(
+                  (medications.flatMap(m => m.timesOfDay || ["06:00"]) as string[])
+                )).sort();
 
-              if (allTimes.length === 0) return <div className="timeline-empty-bar" />;
+                if (allTimes.length === 0) return <div className="timeline-empty-bar" />;
 
-              return (
-                <div className="timeline-bar-container">
-                  {allTimes.slice(0, 5).map((time, idx) => {
-                    const hour = parseInt(time.split(':')[0], 10);
+                return (
+                  <div className="timeline-bar-container">
+                    {allTimes.slice(0, 5).map((time, idx) => {
+                      const hour = parseInt(time.split(':')[0], 10);
 
-                    // Determine time group class for coloring
-                    let timeGroupClass = "time-group-night";
-                    if (hour < 6) timeGroupClass = "time-group-early";
-                    else if (hour < 9) timeGroupClass = "time-group-morning";
-                    else if (hour < 12) timeGroupClass = "time-group-midmorning";
-                    else if (hour < 15) timeGroupClass = "time-group-noon";
-                    else if (hour < 18) timeGroupClass = "time-group-afternoon";
-                    else if (hour < 21) timeGroupClass = "time-group-evening";
+                      // Determine time group class for coloring
+                      let timeGroupClass = "time-group-night";
+                      if (hour < 6) timeGroupClass = "time-group-early";
+                      else if (hour < 9) timeGroupClass = "time-group-morning";
+                      else if (hour < 12) timeGroupClass = "time-group-midmorning";
+                      else if (hour < 15) timeGroupClass = "time-group-noon";
+                      else if (hour < 18) timeGroupClass = "time-group-afternoon";
+                      else if (hour < 21) timeGroupClass = "time-group-evening";
 
-                    // Determine status for this slot
-                    const medsInSlot = medications.filter(m =>
-                      (m.timesOfDay || ["06:00"]).includes(time)
-                    );
-                    const isSlotTaken = medsInSlot.every(m =>
-                      getDoseStatusFromLog(dayLog, m.id, time) === DoseStatus.TAKEN
-                    );
+                      // Determine status for this slot
+                      const medsInSlot = medications.filter(m =>
+                        (m.timesOfDay || ["06:00"]).includes(time)
+                      );
+                      const isSlotTaken = medsInSlot.every(m =>
+                        getDoseStatusFromLog(dayLog, m.id, time) === DoseStatus.TAKEN
+                      );
 
-                    return (
-                      <div
-                        key={`${time}-${idx}`}
-                        className={classNames("timeline-slice-group", timeGroupClass)}
-                        style={{ flex: 1 }}
-                      >
+                      return (
                         <div
-                          className={classNames("timeline-slice", {
-                            "timeline-slice--taken": isSlotTaken
-                          })}
-                          data-time-hour={hour}
+                          key={`${time}-${idx}`}
+                          className={classNames("timeline-slice-group", timeGroupClass)}
+                          style={{ flex: 1 }}
                         >
-                          {/* Label Overlay (Time Only) */}
-                          <div className="timeline-slice-label">
-                            <span className="timeline-slice-time">{time}</span>
-                          </div>
-
-                          {/* Taken Checkmark (Small, at the side) */}
-                          {isSlotTaken && (
-                            <div className="timeline-slice-check">
-                              <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                              </svg>
+                          <div
+                            className={classNames("timeline-slice", {
+                              "timeline-slice--taken": isSlotTaken
+                            })}
+                            data-time-hour={hour}
+                          >
+                            {/* Label Overlay (Time Only) */}
+                            <div className="timeline-slice-label">
+                              <span className="timeline-slice-time">{time}</span>
                             </div>
-                          )}
+
+                            {/* Taken Checkmark (Small, at the side) */}
+                            {isSlotTaken && (
+                              <div className="timeline-slice-check">
+                                <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })()}
-          </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
         </div>
 
         <div className="inactive-pillbox-card__right">
-          {/* Reminder Clock Icon */}
-          <button
-            className="inactive-pillbox-card__clock-btn"
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent card click
-              // Placeholder for clock action
-              console.log("Open reminders for", date);
-            }}
-            aria-label="Set Reminder"
-          >
-            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-          </button>
+          {/* Only show clock and pill count when there are medications */}
+          {!hasNoPills && (
+            <>
+              {/* Reminder Clock Icon */}
+              <button
+                className="inactive-pillbox-card__clock-btn"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent card click
+                  // Placeholder for clock action
+                  console.log("Open reminders for", date);
+                }}
+                aria-label="Set Reminder"
+              >
+                <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </button>
 
-          {/* Pill Icon with Count */}
-          <div className="inactive-pillbox-card__pill-icon-wrapper">
-            <svg
-              width="36"
-              height="20"
-              viewBox="0 0 36 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="inactive-pillbox-card__pill-svg"
-            >
-              <rect width="36" height="20" rx="10" fill="var(--color-primary-100)" />
-              <rect x="0.5" y="0.5" width="35" height="19" rx="9.5" stroke="var(--color-primary-200)" />
-            </svg>
-            <span className="inactive-pillbox-card__pill-count-text">
-              {medications.length}
-            </span>
-          </div>
+              {/* Pill Icon with Count */}
+              <div className="inactive-pillbox-card__pill-icon-wrapper">
+                <svg
+                  width="36"
+                  height="20"
+                  viewBox="0 0 36 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="inactive-pillbox-card__pill-svg"
+                >
+                  <rect width="36" height="20" rx="10" fill="var(--color-primary-100)" />
+                  <rect x="0.5" y="0.5" width="35" height="19" rx="9.5" stroke="var(--color-primary-200)" />
+                </svg>
+                <span className="inactive-pillbox-card__pill-count-text">
+                  {medications.length}
+                </span>
+              </div>
+            </>
+          )}
 
           <svg
             className="inactive-pillbox-card__chevron-icon"

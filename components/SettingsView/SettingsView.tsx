@@ -3,7 +3,11 @@ import { useUserStore } from "../../store/useUserStore";
 import { useDayCardStore } from "../../store/useDayCardStore";
 import { useModalStore } from "../../store/useModalStore";
 import { loadAppData, saveAppData, clearAllData } from "../../services/dataService";
+import { MOCK_VITAMINS } from "../../constants";
+import { AppData } from "../../types";
 import "./SettingsView.css";
+
+const DEMO_USER_ID = "user_demo";
 
 interface SettingsViewProps {
   onBack: () => void;
@@ -122,6 +126,66 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       }
     };
     reader.readAsText(file);
+  };
+
+  const isInDemoMode = currentUserId === DEMO_USER_ID;
+
+  const handleEnterDemoMode = () => {
+    // Save current user's data first
+    const currentData = localStorage.getItem('pillbow_app_data');
+    if (currentData) {
+      localStorage.setItem(`pillbow_data_${currentUserId}`, currentData);
+    }
+
+    // Check if demo user data exists, if not populate with vitamins
+    const demoData = localStorage.getItem(`pillbow_data_${DEMO_USER_ID}`);
+    if (!demoData) {
+      const newDemoData: AppData = {
+        medications: MOCK_VITAMINS,
+        dayLogs: [],
+        settings: { reminderEnabled: true, soundEnabled: true },
+        lastUpdated: new Date().toISOString()
+      };
+      localStorage.setItem(`pillbow_data_${DEMO_USER_ID}`, JSON.stringify(newDemoData));
+    }
+
+    // Load demo data into active slot
+    const demoDataToLoad = localStorage.getItem(`pillbow_data_${DEMO_USER_ID}`);
+    if (demoDataToLoad) {
+      localStorage.setItem('pillbow_app_data', demoDataToLoad);
+    }
+
+    // Switch to demo user
+    localStorage.setItem('pillbow_current_user_id', DEMO_USER_ID);
+    window.location.reload();
+  };
+
+  const handleExitDemoMode = () => {
+    // Save demo data
+    const demoData = localStorage.getItem('pillbow_app_data');
+    if (demoData) {
+      localStorage.setItem(`pillbow_data_${DEMO_USER_ID}`, demoData);
+    }
+
+    // Load real user's data (default user)
+    const realUserId = 'user_default';
+    const realData = localStorage.getItem(`pillbow_data_${realUserId}`);
+    if (realData) {
+      localStorage.setItem('pillbow_app_data', realData);
+    } else {
+      // No real data exists, start empty
+      const emptyData: AppData = {
+        medications: [],
+        dayLogs: [],
+        settings: { reminderEnabled: true, soundEnabled: true },
+        lastUpdated: new Date().toISOString()
+      };
+      localStorage.setItem('pillbow_app_data', JSON.stringify(emptyData));
+    }
+
+    // Switch back to default user
+    localStorage.setItem('pillbow_current_user_id', realUserId);
+    window.location.reload();
   };
 
   return (
@@ -276,6 +340,34 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
         )}
 
+        {/* Demo Mode Section */}
+        <div className="settings-v2__section">
+          <h3 className="settings-v2__section-title">Try Sample Data</h3>
+          {isInDemoMode ? (
+            <button
+              className="demo-card demo-card--exit"
+              onClick={handleExitDemoMode}
+            >
+              <div className="demo-card__icon">🔙</div>
+              <div className="demo-card__content">
+                <span className="demo-card__title">Exit Sample Mode</span>
+                <span className="demo-card__desc">Return to your real medications</span>
+              </div>
+            </button>
+          ) : (
+            <button
+              className="demo-card demo-card--enter"
+              onClick={handleEnterDemoMode}
+            >
+              <div className="demo-card__icon">🧪</div>
+              <div className="demo-card__content">
+                <span className="demo-card__title">Try with Sample Vitamins</span>
+                <span className="demo-card__desc">See how the app works (your data stays safe)</span>
+              </div>
+            </button>
+          )}
+        </div>
+
         {/* Reset Section */}
         <div className="settings-v2__section">
           <h3 className="settings-v2__section-title">Start Fresh</h3>
@@ -295,7 +387,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="settings-v2__footer">
           <div className="app-info">
             <span className="app-info__name">PillBow</span>
-            <span className="app-info__version">v2.0</span>
+            <span className="app-info__version">pilbow-ver:0.0.1</span>
           </div>
           <p className="app-info__tagline">Your medication companion</p>
         </div>

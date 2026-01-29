@@ -13,6 +13,7 @@ export * from './icons';
 
 // Re-export legacy constants for backwards compatibility
 export {
+  MOCK_VITAMINS,
   MOCK_MEDICATIONS,
   ALL_TIME_SLOTS,
   TIME_SLOTS,

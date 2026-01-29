@@ -482,3 +482,42 @@
 .inactive-pillbox-card--ended .inactive-pillbox-card__pill-preview-dot {
   filter: grayscale(50%);
 }
+
+/* Empty card state - no medications - same height, subtle styling */
+.inactive-pillbox-card--empty {
+  /* Keep same height as regular cards (4.5rem) */
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+}
+
+.inactive-pillbox-card--empty:hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.inactive-pillbox-card--empty .inactive-pillbox-card__day-num {
+  color: #64748b;
+}
+
+.inactive-pillbox-card--empty .inactive-pillbox-card__day-short,
+.inactive-pillbox-card--empty .inactive-pillbox-card__month {
+  color: #94a3b8;
+}
+
+.inactive-pillbox-card--empty .inactive-pillbox-card__chevron-icon {
+  color: #cbd5e1;
+}
+
+/* Empty + Today styling */
+.inactive-pillbox-card--empty.inactive-pillbox-card--today {
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  border-color: #a5b4fc;
+}
+
+.inactive-pillbox-card--empty.inactive-pillbox-card--today .inactive-pillbox-card__day-num {
+  color: #6366f1;
+}
+
+.inactive-pillbox-card--empty.inactive-pillbox-card--today .inactive-pillbox-card__day-short,
+.inactive-pillbox-card--empty.inactive-pillbox-card--today .inactive-pillbox-card__month {
+  color: #818cf8;
+}

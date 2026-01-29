@@ -47,8 +47,20 @@ export default defineConfig(({ mode }) => {
           short_name: 'PillBow',
           description: 'A medication reminder and tracking app for elderly users',
           theme_color: '#3b82f6',
-          background_color: '#ffffff',
-          display: 'standalone',
+          icons: [
+            {
+              src: '/icon.png',
+              sizes: '192x192',
+              type: 'image/png',
+              purpose: 'any',
+            },
+            {
+              src: '/icon.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable',
+            },
+          ],
         },
       })
     ],
