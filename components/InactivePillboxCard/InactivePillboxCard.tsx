@@ -9,6 +9,7 @@ type MedStatus = "active" | "ending-soon" | "last-day" | "ended";
 
 const getMedicationStatus = (med: Medication, date: Date): MedStatus => {
   if (!med.endDate) return "active";
+  if (med.refillDismissed) return "active";
 
   const endDate = startOfDay(parseISO(med.endDate));
   const checkDate = startOfDay(date);
@@ -16,7 +17,7 @@ const getMedicationStatus = (med: Medication, date: Date): MedStatus => {
 
   if (daysUntilEnd < 0) return "ended";
   if (daysUntilEnd === 0) return "last-day";
-  if (daysUntilEnd <= 7) return "ending-soon";
+  if (daysUntilEnd <= 2) return "ending-soon"; // Threshold set to 2 days
   return "active";
 };
 
@@ -39,6 +40,7 @@ interface InactivePillboxCardProps {
   dayLog?: DayLog;
   isToday?: boolean;
   onClick: () => void;
+  onDismissRefill?: (medIds: string[]) => void;
 }
 
 const getDoseStatusFromLog = (
@@ -59,6 +61,7 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
   dayLog,
   isToday = false,
   onClick,
+  onDismissRefill,
 }) => {
   const dayShort = format(date, "EEE").toUpperCase();
   const dayNum = format(date, "d");
@@ -98,6 +101,17 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
                 <path d="M12 9v4M12 17h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" />
               </svg>
               <span>Refill soon</span>
+              <button
+                className="inactive-pillbox-card__dismiss-refill"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const endingMeds = medications.filter(m => getMedicationStatus(m, date) === "ending-soon");
+                  onDismissRefill?.(endingMeds.map(m => m.id));
+                }}
+                title="Dismiss alert"
+              >
+                ✕
+              </button>
             </>
           )}
           {medStatus === "last-day" && (

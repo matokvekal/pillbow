@@ -17,7 +17,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1rem;
+  height: 2.5rem;
+  padding: 0 0.875rem;
   background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
   border: 2px solid var(--color-primary-700);
   border-radius: 2rem;
@@ -26,7 +27,6 @@
   transition: all var(--transition-base);
   box-shadow: var(--shadow-md);
   font-weight: var(--font-weight-semibold);
-  min-height: var(--touch-target-min);
   font-family: inherit;
 }
 
@@ -44,17 +44,24 @@
 }
 
 .user-avatar {
-  font-size: var(--font-size-2xl);
+  font-size: 1.125rem;
   line-height: var(--line-height-none);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.user-avatar-img {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .user-name {
-  font-size: var(--font-size-md);
+  font-size: 0.8rem;
   font-weight: var(--font-weight-bold);
-  max-width: 120px;
+  max-width: 80px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -170,6 +177,13 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+.option-avatar-img {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .option-info {

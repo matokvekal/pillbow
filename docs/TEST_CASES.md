@@ -465,6 +465,295 @@
 
 ---
 
+## 11. GOOGLE AUTHENTICATION TESTS
+
+### TC-G01: Sign-in Button Visibility
+- **Steps:** Go to Settings -> Account section
+- **Expected:** "Sign in with Google" card is visible for non-authenticated users
+- **Status:** [ ]
+
+### TC-G02: Google Info in Settings
+- **Steps:** 
+  1. (Simulate) Perform Google login
+  2. View Settings -> Account
+- **Expected:** Shows User Name, Email, and Profile Photo
+- **Status:** [ ]
+
+### TC-G03: Sign Out from Google
+- **Steps:** Click "Sign Out" in Account section
+- **Expected:** Session cleared, button reverts to "Sign in with Google"
+- **Status:** [ ]
+
+### TC-G04: UserSwitcher Avatar Sync
+- **Steps:** Login with Google
+- **Expected:** Header dropdown "ME" shows Google profile image instead of 👤
+- **Status:** [ ]
+
+### TC-G05: Dropdown Option Image
+- **Steps:** Open UserSwitcher dropdown
+- **Expected:** Google user option shows circular profile photo
+- **Status:** [ ]
+
+### TC-G06: Profile Sync Persistence
+- **Steps:** Login, then reload page
+- **Expected:** Google profile image persists in header and dropdown
+- **Status:** [ ]
+
+### TC-G07: Multiple Profiles - Auth State
+- **Steps:** 
+  1. User A (Me) logs in with Google
+  2. Switch to User B (Family)
+- **Expected:** User B does NOT show User A's Google info (isolation)
+- **Status:** [ ]
+
+### TC-G08: Sign-in Prompt Alert
+- **Steps:** Click Google Sign-in card (without live config)
+- **Expected:** Instructions/Alert about OAuth configuration appears
+- **Status:** [ ]
+
+---
+
+## 12. APPOINTMENT & EVENT TESTS
+
+### TC-A01: Icon Reaction - Label Change
+- **Steps:** In Manual Add, click Doctor or Hospital icon
+- **Expected:** "Medicine Name" label changes to "Event Name"
+- **Status:** [ ]
+
+### TC-A02: Icon Reaction - Field Hiding
+- **Steps:** Select "Dental" or "Hospital" icon
+- **Expected:** "Amount / Strength" section is hidden automatically
+- **Status:** [ ]
+
+### TC-A03: Schedule Toggle Visibility
+- **Steps:** Select an "Event" (Appointment) icon
+- **Expected:** "Schedule" section appears with "One-time" and "Recurring" buttons
+- **Status:** [ ]
+
+### TC-A04: One-time Appointment Logic
+- **Steps:** 
+  1. Select Event icon
+  2. Select "One-time"
+- **Expected:** Simple Date Picker appears labeled "Appointment Date"
+- **Status:** [ ]
+
+### TC-A05: Recurring Appointment - Weeks
+- **Steps:** 
+  1. Select Event icon
+  2. Select "Recurring"
+- **Expected:** "Every X weeks" number picker appears (1-4)
+- **Status:** [ ]
+
+### TC-A06: Recurring Appointment - Day
+- **Steps:** In Recurring mode, select "Fr" (Friday)
+- **Expected:** Friday is selected for the schedule
+- **Status:** [ ]
+
+### TC-A07: Event Slot Prompt
+- **Steps:** View "When to take" section for Events
+- **Expected:** Label is "In what time" (or similar specific prompt)
+- **Status:** [ ]
+
+### TC-A08: Duration Hiding for Events
+- **Steps:** Select Appointment icon
+- **Expected:** "For how long?" (Duration) section is hidden (scheduling handles it)
+- **Status:** [ ]
+
+### TC-A09: Add One-time Appointment
+- **Steps:** 
+  1. Create One-time Doctor appt for tomorrow
+  2. Save
+- **Expected:** Event appears ONLY in tomorrow's timeline
+- **Status:** [ ]
+
+### TC-A10: Add Weekly Appointment
+- **Steps:** 
+  1. Create Weekly Hospital appt (Every 1 week on Monday)
+  2. Save
+- **Expected:** Appears every Monday in the timeline
+- **Status:** [ ]
+
+### TC-A11: Switch Back to Medicine
+- **Steps:** 
+  1. Select Event icon (fields hide)
+  2. Click "Pill" icon
+- **Expected:** "Amount", "Duration", and "Medicine Name" return to UI
+- **Status:** [ ]
+
+### TC-A12: Appointment Preview in Card
+- **Steps:** View Timeline with an Appointment
+- **Expected:** Event Name shown clearly (e.g. "Doctor") without units
+- **Status:** [ ]
+
+---
+
+## 13. AI FEATURE TESTS
+
+### TC-AI01: Ask AI Button Visibility
+- **Steps:** Open Manual Add form
+- **Expected:** Sparkle icon "Ask AI" button visible next to Name field
+- **Status:** [ ]
+
+### TC-AI02: Registration Prompt (Unauth)
+- **Steps:** 
+  1. Ensure not signed in with Google
+  2. Click "Ask AI" button
+- **Expected:** Alert shows "Register with Google to get 50 credits"
+- **Status:** [ ]
+
+### TC-AI03: Priority Mention (Auth)
+- **Steps:** 
+  1. Sign in with Google
+  2. Click "Ask AI"
+- **Expected:** Alert shows "Ask AI is coming soon for your account"
+- **Status:** [ ]
+
+### TC-AI04: Button Style
+- **Steps:** Hover over "Ask AI" button
+- **Expected:** Smooth transition, slight lift, purple glow
+- **Status:** [ ]
+
+### TC-AI05: Input Constraints
+- **Steps:** Click Ask AI inside the Name input wrapper
+- **Expected:** Input doesn't lose focus, button fits in the "padding-right"
+- **Status:** [ ]
+
+---
+
+## 14. REFILL ALERT IMPROVEMENTS
+
+### TC-RA01: Alert Threshold - 3 Days
+- **Steps:** Add med ending in 3 days
+- **Expected:** NO "Refill soon" badge visible (Threshold is 2)
+- **Status:** [ ]
+
+### TC-RA02: Alert Threshold - 2 Days
+- **Steps:** Add med ending in 2 days
+- **Expected:** "Refill soon" badge appears on card
+- **Status:** [ ]
+
+### TC-RA03: Dismiss Button "X"
+- **Steps:** View "Refill soon" badge
+- **Expected:** Small "X" button visible on the right of the badge
+- **Status:** [ ]
+
+### TC-RA04: Permanent Dismissal
+- **Steps:** 
+  1. Click "X" on refill badge
+  2. Badge disappears
+  3. Reload page
+- **Expected:** Badge does NOT return for that medication
+- **Status:** [ ]
+
+### TC-RA05: Dismissal Priority
+- **Steps:** Dismiss alert for Med A but not Med B (both ending)
+- **Expected:** Badge still shows for Med B
+- **Status:** [ ]
+
+### TC-RA06: Manage List Sync
+- **Steps:** Dismiss refill in timeline
+- **Expected:** Refill alert also hidden in "Manage Medications" list
+- **Status:** [ ]
+
+---
+
+## 15. SMART FORM LOGIC (REACTIONS)
+
+### TC-L01: Unit Auto-Adjust (Pills)
+- **Steps:** Select "Pills" unit
+- **Expected:** Amount value defaults to "1"
+- **Status:** [ ]
+
+### TC-L02: Unit Auto-Adjust (Drops)
+- **Steps:** Select "Drops" unit
+- **Expected:** Amount value defaults to "10"
+- **Status:** [ ]
+
+### TC-L03: Unit Auto-Adjust (Liquid)
+- **Steps:** Select "Liquid" unit
+- **Expected:** Amount value defaults to "5" (ml)
+- **Status:** [ ]
+
+### TC-L04: Start Date Phrasing
+- **Steps:** View Start Date section
+- **Expected:** Label is "Start Date" (Professional English)
+- **Status:** [ ]
+
+### TC-L05: Start Date Custom Toggle
+- **Steps:** Click "Pick Date" in Start Date
+- **Expected:** Calendar opens, previous "Today/Tomorrow" options unselect
+- **Status:** [ ]
+
+### TC-L06: Form Reset on Icon Switch
+- **Steps:** 
+  1. Enter name "Tylenol"
+  2. Switch to Event icon
+- **Expected:** Name persists, but mode-specific fields adjust
+- **Status:** [ ]
+
+---
+
+## 16. COMPREHENSIVE CLEAR DATA
+
+### TC-C01: Wipe All Keys
+- **Steps:** 
+  1. Add Users, Meds, Google linkage
+  2. Click "Clear All Data" in Settings
+- **Expected:** localStorage is completely wiped of `pillbow_*` keys
+- **Status:** [ ]
+
+### TC-C02: Onboarding Reset
+- **Steps:** 
+  1. Clear all data
+  2. Re-open app
+- **Expected:** Onboarding screen showing "Welcome" (Dismissed state deleted)
+- **Status:** [ ]
+
+### TC-C03: Force Reload Sync
+- **Steps:** Clear data
+- **Expected:** Page reloads automatically to clear memory stores
+- **Status:** [ ]
+
+---
+
+## 17. RECURRING EVENT EDGE CASES
+
+### TC-RE01: Every 4 Weeks Calculation
+- **Steps:** Set event to "Every 4 weeks" starting Jan 1st
+- **Expected:** Next event shows on Jan 29th
+- **Status:** [ ]
+
+### TC-RE02: Multiple Days Recurring
+- **Steps:** Try to select multiple days for a recurring event
+- **Expected:** (Constraint Check) Current logic supports one day per weekly schedule
+- **Status:** [ ]
+
+### TC-RE03: Start Date in Past
+- **Steps:** Set recurring event start date to 1 month ago
+- **Expected:** Past instances populated in timeline (if relevant)
+- **Status:** [ ]
+
+---
+
+## 18. UX MICRO-ANIMATIONS
+
+### TC-UX01: Google Hover Effect
+- **Steps:** Hover over Google sign-in card
+- **Expected:** Card lifts slightly (transform), border glows blue
+- **Status:** [ ]
+
+### TC-UX02: AI Button Sparkle
+- **Steps:** Look at AI button
+- **Expected:** Sparkle icon (✨) is visible and clear
+- **Status:** [ ]
+
+### TC-UX03: Refill Dismiss Pulse
+- **Steps:** Hover over "X" in refill badge
+- **Expected:** Background darkens, cursor is pointer
+- **Status:** [ ]
+
+---
+
 ## Test Summary
 
 | Category | Total | Passed | Failed | Blocked |
@@ -479,7 +768,15 @@
 | Edge Cases | 6 | | | |
 | Scan/Photo | 3 | | | |
 | Responsive | 3 | | | |
-| **TOTAL** | **59** | | | |
+| **Google Auth** | **8** | | | |
+| **Appointments** | **12** | | | |
+| **AI Features** | **5** | | | |
+| **Refills** | **6** | | | |
+| **Smart Logic** | **6** | | | |
+| **Clear Data** | **3** | | | |
+| **Recur. Edge Cases**| **3** | | | |
+| **UX Polish** | **3** | | | |
+| **TOTAL** | **105** | | | |
 
 ---
 
@@ -488,17 +785,12 @@
 | ID | Severity | Description | Steps to Reproduce | Status |
 |----|----------|-------------|-------------------|--------|
 | BUG-001 | Medium | Import validation incomplete - only checked medications array, not dayLogs/settings | Import JSON with only medications[] | FIXED |
-
-## Code Analysis Findings
-
-### Fixed Issues:
-1. **SettingsView.tsx:66-71** - Import validation now checks for all required fields (medications, dayLogs, settings)
+| BUG-002 | Low | "Start from when?" used awkward English phrasing | View Manual Add form | FIXED |
+| BUG-003 | High | Clear All Data didn't remove user-specific keys | Click Clear All in Settings | FIXED |
 
 ---
 
 ## Notes
-
-- Testing Date:
-- Tester:
-- Build Version:
-- Browser:
+- Last Update: 2026-01-30 18:35
+- Automated Tests: No (Manual validation required)
+- Next Steps: Verify Appointment recurring scheduling calculations for 2026 leap years.

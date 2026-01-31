@@ -11,10 +11,10 @@ import {
 } from "./constants";
 import { AppHeader } from "./components/AppHeader/AppHeader";
 import { TimelineContainer } from "./components/TimelineContainer/TimelineContainer";
-import { FloatingActionButtons } from "./components/FloatingActionButtons/FloatingActionButtons";
 import { ModalContainer } from "./components/ModalContainer/ModalContainer";
 import { AddMedication } from "./components/AddMedication/AddMedication";
 import { SettingsView } from "./components/SettingsView/SettingsView";
+import { TermsModal } from "./components/TermsModal/TermsModal";
 import { useModalStore } from "./store/useModalStore";
 import { useUserStore } from "./store/useUserStore";
 import { useDayCardStore } from "./store/useDayCardStore";
@@ -22,12 +22,14 @@ import {
   loadAppData,
   saveAppData,
   addMedication,
+  updateMedication,
   updateDoseStatus,
   getDayLog,
   isDateEditable,
   getMedicationsForDate,
 } from "./services/dataService";
 import { playNotificationSound } from "./utils/audioAndFileUtils";
+import "./styles/med-colors.css";
 import "./App.css";
 
 // Calendar range: 5 years back, 1 year forward
@@ -40,6 +42,8 @@ const App: React.FC = () => {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [updateKey, setUpdateKey] = useState(0); // Force re-render on dose status change
   const { pushModal } = useModalStore();
 
@@ -128,11 +132,19 @@ const App: React.FC = () => {
 
   const getMedicationsForDay = (day: Date) => {
     return medications.filter((med) => {
-      if (!med.startDate || !med.endDate) return true;
-      const medDate = day.getTime();
-      const startDate = new Date(med.startDate).getTime();
-      const endDate = new Date(med.endDate).getTime();
-      return medDate >= startDate && medDate <= endDate;
+      if (!med.startDate || !med.endDate) {
+        // Still check day-of-week even without date range
+      } else {
+        const medDate = day.getTime();
+        const startDate = new Date(med.startDate).getTime();
+        const endDate = new Date(med.endDate).getTime();
+        if (medDate < startDate || medDate > endDate) return false;
+      }
+      // Day-of-week filter
+      if (med.daysOfWeek && med.daysOfWeek.length > 0) {
+        if (!med.daysOfWeek.includes(day.getDay())) return false;
+      }
+      return true;
     });
   };
 
@@ -188,6 +200,7 @@ const App: React.FC = () => {
       pillImageUrl: medData.pillImageUrl,
       startDate: medData.startDate || new Date().toISOString().split("T")[0],
       endDate: medData.endDate,
+      daysOfWeek: medData.daysOfWeek,
       notes: medData.notes,
     };
 
@@ -211,6 +224,21 @@ const App: React.FC = () => {
     );
 
     // Force re-render
+    setUpdateKey((prev) => prev + 1);
+  };
+
+  const handleDismissRefill = (medIds: string[]) => {
+    medIds.forEach((id) => {
+      updateMedication(id, { refillDismissed: true });
+    });
+
+    // Update local state
+    setMedications((prev) =>
+      prev.map((med) =>
+        medIds.includes(med.id) ? { ...med, refillDismissed: true } : med
+      )
+    );
+
     setUpdateKey((prev) => prev + 1);
   };
 
@@ -239,7 +267,7 @@ const App: React.FC = () => {
 
   return (
     <div className="app-container">
-      <AppHeader onMenuClick={() => setView("settings")} />
+      <AppHeader onMenuClick={() => setView("settings")} onTodayClick={scrollToToday} />
 
       {view === "timeline" && (
         <>
@@ -250,15 +278,21 @@ const App: React.FC = () => {
             dayLogs={dayLogsMap}
             editableDates={editableDatesSet}
             onStatusChange={handleStatusChange}
-            onPillClick={() => {}}
+            onPillClick={() => { }}
             onDayClick={handleDayClick}
-            onCloseBox={() => {}}
+            onCloseBox={() => { }}
+            onDismissRefill={handleDismissRefill}
           />
 
-          <FloatingActionButtons
-            onAddClick={() => setShowAddModal(true)}
-            onTodayClick={scrollToToday}
-          />
+          <button
+            className="fab-add"
+            onClick={() => setShowAddModal(true)}
+            aria-label="Add medication"
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </>
       )}
 
@@ -306,10 +340,33 @@ const App: React.FC = () => {
             <div className="onboarding-icon">💊</div>
             <h2 className="onboarding-title">Welcome to PillBow</h2>
             <p className="onboarding-text">No medications yet</p>
+
+            {/* Terms & Conditions Agreement */}
+            <div className="onboarding-terms">
+              <label className="onboarding-terms__label">
+                <input
+                  type="checkbox"
+                  className="onboarding-terms__checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                />
+                <span className="onboarding-terms__text">
+                  I have read and agree to the{" "}
+                  <button
+                    className="onboarding-terms__link"
+                    onClick={() => setShowTermsModal(true)}
+                  >
+                    Terms & Conditions
+                  </button>
+                </span>
+              </label>
+            </div>
+
             <div className="onboarding-actions">
               <button
                 className="onboarding-btn onboarding-btn--primary"
                 onClick={handleLoadSampleVitamins}
+                disabled={!termsAccepted}
               >
                 Try with Sample Vitamins
               </button>
@@ -319,12 +376,24 @@ const App: React.FC = () => {
                   handleDismissOnboarding();
                   setShowAddModal(true);
                 }}
+                disabled={!termsAccepted}
               >
                 Add My Medication
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Terms Modal */}
+      {showTermsModal && (
+        <TermsModal
+          onClose={() => setShowTermsModal(false)}
+          onAgree={() => {
+            setTermsAccepted(true);
+            setShowTermsModal(false);
+          }}
+        />
       )}
     </div>
   );

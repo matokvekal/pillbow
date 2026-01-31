@@ -14,7 +14,7 @@
 
 import { AppData, Medication, DayLog, DoseRecord, DoseStatus, AppSettings } from '../types';
 
-const STORAGE_KEY = 'pillbow_data';
+const STORAGE_KEY = 'pillbow_app_data';
 
 // Default app data
 const getDefaultAppData = (): AppData => ({
@@ -144,6 +144,11 @@ export const getOrCreateDayLog = (dateStr: string, medications: Medication[]): D
       if (startDate && date < startDate) return;
       if (endDate && date > endDate) return;
 
+      // Day-of-week filter
+      if (med.daysOfWeek && med.daysOfWeek.length > 0) {
+        if (!med.daysOfWeek.includes(date.getDay())) return;
+      }
+
       med.timesOfDay.forEach(time => {
         doses.push({
           medicationId: med.id,
@@ -261,7 +266,19 @@ export const importData = (jsonStr: string): boolean => {
 
 // Clear all data
 export const clearAllData = (): void => {
+  // Clear the active storage key
   saveAppData(getDefaultAppData());
+
+  // Clear all pillbow related keys in localStorage
+  const keysToRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('pillbow_')) {
+      keysToRemove.push(key);
+    }
+  }
+
+  keysToRemove.forEach(key => localStorage.removeItem(key));
 };
 
 // Get medications active on a specific date
@@ -277,6 +294,12 @@ export const getMedicationsForDate = (dateStr: string, medications: Medication[]
 
     if (startDate && date < startDate) return false;
     if (endDate && date > endDate) return false;
+
+    // Day-of-week filter
+    if (med.daysOfWeek && med.daysOfWeek.length > 0) {
+      if (!med.daysOfWeek.includes(date.getDay())) return false;
+    }
+
     return true;
   }).map(migrateMedication);
 };

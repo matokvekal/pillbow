@@ -1,6 +1,9 @@
 /* Scan Screen - Simple Camera UI */
 
 .scan {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
   background: #000;
@@ -315,46 +318,4 @@
 
 .scan__retry:active {
   background: #f8fafc;
-}
-
-/* Color variants for med icon */
-.scan__med-icon.bg-blue-300 {
-  background-color: #93c5fd;
-}
-
-.scan__med-icon.bg-green-300 {
-  background-color: #86efac;
-}
-
-.scan__med-icon.bg-yellow-300 {
-  background-color: #fcd34d;
-}
-
-.scan__med-icon.bg-red-300 {
-  background-color: #fca5a5;
-}
-
-.scan__med-icon.bg-purple-300 {
-  background-color: #d8b4fe;
-}
-
-.scan__med-icon.bg-orange-300 {
-  background-color: #fdba74;
-}
-
-.scan__med-icon.bg-pink-300 {
-  background-color: #f9a8d4;
-}
-
-.scan__med-icon.bg-cyan-300 {
-  background-color: #67e8f9;
-}
-
-.scan__med-icon.bg-gray-300 {
-  background-color: #d1d5db;
-}
-
-.scan__med-icon.bg-white {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
 }

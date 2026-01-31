@@ -1,12 +1,26 @@
 /* Detail Sheet */
 .detail-sheet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 100vh;
   display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 200;
   padding: 1rem;
 }
 
+.detail-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
 .detail-sheet-content {
+  position: relative;
   background-color: white;
   border-radius: 1.25rem;
   width: 100%;
@@ -15,6 +29,11 @@
   padding: 1.25rem;
   overflow-y: auto;
   z-index: 1;
+}
+
+.detail-sheet-content--edit {
+  padding: 0;
+  max-height: 90vh;
 }
 
 .detail-sheet-content::-webkit-scrollbar {
@@ -328,46 +347,4 @@
 
 .detail-sheet-close-btn:hover {
   background-color: #1e293b;
-}
-
-/* Color variants */
-.detail-sheet-icon.bg-blue-300 {
-  background-color: #93c5fd;
-}
-
-.detail-sheet-icon.bg-green-300 {
-  background-color: #86efac;
-}
-
-.detail-sheet-icon.bg-yellow-300 {
-  background-color: #fcd34d;
-}
-
-.detail-sheet-icon.bg-red-300 {
-  background-color: #fca5a5;
-}
-
-.detail-sheet-icon.bg-purple-300 {
-  background-color: #d8b4fe;
-}
-
-.detail-sheet-icon.bg-pink-300 {
-  background-color: #f9a8d4;
-}
-
-.detail-sheet-icon.bg-orange-300 {
-  background-color: #fdba74;
-}
-
-.detail-sheet-icon.bg-cyan-300 {
-  background-color: #67e8f9;
-}
-
-.detail-sheet-icon.bg-gray-300 {
-  background-color: #d1d5db;
-}
-
-.detail-sheet-icon.bg-white {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
 }

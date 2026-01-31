@@ -1,6 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { format, addDays } from "date-fns";
+import { useUserStore } from "../../store/useUserStore";
 import { Medication } from "../../types";
+import {
+  FORM_COLORS as COLORS,
+  FORM_SHAPES as SHAPES,
+  FORM_UNITS,
+  FORM_DURATIONS as DURATIONS,
+  FORM_TIME_PRESETS as TIME_PRESETS,
+  DAY_LABELS,
+  isEventShape,
+} from "../../constants/medFormConfig";
+
+// Extract just the unit strings for the picker
+const UNITS = FORM_UNITS.map(u => u.unit);
 import "./ManualAddFlow.css";
 
 interface ManualAddFlowProps {
@@ -8,62 +21,17 @@ interface ManualAddFlowProps {
   onAdd: (medication: Partial<Medication>) => void;
 }
 
-// Color options - 10 colors
-const COLORS = [
-  { class: "bg-blue-300", hex: "#93c5fd" },
-  { class: "bg-green-300", hex: "#86efac" },
-  { class: "bg-yellow-300", hex: "#fcd34d" },
-  { class: "bg-red-300", hex: "#fca5a5" },
-  { class: "bg-purple-300", hex: "#d8b4fe" },
-  { class: "bg-orange-300", hex: "#fdba74" },
-  { class: "bg-pink-300", hex: "#f9a8d4" },
-  { class: "bg-cyan-300", hex: "#67e8f9" },
-  { class: "bg-gray-300", hex: "#d1d5db" },
-  { class: "bg-white", hex: "#ffffff" },
-];
-
-// Shape options - 10 shapes with visual icons
-const SHAPES = [
-  { id: "round-small", label: "Small Round", icon: "●" },
-  { id: "round-large", label: "Large Round", icon: "⬤" },
-  { id: "oval", label: "Oval", icon: "⬮" },
-  { id: "capsule", label: "Capsule", icon: "💊" },
-  { id: "tablet", label: "Tablet", icon: "▬" },
-  { id: "diamond", label: "Diamond", icon: "◆" },
-  { id: "square", label: "Square", icon: "■" },
-  { id: "triangle", label: "Triangle", icon: "▲" },
-  { id: "heart", label: "Heart", icon: "♥" },
-  { id: "oblong", label: "Oblong", icon: "⬭" },
-];
-
-// Strength units
-const UNITS = ["mg", "ml", "pills", "drops"];
-
-// Duration presets
-const DURATIONS = [
-  { label: "7 days", days: 7 },
-  { label: "2 weeks", days: 14 },
-  { label: "1 month", days: 30 },
-  { label: "Ongoing", days: 0 },
-];
-
-// Time presets - easy selection
-const TIME_PRESETS = [
-  { id: "morning", label: "Morning", time: "08:00", icon: "🌅" },
-  { id: "noon", label: "Noon", time: "12:00", icon: "☀️" },
-  { id: "afternoon", label: "Afternoon", time: "15:00", icon: "🌤️" },
-  { id: "evening", label: "Evening", time: "19:00", icon: "🌆" },
-  { id: "night", label: "Night", time: "22:00", icon: "🌙" },
-];
 
 export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
   onBack,
   onAdd,
 }) => {
+  const { getCurrentUser } = useUserStore();
+  const currentUser = getCurrentUser();
   const [name, setName] = useState("");
-  const [strengthValue, setStrengthValue] = useState("100");
-  const [strengthUnit, setStrengthUnit] = useState("mg");
-  const [selectedTimes, setSelectedTimes] = useState<string[]>(["08:00"]); // Default morning
+  const [strengthValue, setStrengthValue] = useState("");
+  const [strengthUnit, setStrengthUnit] = useState("");
+  const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [customTime, setCustomTime] = useState("");
   const [showCustomTime, setShowCustomTime] = useState(false);
   const [durationIndex, setDurationIndex] = useState(3); // Default "Ongoing"
@@ -71,6 +39,58 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
   const [showCalendar, setShowCalendar] = useState(false);
   const [colorIndex, setColorIndex] = useState(0);
   const [shapeIndex, setShapeIndex] = useState(0);
+  const [selectedDays, setSelectedDays] = useState<number[]>([]);
+  const [eventDate, setEventDate] = useState(""); // For one-time events like doctor appointments
+  const [isRecurring, setIsRecurring] = useState(false); // Toggle for event: one-time vs recurring
+  const [recurringWeeks, setRecurringWeeks] = useState(1); // Every X weeks
+  const [recurringDay, setRecurringDay] = useState(1); // Day of week (0=Sun, 1=Mon, etc.)
+  const [startDateOption, setStartDateOption] = useState<'today' | 'tomorrow' | 'custom'>('today'); // When to start medicine
+  const [customStartDate, setCustomStartDate] = useState(""); // Custom start date for medicine
+
+  // Track previous values to detect changes
+  const prevStrengthUnit = useRef(strengthUnit);
+  const prevShapeIndex = useRef(shapeIndex);
+
+  // Phase 1: Auto-adjust amount when unit changes
+  useEffect(() => {
+    // Only adjust if unit actually changed and we have a value
+    if (prevStrengthUnit.current !== strengthUnit && strengthUnit) {
+      const unitConfig = FORM_UNITS.find(u => u.unit === strengthUnit);
+      if (unitConfig && strengthUnit) {
+        setStrengthValue(unitConfig.defaultValue);
+      }
+    }
+    prevStrengthUnit.current = strengthUnit;
+  }, [strengthUnit]);
+
+  // Phase 2: Smart transitions when icon type changes
+  useEffect(() => {
+    const currentIsEvent = isEventShape(SHAPES[shapeIndex]?.id);
+    const wasEvent = isEventShape(SHAPES[prevShapeIndex.current]?.id);
+
+    // Only run on actual changes (not initial render)
+    if (prevShapeIndex.current !== shapeIndex) {
+      // Medicine → Event transition
+      if (!wasEvent && currentIsEvent) {
+        setStrengthValue("");
+        setStrengthUnit("");
+        // For events, default to reasonable duration (not "Ongoing")
+        if (durationIndex === 3) {
+          setDurationIndex(0); // Default to "7 days"
+        }
+      }
+
+      // Event → Medicine transition  
+      if (wasEvent && !currentIsEvent) {
+        if (!strengthUnit) {
+          setStrengthValue("1");
+          setStrengthUnit("pills");
+        }
+      }
+    }
+
+    prevShapeIndex.current = shapeIndex;
+  }, [shapeIndex, durationIndex, strengthUnit]);
 
   // Toggle time selection
   const toggleTime = (time: string) => {
@@ -108,7 +128,7 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
     const medication: Partial<Medication> = {
       id: `med-${Date.now()}`,
       name: name.trim(),
-      strength: `${strengthValue} ${strengthUnit}`,
+      strength: `${strengthValue}${strengthUnit}`,
       dosage: "1 dose",
       dosesPerDay: selectedTimes.length,
       timesOfDay: selectedTimes,
@@ -155,50 +175,204 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
 
       {/* Form */}
       <div className="manual-add__form">
-        {/* Medicine Name */}
+        {/* Shape - at top for quick type selection */}
         <div className="manual-add__field">
-          <label className="manual-add__label">Medicine Name</label>
-          <input
-            type="text"
-            className="manual-add__input"
-            placeholder="e.g. Aspirin"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            autoFocus
-            autoComplete="off"
-          />
-        </div>
-
-        {/* Strength / Amount */}
-        <div className="manual-add__field">
-          <label className="manual-add__label">Amount / Strength</label>
-          <div className="manual-add__strength-row">
-            <input
-              type="number"
-              className="manual-add__strength-input"
-              value={strengthValue}
-              onChange={(e) => setStrengthValue(e.target.value)}
-              min="1"
-              max="9999"
-            />
-            <div className="manual-add__unit-picker">
-              {UNITS.map((unit) => (
-                <button
-                  key={unit}
-                  className={`manual-add__unit-btn ${strengthUnit === unit ? "manual-add__unit-btn--active" : ""}`}
-                  onClick={() => setStrengthUnit(unit)}
-                >
-                  {unit}
-                </button>
-              ))}
-            </div>
+          <label className="manual-add__label">Type</label>
+          <div className="manual-add__scroll-row">
+            {SHAPES.map((shape, index) => (
+              <button
+                key={shape.id}
+                className={`manual-add__shape ${shapeIndex === index ? "manual-add__shape--active" : ""}`}
+                onClick={() => setShapeIndex(index)}
+                title={shape.label}
+              >
+                {shape.icon}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* When to Take - Time Picker */}
+        {/* Name - label changes based on type */}
         <div className="manual-add__field">
-          <label className="manual-add__label">When to take?</label>
-          <p className="manual-add__hint">Tap to select times (can pick multiple)</p>
+          <label className="manual-add__label">
+            {isEventShape(SHAPES[shapeIndex].id) ? "Event Name" : "Medicine Name"}
+          </label>
+          <div className="manual-add__input-wrapper">
+            <input
+              type="text"
+              className="manual-add__input"
+              placeholder={isEventShape(SHAPES[shapeIndex].id) ? "e.g. Doctor appointment" : "e.g. Aspirin"}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoFocus
+              autoComplete="off"
+            />
+            <button
+              type="button"
+              className="manual-add__ask-ai"
+              onClick={() => {
+                if (!currentUser?.isGoogleUser) {
+                  alert("🌟 AI features are coming!\n\nRegister with Google now to get 50 free AI credits when we launch.");
+                } else {
+                  alert("✨ Ask AI is coming soon for your account!");
+                }
+              }}
+            >
+              <span className="manual-add__ask-ai-icon">✨</span>
+              <span className="manual-add__ask-ai-text">Ask AI</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Strength / Amount - only for medicines */}
+        {!isEventShape(SHAPES[shapeIndex].id) && (
+          <div className="manual-add__field">
+            <label className="manual-add__label">Amount / Strength</label>
+            <div className="manual-add__strength-row">
+              <div className="manual-add__amount-control">
+                <button
+                  type="button"
+                  className="manual-add__amount-btn"
+                  onClick={() => setStrengthValue(prev => String(Math.max(1, Number(prev) - 1)))}
+                  disabled={!strengthValue || Number(strengthValue) <= 1}
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  className="manual-add__strength-input"
+                  value={strengthValue}
+                  onChange={(e) => setStrengthValue(e.target.value)}
+                  min="1"
+                  max="9999"
+                />
+                <button
+                  type="button"
+                  className="manual-add__amount-btn"
+                  onClick={() => setStrengthValue(prev => String(Number(prev || 0) + 1))}
+                >
+                  +
+                </button>
+              </div>
+              <div className="manual-add__unit-picker">
+                {UNITS.map((unit) => (
+                  <button
+                    key={unit}
+                    className={`manual-add__unit-btn ${strengthUnit === unit ? "manual-add__unit-btn--active" : ""}`}
+                    onClick={() => setStrengthUnit(unit)}
+                  >
+                    {unit}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Event Schedule - only for events (appointments) */}
+        {isEventShape(SHAPES[shapeIndex].id) && (
+          <div className="manual-add__field">
+            <label className="manual-add__label">Schedule</label>
+
+            {/* One-time vs Recurring toggle */}
+            <div className="manual-add__schedule-toggle">
+              <button
+                type="button"
+                className={`manual-add__toggle-btn ${!isRecurring ? "manual-add__toggle-btn--active" : ""}`}
+                onClick={() => setIsRecurring(false)}
+              >
+                📅 One-time
+              </button>
+              <button
+                type="button"
+                className={`manual-add__toggle-btn ${isRecurring ? "manual-add__toggle-btn--active" : ""}`}
+                onClick={() => setIsRecurring(true)}
+              >
+                🔄 Recurring
+              </button>
+            </div>
+
+            {/* One-time: Just date picker */}
+            {!isRecurring && (
+              <div className="manual-add__onetime-schedule">
+                <p className="manual-add__hint">When is your appointment?</p>
+                <input
+                  type="date"
+                  className="manual-add__date-input manual-add__date-input--full"
+                  value={eventDate}
+                  onChange={(e) => setEventDate(e.target.value)}
+                  min={format(new Date(), "yyyy-MM-dd")}
+                />
+              </div>
+            )}
+
+            {/* Recurring: Every X weeks on Day, starting Date */}
+            {isRecurring && (
+              <div className="manual-add__recurring-schedule">
+                <p className="manual-add__hint">How often?</p>
+
+                {/* Every X weeks */}
+                <div className="manual-add__recurring-row">
+                  <span className="manual-add__recurring-label">Every</span>
+                  <div className="manual-add__weeks-picker">
+                    {[1, 2, 3, 4].map((weeks) => (
+                      <button
+                        key={weeks}
+                        type="button"
+                        className={`manual-add__weeks-btn ${recurringWeeks === weeks ? "manual-add__weeks-btn--active" : ""}`}
+                        onClick={() => setRecurringWeeks(weeks)}
+                      >
+                        {weeks}
+                      </button>
+                    ))}
+                  </div>
+                  <span className="manual-add__recurring-label">week{recurringWeeks > 1 ? "s" : ""}</span>
+                </div>
+
+                {/* On which day */}
+                <div className="manual-add__recurring-row">
+                  <span className="manual-add__recurring-label">On</span>
+                  <div className="manual-add__day-picker manual-add__day-picker--compact">
+                    {DAY_LABELS.map((day, index) => (
+                      <button
+                        key={day}
+                        type="button"
+                        className={`manual-add__day-btn ${recurringDay === index ? "manual-add__day-btn--active" : ""}`}
+                        onClick={() => setRecurringDay(index)}
+                      >
+                        {day}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Starting from */}
+                <div className="manual-add__recurring-row">
+                  <span className="manual-add__recurring-label">Starting</span>
+                  <input
+                    type="date"
+                    className="manual-add__date-input"
+                    value={eventDate}
+                    onChange={(e) => setEventDate(e.target.value)}
+                    min={format(new Date(), "yyyy-MM-dd")}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+
+        {/* Time Picker - label changes based on type */}
+        <div className="manual-add__field">
+          <label className="manual-add__label">
+            {isEventShape(SHAPES[shapeIndex].id) ? "At what time?" : "When to take?"}
+          </label>
+          <p className="manual-add__hint">
+            {isEventShape(SHAPES[shapeIndex].id)
+              ? "Select appointment time"
+              : "Tap to select times (can pick multiple)"}
+          </p>
 
           <div className="manual-add__time-grid">
             {TIME_PRESETS.map((preset) => (
@@ -280,86 +454,110 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
           </div>
         </div>
 
-        {/* Duration */}
-        <div className="manual-add__field">
-          <label className="manual-add__label">For how long?</label>
-          <div className="manual-add__duration-grid">
-            {DURATIONS.map((duration, index) => (
+        {/* Start Date - only for medicines */}
+        {!isEventShape(SHAPES[shapeIndex].id) && (
+          <div className="manual-add__field">
+            <label className="manual-add__label">Start Date</label>
+            <div className="manual-add__start-options">
               <button
-                key={duration.label}
-                className={`manual-add__duration-btn ${durationIndex === index && !showCalendar ? "manual-add__duration-btn--active" : ""
-                  }`}
-                onClick={() => handleDurationSelect(index)}
+                type="button"
+                className={`manual-add__start-btn ${startDateOption === 'today' ? "manual-add__start-btn--active" : ""}`}
+                onClick={() => setStartDateOption('today')}
               >
-                {duration.label}
+                📅 Today
               </button>
-            ))}
+              <button
+                type="button"
+                className={`manual-add__start-btn ${startDateOption === 'tomorrow' ? "manual-add__start-btn--active" : ""}`}
+                onClick={() => setStartDateOption('tomorrow')}
+              >
+                ⏭️ Tomorrow
+              </button>
+              <button
+                type="button"
+                className={`manual-add__start-btn ${startDateOption === 'custom' ? "manual-add__start-btn--active" : ""}`}
+                onClick={() => setStartDateOption('custom')}
+              >
+                🗓️ Pick date
+              </button>
+            </div>
+            {startDateOption === 'custom' && (
+              <input
+                type="date"
+                className="manual-add__date-input manual-add__date-input--full"
+                value={customStartDate}
+                onChange={(e) => setCustomStartDate(e.target.value)}
+                min={format(addDays(new Date(), 2), "yyyy-MM-dd")}
+              />
+            )}
           </div>
-          {/* Calendar option */}
-          <div className="manual-add__date-section">
-            <button
-              className={`manual-add__calendar-btn ${showCalendar ? "manual-add__calendar-btn--active" : ""}`}
-              onClick={() => {
-                if (!showCalendar) {
-                  setShowCalendar(true);
-                  setDurationIndex(-1);
-                  // Attempt to focus the input on the next tick
-                  setTimeout(() => {
-                    const dateInput = document.querySelector('.manual-add__date-input') as HTMLInputElement;
-                    if (dateInput) {
-                      try {
-                        dateInput.showPicker();
-                      } catch (e) {
-                        dateInput.focus();
+        )}
+
+        {/* Duration - only for medicines */}
+        {!isEventShape(SHAPES[shapeIndex].id) && (
+          <div className="manual-add__field">
+            <label className="manual-add__label">For how long?</label>
+            <div className="manual-add__duration-grid">
+              {DURATIONS.map((duration, index) => (
+                <button
+                  key={duration.label}
+                  className={`manual-add__duration-btn ${durationIndex === index && !showCalendar ? "manual-add__duration-btn--active" : ""}`}
+                  onClick={() => handleDurationSelect(index)}
+                >
+                  {duration.label}
+                </button>
+              ))}
+            </div>
+            {/* Calendar option */}
+            <div className="manual-add__date-section">
+              <button
+                className={`manual-add__calendar-btn ${showCalendar ? "manual-add__calendar-btn--active" : ""}`}
+                onClick={() => {
+                  if (!showCalendar) {
+                    setShowCalendar(true);
+                    setDurationIndex(-1);
+                    // Attempt to focus the input on the next tick
+                    setTimeout(() => {
+                      const dateInput = document.querySelector('.manual-add__date-input') as HTMLInputElement;
+                      if (dateInput) {
+                        try {
+                          dateInput.showPicker();
+                        } catch (e) {
+                          dateInput.focus();
+                        }
                       }
-                    }
-                  }, 0);
-                } else {
-                  setShowCalendar(false);
-                }
-              }}
-            >
-              <span>📅</span>
-              <span>{showCalendar ? "Hide date picker" : "Pick end date"}</span>
-            </button>
-
-            {showCalendar && (
-              <div className="manual-add__date-input-wrapper">
-                <input
-                  type="date"
-                  className="manual-add__date-input"
-                  value={customEndDate}
-                  onChange={(e) => setCustomEndDate(e.target.value)}
-                  min={format(new Date(), "yyyy-MM-dd")}
-                  autoFocus
-                />
-              </div>
-            )}
-
-            {(durationIndex < 3 || (showCalendar && customEndDate)) && (
-              <p className="manual-add__end-date">
-                Ends: {getEndDateDisplay()}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Shape */}
-        <div className="manual-add__field">
-          <label className="manual-add__label">Shape</label>
-          <div className="manual-add__scroll-row">
-            {SHAPES.map((shape, index) => (
-              <button
-                key={shape.id}
-                className={`manual-add__shape ${shapeIndex === index ? "manual-add__shape--active" : ""}`}
-                onClick={() => setShapeIndex(index)}
-                title={shape.label}
+                    }, 0);
+                  } else {
+                    setShowCalendar(false);
+                  }
+                }}
               >
-                {shape.icon}
+                <span>📅</span>
+                <span>{showCalendar ? "Hide date picker" : "Pick end date"}</span>
               </button>
-            ))}
+
+              {showCalendar && (
+                <div className="manual-add__date-input-wrapper">
+                  <input
+                    type="date"
+                    className="manual-add__date-input"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    min={format(new Date(), "yyyy-MM-dd")}
+                    autoFocus
+                  />
+                </div>
+              )}
+
+              {(durationIndex < 3 || (showCalendar && customEndDate)) && (
+                <p className="manual-add__end-date">
+                  Ends: {getEndDateDisplay()}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
+
 
         {/* Color */}
         <div className="manual-add__field">

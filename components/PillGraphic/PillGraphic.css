@@ -63,36 +63,3 @@
   border-radius: 9999px;
   margin: auto;
 }
-
-/* Color variants */
-.pill-graphic__pill.bg-blue-300 {
-  background-color: #93c5fd;
-}
-
-.pill-graphic__pill.bg-green-300 {
-  background-color: #86efac;
-}
-
-.pill-graphic__pill.bg-yellow-300 {
-  background-color: #fcd34d;
-}
-
-.pill-graphic__pill.bg-red-300 {
-  background-color: #fca5a5;
-}
-
-.pill-graphic__pill.bg-purple-300 {
-  background-color: #d8b4fe;
-}
-
-.pill-graphic__pill.bg-pink-300 {
-  background-color: #f472b6;
-}
-
-.pill-graphic__pill.bg-orange-300 {
-  background-color: #fdba74;
-}
-
-.pill-graphic__pill.bg-indigo-300 {
-  background-color: #a5b4fc;
-}

@@ -143,36 +143,3 @@
   color: #cbd5e1;
   margin: 0;
 }
-
-/* Color variants */
-.medication-footer__med-icon.bg-blue-300 {
-  background-color: #93c5fd;
-}
-
-.medication-footer__med-icon.bg-green-300 {
-  background-color: #86efac;
-}
-
-.medication-footer__med-icon.bg-yellow-300 {
-  background-color: #fcd34d;
-}
-
-.medication-footer__med-icon.bg-red-300 {
-  background-color: #fca5a5;
-}
-
-.medication-footer__med-icon.bg-purple-300 {
-  background-color: #d8b4fe;
-}
-
-.medication-footer__med-icon.bg-pink-300 {
-  background-color: #f472b6;
-}
-
-.medication-footer__med-icon.bg-orange-300 {
-  background-color: #fdba74;
-}
-
-.medication-footer__med-icon.bg-indigo-300 {
-  background-color: #a5b4fc;
-}

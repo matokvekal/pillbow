@@ -439,6 +439,30 @@
   border: 1px solid #fcd34d;
 }
 
+.inactive-pillbox-card__dismiss-refill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  margin-left: 0.25rem;
+  padding: 0;
+  background: rgba(180, 83, 9, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: #b45309;
+  font-size: 0.6rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.inactive-pillbox-card__dismiss-refill:hover {
+  background: rgba(180, 83, 9, 0.2);
+  transform: scale(1.1);
+}
+
 .inactive-pillbox-card--ending-soon {
   border-top: 2px solid #f59e0b;
 }

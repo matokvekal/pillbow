@@ -4,9 +4,10 @@ import "./AppHeader.css";
 
 interface AppHeaderProps {
   onMenuClick: () => void;
+  onTodayClick?: () => void;
 }
 
-export const AppHeader: React.FC<AppHeaderProps> = ({ onMenuClick }) => {
+export const AppHeader: React.FC<AppHeaderProps> = ({ onMenuClick, onTodayClick }) => {
   return (
     <header className="app-header">
       <div className="app-header__logo-container">
@@ -26,6 +27,16 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onMenuClick }) => {
 
       {/* User Switcher - for family member selection */}
       <UserSwitcher />
+
+      {onTodayClick && (
+        <button
+          onClick={onTodayClick}
+          className="app-header__today-btn"
+          aria-label="Go to today"
+        >
+          Today
+        </button>
+      )}
 
       <button
         onClick={() => onMenuClick()}

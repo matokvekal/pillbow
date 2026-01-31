@@ -12,6 +12,10 @@ interface UserStore {
     removeUser: (userId: string) => void;
     init: () => void;
 
+    // Google Auth Actions
+    syncGoogleUser: (googleProfile: any) => void;
+    clearGoogleUser: () => void;
+
     // Computed (call as function)
     getCurrentUser: () => UserProfile | undefined;
 }
@@ -148,5 +152,45 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
         // Clean up data
         localStorage.removeItem(`pillbow_data_${userId}`);
+    },
+
+    syncGoogleUser: (googleProfile: any) => {
+        set(state => {
+            const { users, currentUserId } = state;
+            const updatedUsers = users.map(user => {
+                if (user.id === currentUserId) {
+                    return {
+                        ...user,
+                        name: googleProfile.name,
+                        email: googleProfile.email,
+                        photoURL: googleProfile.photoURL,
+                        avatar: googleProfile.photoURL, // Overwrite avatar with Google photo
+                        isGoogleUser: true,
+                        googleId: googleProfile.id
+                    };
+                }
+                return user;
+            });
+            localStorage.setItem('pillbow_users', JSON.stringify(updatedUsers));
+            return { users: updatedUsers };
+        });
+    },
+
+    clearGoogleUser: () => {
+        set(state => {
+            const { users, currentUserId } = state;
+            const updatedUsers = users.map(user => {
+                if (user.id === currentUserId) {
+                    const { email, photoURL, isGoogleUser, googleId, ...rest } = user;
+                    return {
+                        ...rest,
+                        avatar: '👤' // Reset to default avatar
+                    };
+                }
+                return user;
+            });
+            localStorage.setItem('pillbow_users', JSON.stringify(updatedUsers));
+            return { users: updatedUsers };
+        });
     }
 }));

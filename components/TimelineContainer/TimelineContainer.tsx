@@ -21,6 +21,7 @@ interface TimelineContainerProps {
   onPillClick: (med: Medication) => void;
   onDayClick: (date: Date) => void;
   onCloseBox: () => void;
+  onDismissRefill?: (medIds: string[]) => void;
 }
 
 export const TimelineContainer: React.FC<TimelineContainerProps> = ({
@@ -33,29 +34,38 @@ export const TimelineContainer: React.FC<TimelineContainerProps> = ({
   onPillClick,
   onDayClick,
   onCloseBox,
+  onDismissRefill,
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Get medications for a specific day
   const getMedicationsForDay = (day: Date) => {
     return medications.filter((med) => {
-      if (!med.startDate || !med.endDate) return true;
-      const medDate = day.getTime();
-      const startDate = new Date(med.startDate).getTime();
-      const endDate = new Date(med.endDate).getTime();
-      return medDate >= startDate && medDate <= endDate;
+      if (!med.startDate || !med.endDate) {
+        // Still check day-of-week even without date range
+      } else {
+        const medDate = day.getTime();
+        const startDate = new Date(med.startDate).getTime();
+        const endDate = new Date(med.endDate).getTime();
+        if (medDate < startDate || medDate > endDate) return false;
+      }
+      // Day-of-week filter
+      if (med.daysOfWeek && med.daysOfWeek.length > 0) {
+        if (!med.daysOfWeek.includes(day.getDay())) return false;
+      }
+      return true;
     });
   };
 
   // Get data for the selected day (for the modal)
   const selectedDayData = selectedDate
     ? {
-        date: selectedDate,
-        dateStr: format(selectedDate, "yyyy-MM-dd"),
-        medications: getMedicationsForDay(selectedDate),
-        dayLog: dayLogs.get(format(selectedDate, "yyyy-MM-dd")),
-        isEditable: editableDates.has(format(selectedDate, "yyyy-MM-dd")),
-      }
+      date: selectedDate,
+      dateStr: format(selectedDate, "yyyy-MM-dd"),
+      medications: getMedicationsForDay(selectedDate),
+      dayLog: dayLogs.get(format(selectedDate, "yyyy-MM-dd")),
+      isEditable: editableDates.has(format(selectedDate, "yyyy-MM-dd")),
+    }
     : null;
 
   return (
@@ -83,6 +93,7 @@ export const TimelineContainer: React.FC<TimelineContainerProps> = ({
                 dayLog={dayLog}
                 isToday={isTodayDate}
                 onClick={() => onDayClick(day)}
+                onDismissRefill={onDismissRefill}
               />
             </div>
           );

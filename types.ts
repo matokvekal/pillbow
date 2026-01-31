@@ -19,28 +19,30 @@ export interface Medication {
   pillImageUrl?: string;
   startDate?: string;         // ISO date string
   endDate?: string;           // ISO date string
+  daysOfWeek?: number[];      // 0=Sun, 1=Mon, ..., 6=Sat. Undefined = every day
   notes?: string;
+  refillDismissed?: boolean;  // User dismissed the refill alert
 }
 
-// Shape definitions with icons - 10 shapes
+// Shape definitions with icons - clear medical emojis
 export const PILL_SHAPES = {
-  "round-small": { label: "Small Round", icon: "●", css: "pill-shape--round-small" },
-  "round-large": { label: "Large Round", icon: "⬤", css: "pill-shape--round-large" },
-  "oval": { label: "Oval", icon: "⬮", css: "pill-shape--oval" },
   "capsule": { label: "Capsule", icon: "💊", css: "pill-shape--capsule" },
-  "tablet": { label: "Tablet", icon: "▬", css: "pill-shape--tablet" },
-  "diamond": { label: "Diamond", icon: "◆", css: "pill-shape--diamond" },
-  "square": { label: "Square", icon: "■", css: "pill-shape--square" },
-  "triangle": { label: "Triangle", icon: "▲", css: "pill-shape--triangle" },
-  "heart": { label: "Heart", icon: "♥", css: "pill-shape--heart" },
-  "oblong": { label: "Oblong", icon: "⬭", css: "pill-shape--oblong" },
+  "syringe": { label: "Injection", icon: "💉", css: "pill-shape--syringe" },
+  "drops": { label: "Drops", icon: "💧", css: "pill-shape--drops" },
+  "vitamin": { label: "Vitamin", icon: "🧴", css: "pill-shape--vitamin" },
+  "stethoscope": { label: "Doctor", icon: "🩻", css: "pill-shape--stethoscope" },
+  "hospital": { label: "Hospital", icon: "🚑", css: "pill-shape--hospital" },
+  "tooth": { label: "Dental", icon: "🪥", css: "pill-shape--tooth" },
+  "heart": { label: "Heart", icon: "❤️", css: "pill-shape--heart" },
+  "herb": { label: "Herb", icon: "🌿", css: "pill-shape--herb" },
+  "eye": { label: "Eye", icon: "👁️", css: "pill-shape--eye" },
 } as const;
 
 export type PillShape = keyof typeof PILL_SHAPES;
 
 // Helper to get shape icon
 export const getShapeIcon = (shape?: string): string => {
-  if (!shape || !(shape in PILL_SHAPES)) return "●"; // Default to round-small
+  if (!shape || !(shape in PILL_SHAPES)) return "💊"; // Default to capsule
   return PILL_SHAPES[shape as PillShape].icon;
 };
 
@@ -66,6 +68,11 @@ export interface UserProfile {
   avatar?: string; // emoji or image URL
   color: string; // for visual distinction
   createdAt: string;
+  // Google auth fields
+  email?: string;
+  photoURL?: string;
+  isGoogleUser?: boolean;
+  googleId?: string;
 }
 
 // Complete app data structure (saved to JSON)

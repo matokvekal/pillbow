@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useUserStore } from "../../store/useUserStore";
+import { useModalStore } from "../../store/useModalStore";
 import { AddUserModal } from "./AddUserModal";
 import "./UserSwitcher.css";
 
@@ -47,26 +48,37 @@ const UserOption: React.FC<UserOptionProps> = ({
   relationship,
   isActive,
   onSelect,
-}) => (
-  <button
-    className={`user-option ${isActive ? "active" : ""}`}
-    onClick={() => onSelect(id)}
-  >
-    <span className="option-avatar">{avatar}</span>
-    <div className="option-info">
-      <span className="option-name">{name}</span>
-      <span className="option-role">
-        {relationship === "self" ? `(${SELF_LABEL})` : `(${relationship})`}
+}) => {
+  const isImageAvatar = avatar && (avatar.startsWith('http') || avatar.startsWith('/'));
+
+  return (
+    <button
+      className={`user-option ${isActive ? "active" : ""}`}
+      onClick={() => onSelect(id)}
+    >
+      <span className="option-avatar">
+        {isImageAvatar ? (
+          <img src={avatar} alt={name} className="option-avatar-img" />
+        ) : (
+          avatar
+        )}
       </span>
-    </div>
-    {isActive && <span className="check-icon">{CHECK_ICON}</span>}
-  </button>
-);
+      <div className="option-info">
+        <span className="option-name">{name}</span>
+        <span className="option-role">
+          {relationship === "self" ? `(${SELF_LABEL})` : `(${relationship})`}
+        </span>
+      </div>
+      {isActive && <span className="check-icon">{CHECK_ICON}</span>}
+    </button>
+  );
+};
 
 export const UserSwitcher: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const { users, currentUserId, switchUser, getCurrentUser } = useUserStore();
+  const { clearStack } = useModalStore();
   const currentUser = getCurrentUser();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -111,12 +123,21 @@ export const UserSwitcher: React.FC = () => {
     <div className="user-switcher" ref={dropdownRef}>
       <button
         className="current-user-btn"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          if (!isOpen) {
+            clearStack();
+          }
+          setIsOpen(!isOpen);
+        }}
         aria-label="Switch user"
         aria-expanded={isOpen}
       >
         <span className="user-avatar">
-          {currentUser?.avatar || DEFAULT_AVATAR}
+          {currentUser?.avatar && (currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('/')) ? (
+            <img src={currentUser.avatar} alt={currentUser.name} className="user-avatar-img" />
+          ) : (
+            currentUser?.avatar || DEFAULT_AVATAR
+          )}
         </span>
         <span className="user-name">{currentUser?.name || SELF_LABEL}</span>
         <ChevronIcon size={CHEVRON_SIZE} />
