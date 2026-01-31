@@ -7,7 +7,7 @@ import {
   DAYS_BACK,
   DAYS_FORWARD,
   TOTAL_DAYS,
-  MOCK_VITAMINS,
+  MOCK_VITAMINS
 } from "./constants";
 import { AppHeader } from "./components/AppHeader/AppHeader";
 import { TimelineContainer } from "./components/TimelineContainer/TimelineContainer";
@@ -15,9 +15,11 @@ import { ModalContainer } from "./components/ModalContainer/ModalContainer";
 import { AddMedication } from "./components/AddMedication/AddMedication";
 import { SettingsView } from "./components/SettingsView/SettingsView";
 import { TermsModal } from "./components/TermsModal/TermsModal";
+import { UpdateBanner } from "./components/UpdateBanner/UpdateBanner";
 import { useModalStore } from "./store/useModalStore";
 import { useUserStore } from "./store/useUserStore";
 import { useDayCardStore } from "./store/useDayCardStore";
+import { useRegisterSW } from "virtual:pwa-register/react";
 import {
   loadAppData,
   saveAppData,
@@ -26,7 +28,7 @@ import {
   updateDoseStatus,
   getDayLog,
   isDateEditable,
-  getMedicationsForDate,
+  getMedicationsForDate
 } from "./services/dataService";
 import { playNotificationSound } from "./utils/audioAndFileUtils";
 import "./styles/med-colors.css";
@@ -47,11 +49,30 @@ const App: React.FC = () => {
   const [updateKey, setUpdateKey] = useState(0); // Force re-render on dose status change
   const { pushModal } = useModalStore();
 
+  // PWA update handling with immediate prompt
+  const {
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker
+  } = useRegisterSW({
+    immediate: true,
+    onNeedRefresh() {
+      setNeedRefresh(true);
+    },
+    onOfflineReady() {
+      console.log("App ready to work offline");
+    }
+  });
+
+  // Handle update button click
+  const handleUpdate = () => {
+    updateServiceWorker(true);
+  };
+
   // Generate days array: 5 years back to 1 year forward
   const days = useCallback(() => {
     const today = startOfDay(new Date());
     return Array.from({ length: TOTAL_DAYS }, (_, i) =>
-      addDays(subDays(today, DAYS_BACK), i),
+      addDays(subDays(today, DAYS_BACK), i)
     );
   }, [])();
 
@@ -65,7 +86,8 @@ const App: React.FC = () => {
     setMedications(data.medications);
 
     // Show onboarding if empty and not dismissed before
-    const wasDismissed = localStorage.getItem(ONBOARDING_DISMISSED_KEY) === "true";
+    const wasDismissed =
+      localStorage.getItem(ONBOARDING_DISMISSED_KEY) === "true";
     if (data.medications.length === 0 && !wasDismissed) {
       setShowOnboarding(true);
     }
@@ -77,7 +99,7 @@ const App: React.FC = () => {
     const updatedData = {
       ...data,
       medications: MOCK_VITAMINS,
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: new Date().toISOString()
     };
     saveAppData(updatedData);
     setMedications(MOCK_VITAMINS);
@@ -114,7 +136,7 @@ const App: React.FC = () => {
     dateStr: string,
     medId: string,
     time: string,
-    status: DoseStatus,
+    status: DoseStatus
   ) => {
     // Only allow changes for today
     if (!isDateEditable(dateStr)) {
@@ -152,10 +174,10 @@ const App: React.FC = () => {
     const today = startOfDay(new Date());
     // Open today's box using modal stack
     pushModal({
-      type: 'day',
+      type: "day",
       data: {
         date: today,
-        medications: getMedicationsForDay(today),
+        medications: getMedicationsForDay(today)
       }
     });
     // Scroll to today
@@ -171,10 +193,10 @@ const App: React.FC = () => {
 
     // Open day using modal stack
     pushModal({
-      type: 'day',
+      type: "day",
       data: {
         date,
-        medications: getMedicationsForDay(date),
+        medications: getMedicationsForDay(date)
       }
     });
 
@@ -201,7 +223,7 @@ const App: React.FC = () => {
       startDate: medData.startDate || new Date().toISOString().split("T")[0],
       endDate: medData.endDate,
       daysOfWeek: medData.daysOfWeek,
-      notes: medData.notes,
+      notes: medData.notes
     };
 
     // Save to localStorage
@@ -267,7 +289,13 @@ const App: React.FC = () => {
 
   return (
     <div className="app-container">
-      <AppHeader onMenuClick={() => setView("settings")} onTodayClick={scrollToToday} />
+      {/* PWA Update Banner */}
+      {needRefresh && <UpdateBanner onUpdate={handleUpdate} />}
+
+      <AppHeader
+        onMenuClick={() => setView("settings")}
+        onTodayClick={scrollToToday}
+      />
 
       {view === "timeline" && (
         <>
@@ -278,9 +306,9 @@ const App: React.FC = () => {
             dayLogs={dayLogsMap}
             editableDates={editableDatesSet}
             onStatusChange={handleStatusChange}
-            onPillClick={() => { }}
+            onPillClick={() => {}}
             onDayClick={handleDayClick}
-            onCloseBox={() => { }}
+            onCloseBox={() => {}}
             onDismissRefill={handleDismissRefill}
           />
 
@@ -289,8 +317,19 @@ const App: React.FC = () => {
             onClick={() => setShowAddModal(true)}
             aria-label="Add medication"
           >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path
+                d="M12 5v14M5 12h14"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </>
@@ -333,8 +372,19 @@ const App: React.FC = () => {
               onClick={handleDismissOnboarding}
               aria-label="Close"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  d="M18 6L6 18M6 6l12 12"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
             <div className="onboarding-icon">💊</div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { format, isToday as checkIsToday, isPast, isFuture, startOfDay, differenceInDays, parseISO } from "date-fns";
 import classNames from "classnames";
-import { Medication, DoseStatus, DayLog } from "../../types";
+import { Medication, DoseStatus, DayLog, getShapeIcon } from "../../types";
 import "./InactivePillboxCard.css";
 
 // Check medication status for a given date
@@ -175,6 +175,21 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
                         getDoseStatusFromLog(dayLog, m.id, time) === DoseStatus.TAKEN
                       );
 
+                      // Build shape icons for this slot (deduplicated)
+                      const slotIcons: string[] = [];
+                      const seenShapes = new Set<string>();
+                      for (const m of medsInSlot) {
+                        const shape = m.shape || "capsule";
+                        if (!seenShapes.has(shape)) {
+                          seenShapes.add(shape);
+                          slotIcons.push(getShapeIcon(shape));
+                        }
+                      }
+                      // Truncate: if many slices or many icons, show fewer
+                      const maxIcons = allTimes.length >= 4 ? 1 : slotIcons.length >= 3 ? 2 : slotIcons.length;
+                      const visibleIcons = slotIcons.slice(0, maxIcons);
+                      const hasMore = slotIcons.length > maxIcons;
+
                       return (
                         <div
                           key={`${time}-${idx}`}
@@ -187,9 +202,12 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
                             })}
                             data-time-hour={hour}
                           >
-                            {/* Label Overlay (Time Only) */}
-                            <div className="timeline-slice-label">
-                              <span className="timeline-slice-time">{time}</span>
+                            {/* Shape icons on the slice */}
+                            <div className="timeline-slice-icons">
+                              {visibleIcons.map((icon, i) => (
+                                <span key={i} className="timeline-slice-icon">{icon}</span>
+                              ))}
+                              {hasMore && <span className="timeline-slice-icon-more">..</span>}
                             </div>
 
                             {/* Taken Checkmark (Small, at the side) */}
@@ -200,6 +218,11 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
                                 </svg>
                               </div>
                             )}
+                          </div>
+
+                          {/* Time label below */}
+                          <div className="timeline-slice-label">
+                            <span className="timeline-slice-time">{time}</span>
                           </div>
                         </div>
                       );
@@ -231,20 +254,25 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
                 </svg>
               </button>
 
-              {/* Pill Icon with Count */}
-              <div className="inactive-pillbox-card__pill-icon-wrapper">
-                <svg
-                  width="36"
-                  height="20"
-                  viewBox="0 0 36 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="inactive-pillbox-card__pill-svg"
-                >
-                  <rect width="36" height="20" rx="10" fill="var(--color-primary-100)" />
-                  <rect x="0.5" y="0.5" width="35" height="19" rx="9.5" stroke="var(--color-primary-200)" />
-                </svg>
-                <span className="inactive-pillbox-card__pill-count-text">
+              {/* Item type icon with count */}
+              <div className="inactive-pillbox-card__item-badge">
+                {(() => {
+                  // Get unique shape icons for this day
+                  const seen = new Set<string>();
+                  const icons: string[] = [];
+                  for (const med of medications) {
+                    const shape = med.shape || "capsule";
+                    if (!seen.has(shape)) {
+                      seen.add(shape);
+                      icons.push(getShapeIcon(shape));
+                    }
+                  }
+                  // Show up to 2 unique icons
+                  return icons.slice(0, 2).map((icon, i) => (
+                    <span key={i} className="inactive-pillbox-card__item-icon">{icon}</span>
+                  ));
+                })()}
+                <span className="inactive-pillbox-card__item-count">
                   {medications.length}
                 </span>
               </div>

@@ -10,6 +10,7 @@ import {
   FORM_TIME_PRESETS,
   DAY_LABELS,
   DAY_NAMES,
+  isEventShape,
 } from "../../constants/medFormConfig";
 import "./MedicationEditForm.css";
 
@@ -184,13 +185,15 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
 
       {/* Scrollable form content */}
       <div className="med-edit-form__content">
-        {/* Medicine Name */}
+        {/* Name */}
         <div className="med-edit-form__field">
-          <label className="med-edit-form__label">Medicine Name</label>
+          <label className="med-edit-form__label">
+            {isEventShape(medication.shape || "") ? "Event Name" : "Medicine Name"}
+          </label>
           <input
             type="text"
             className="med-edit-form__input"
-            placeholder="e.g. Aspirin"
+            placeholder={isEventShape(medication.shape || "") ? "e.g. Dentist Visit" : "e.g. Aspirin"}
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoComplete="off"

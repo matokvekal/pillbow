@@ -102,10 +102,10 @@
   display: flex;
   width: 100%;
   gap: 4px;
-  align-items: center;
-  height: 1.5rem;
-  /* Reduced height from 2.5rem */
+  align-items: flex-start;
+  height: 2rem;
   position: relative;
+  padding-top: 0.5rem;
 }
 
 /* Group for Slice + Label */
@@ -117,18 +117,20 @@
   /* Flex: 1 is applied inline */
 }
 
-/* The Angled Slice - Delicate Version */
+/* The Angled Slice */
 .timeline-slice {
   width: 100%;
-  height: 0.4rem;
-  /* Delicate height reduced */
+  height: 1.1rem;
   background: #e2e8f0;
-  /* Default fallback */
-  transform: skewX(-30deg);
-  border-radius: 2px;
+  transform: skewX(-20deg);
+  border-radius: 3px;
   position: relative;
   transition: all 0.3s ease;
   border-right: 1px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
 }
 
 /* Taken State - Green Border/Glow -> Just Checkmark */
@@ -138,23 +140,43 @@
   border-color: transparent;
 }
 
-/* Checkmark Indicator (Small circle, left side) */
-/* Checkmark Indicator (Small circle, lifted above line) */
+/* Shape icons inside the slice */
+.timeline-slice-icons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  transform: skewX(20deg);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.timeline-slice-icon {
+  font-size: 0.6rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.9));
+}
+
+.timeline-slice-icon-more {
+  font-size: 0.5rem;
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.5);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+/* Checkmark Indicator (Small circle, lifted above slice) */
 .timeline-slice-check {
   position: absolute;
-  top: -1.2rem;
-  /* Center on top edge */
-  left: 0;
-  transform: skewX(30deg);
-  /* Counter-skew */
-  width: 1rem;
-  height: 1rem;
+  top: -0.7rem;
+  right: 0;
+  transform: skewX(20deg);
+  width: 0.85rem;
+  height: 0.85rem;
   background-color: white;
   border-radius: 50%;
   color: #16a34a;
-  /* Green checkmark */
-  border: 1px solid #16a34a;
-  /* 1px solid color border */
+  border: 1.5px solid #16a34a;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,16 +189,11 @@
   height: 60%;
 }
 
-/* Label Overlay (Time Only) - Below the bar */
+/* Time label below the slice */
 .timeline-slice-label {
-  position: absolute;
-  top: 140%;
-  /* Push down to clear the bar */
-  left: 50%;
-  transform: translateX(-50%) skewX(30deg);
-  /* Counter-skew */
-  margin-top: 0.1rem;
-  font-size: 0.55rem;
+  text-align: center;
+  margin-top: 2px;
+  font-size: 0.5rem;
   font-weight: 800;
   white-space: nowrap;
   opacity: 0.85;
@@ -361,37 +378,29 @@
   z-index: 0;
 }
 
-/* Pill Icon Wrapper */
-.inactive-pillbox-card__pill-icon-wrapper {
-  position: relative;
+/* Item type badge (icons + count) */
+.inactive-pillbox-card__item-badge {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 20px;
+  gap: 1px;
+  padding: 2px 6px;
+  background: var(--color-indigo-100, #e0e7ff);
+  border: 1px solid var(--color-indigo-200, #c7d2fe);
+  border-radius: 10px;
+  min-height: 20px;
 }
 
-.inactive-pillbox-card__pill-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.inactive-pillbox-card__pill-svg rect {
-  /* Use a nice pastel color - adjusting variable if needed, using primary-100 as base */
-  fill: var(--color-indigo-100);
-  stroke: var(--color-indigo-200);
-}
-
-.inactive-pillbox-card__pill-count-text {
-  position: relative;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--color-indigo-600);
-  z-index: 1;
+.inactive-pillbox-card__item-icon {
+  font-size: 0.7rem;
   line-height: 1;
+}
+
+.inactive-pillbox-card__item-count {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--color-indigo-600, #4f46e5);
+  line-height: 1;
+  margin-left: 1px;
 }
 
 /* Future day styling */

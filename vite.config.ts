@@ -7,6 +7,16 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
     base: '/',
+    build: {
+      rollupOptions: {
+        output: {
+          // Add hashes to all files for cache busting
+          entryFileNames: 'assets/[name].[hash].js',
+          chunkFileNames: 'assets/[name].[hash].js',
+          assetFileNames: 'assets/[name].[hash].[ext]'
+        }
+      }
+    },
     server: {
       port: 3001,
       host: '0.0.0.0',
@@ -14,9 +24,13 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       VitePWA({
-        registerType: 'autoUpdate',
+        registerType: 'prompt',
+        includeAssets: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+          cleanupOutdatedCaches: true,
+          skipWaiting: false,
+          clientsClaim: false,
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

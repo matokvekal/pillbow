@@ -590,7 +590,10 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
           onClick={handleSave}
           disabled={!isValid}
         >
-          {isValid ? "Add Medicine" : "Enter medicine name"}
+          {isValid
+            ? (isEventShape(SHAPES[shapeIndex].id) ? "Add Event" : "Add Medicine")
+            : (isEventShape(SHAPES[shapeIndex].id) ? "Enter event name" : "Enter medicine name")
+          }
         </button>
       </div>
     </div>

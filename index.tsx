@@ -1,22 +1,36 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { registerSW } from "virtual:pwa-register";
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+// Register PWA service worker with auto-update
+const updateSW = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    // Force reload when new version is available
+    console.log("New version available! Reloading...");
+    updateSW(true);
+  },
+  onOfflineReady() {
+    console.log("App ready to work offline");
+  },
+  onRegisteredSW(swUrl, registration) {
+    console.log("Service Worker registered:", swUrl);
+    // Check for updates every 60 seconds
+    if (registration) {
+      setInterval(() => {
+        registration.update();
+      }, 60000);
+    }
+  },
+  onRegisterError(error) {
+    console.error("SW registration error", error);
+  }
+});
 
-// Register PWA service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(
-      (err) => {
-        console.warn('Service Worker registration failed:', err);
-      }
-    );
-  });
-}
-
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 if (!rootElement) {
-  throw new Error('Could not find root element to mount to');
+  throw new Error("Could not find root element to mount to");
 }
 
 const root = ReactDOM.createRoot(rootElement);

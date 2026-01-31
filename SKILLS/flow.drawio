@@ -1,0 +1,275 @@
+<mxfile host="app.diagrams.net" modified="2026-01-31T00:00:00.000Z" agent="PillBow Architecture" version="22.1.16">
+  <diagram name="PillBow Architecture" id="pillbow-architecture">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="PillBow - Program Architecture (PRD)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="660" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- ========== PRESENTATION LAYER ========== -->
+        <mxCell id="presentation-layer-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1840" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="presentation-label" value="PRESENTATION LAYER (React + TypeScript)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="400" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- App.tsx -->
+        <mxCell id="app-tsx" value="App.tsx&#xa;• Root Component&#xa;• Day Generation&#xa;• Data Loading&#xa;• View Routing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="140" width="200" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- AppHeader -->
+        <mxCell id="app-header" value="AppHeader&#xa;• Navigation&#xa;• Logo&#xa;• Menu Button" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="320" y="140" width="160" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- TimelineContainer -->
+        <mxCell id="timeline-container" value="TimelineContainer&#xa;• Vertical Scroll&#xa;• Day Cards (5yr back → 1yr forward)&#xa;• Date Visibility&#xa;• Expansion State" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="140" width="240" height="90" as="geometry" />
+        </mxCell>
+        
+        <!-- ActivePillboxCard -->
+        <mxCell id="active-card" value="ActivePillboxCard&#xa;• Today/Future Days&#xa;• Editable&#xa;• Time Slots (1-6)&#xa;• Medication List" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="800" y="140" width="150" height="90" as="geometry" />
+        </mxCell>
+        
+        <!-- InactivePillboxCard -->
+        <mxCell id="inactive-card" value="InactivePillboxCard&#xa;• Past Days&#xa;• Read-Only&#xa;• Status (Green/Orange/Red)&#xa;• Compact View" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="800" y="250" width="150" height="90" as="geometry" />
+        </mxCell>
+        
+        <!-- TimeSlotView -->
+        <mxCell id="timeslot-view" value="TimeSlotView&#xa;• 1-5 Time Slots&#xa;• Grid Layout&#xa;• Pill Graphics&#xa;• Status Toggle" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="980" y="140" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- ListView -->
+        <mxCell id="list-view" value="ListView&#xa;• 6+ Time Slots&#xa;• List Layout&#xa;• Scrollable" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="980" y="240" width="140" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- AddMedication -->
+        <mxCell id="add-medication" value="AddMedication&#xa;• Manual Flow&#xa;• AI Scan Flow&#xa;• Form Validation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="140" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- MedicationEdit -->
+        <mxCell id="medication-edit" value="MedicationEdit&#xa;• Change Flow&#xa;• Stop Flow&#xa;• Scope (Today/Forward)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="240" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- UserSwitcher -->
+        <mxCell id="user-switcher" value="UserSwitcher&#xa;• Multi-User Profiles&#xa;• Profile Switching&#xa;• Avatar Display" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="140" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- FloatingActionButtons -->
+        <mxCell id="fab" value="FloatingActionButtons&#xa;• Scan Medicine&#xa;• Scroll to Today&#xa;• Add Manual" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="240" width="160" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- DetailSheet/Modal -->
+        <mxCell id="modal" value="ModalContainer&#xa;• Modal Stack&#xa;• Overlay Management&#xa;• Z-Index Control" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="140" width="160" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- DataManagement -->
+        <mxCell id="data-mgmt" value="DataManagement&#xa;• Import/Export&#xa;• Backup&#xa;• Data Reset" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="240" width="160" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- ========== STATE MANAGEMENT LAYER ========== -->
+        <mxCell id="state-layer-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="400" width="1840" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="state-label" value="STATE MANAGEMENT LAYER (Zustand Stores)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="60" y="410" width="400" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- useUserStore -->
+        <mxCell id="user-store" value="useUserStore&#xa;• Current User ID&#xa;• User Switching&#xa;• Profile Management&#xa;• Load/Save User Data&#xa;• Namespace Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="460" width="250" height="130" as="geometry" />
+        </mxCell>
+        
+        <!-- useDayCardStore -->
+        <mxCell id="daycard-store" value="useDayCardStore&#xa;• Expanded Day State&#xa;• Pin Status&#xa;• Auto-Close Behavior&#xa;• Manage List Visibility" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="370" y="460" width="250" height="130" as="geometry" />
+        </mxCell>
+        
+        <!-- useTimeSlotStore -->
+        <mxCell id="timeslot-store" value="useTimeSlotStore&#xa;• Time Slot State&#xa;• Slot-Specific Data&#xa;• Expansion Controls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="660" y="460" width="250" height="130" as="geometry" />
+        </mxCell>
+        
+        <!-- useModalStore -->
+        <mxCell id="modal-store" value="useModalStore&#xa;• Modal Stack&#xa;• Open/Close State&#xa;• Modal Navigation&#xa;• Overlay Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="950" y="460" width="250" height="130" as="geometry" />
+        </mxCell>
+        
+        <!-- Global State Description -->
+        <mxCell id="state-desc" value="Zustand: Single Global Store&#xa;• Deterministic State Transitions&#xa;• No Props Drilling&#xa;• Easy Migration to React Native" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;fontColor=#333333;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="460" width="310" height="130" as="geometry" />
+        </mxCell>
+        
+        <!-- ========== SERVICE LAYER ========== -->
+        <mxCell id="service-layer-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="660" width="1840" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="service-label" value="SERVICE LAYER (Business Logic)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="60" y="670" width="400" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- dataService -->
+        <mxCell id="data-service" value="dataService.ts&#xa;• CRUD Operations&#xa;• Date Validation (isDateEditable)&#xa;• Schedule Generation&#xa;• applyScheduleEdit (Today/Forward)&#xa;• updateDoseStatus&#xa;• addMedication / deleteMedication&#xa;• Data Migration (migrateMedication)&#xa;• localStorage Abstraction" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="720" width="400" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- geminiService -->
+        <mxCell id="gemini-service" value="geminiService.ts&#xa;• AI Image Scanning&#xa;• Gemini API Integration&#xa;• Medicine Recognition&#xa;• Credit-Based (Optional)&#xa;• Error Handling & Fallback" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="520" y="720" width="300" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- audioAndFileUtils -->
+        <mxCell id="utils" value="audioAndFileUtils.ts&#xa;• Notification Scheduling&#xa;• Sound Playback&#xa;• File I/O Operations&#xa;• Import/Export JSON" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="860" y="720" width="280" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- constants -->
+        <mxCell id="constants" value="constants.tsx&#xa;• Mock Data&#xa;• Day Range Config&#xa;• Color Palette&#xa;• Notification Settings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="720" width="240" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- types -->
+        <mxCell id="types" value="types.ts&#xa;• TypeScript Interfaces&#xa;• Medication, DoseRecord&#xa;• DayLog, UserProfile&#xa;• AppData Structure" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="720" width="240" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- ========== DATA PERSISTENCE LAYER ========== -->
+        <mxCell id="data-layer-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="880" width="1840" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="data-label" value="DATA PERSISTENCE LAYER" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="60" y="890" width="400" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- localStorage -->
+        <mxCell id="localstorage" value="localStorage&#xa;• Key: pillbow_data&#xa;• User-Namespaced: pillbow_data_{userId}&#xa;• JSON Serialization&#xa;• Try-Catch Error Handling" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="940" width="380" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Data Structure -->
+        <mxCell id="data-structure" value="Data Structure&#xa;• medications[] - all meds with schedules&#xa;• dayLogs[] - daily dose records&#xa;• settings - user preferences&#xa;• lastUpdated - sync timestamp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="940" width="340" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Migration Path -->
+        <mxCell id="migration" value="Migration Path (Future)&#xa;• Replace localStorage → AsyncStorage (React Native)&#xa;• Replace localStorage → REST API (Backend)&#xa;• Data structure remains compatible&#xa;• Minimal refactoring required" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;align=left;spacingLeft=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="940" width="380" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- AI Server -->
+        <mxCell id="ai-server" value="AI Server (Optional)&#xa;• Gemini API&#xa;• Credit-Based&#xa;• Image → Medication JSON&#xa;• Error Fallback to Manual" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="940" width="260" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- ========== KEY WORKFLOWS ========== -->
+        <mxCell id="workflow-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=2;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1080" width="1840" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="workflow-label" value="KEY WORKFLOWS &amp; DATA FLOWS" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="60" y="1090" width="400" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="workflow-1" value="1. User Switch: UserSwitcher → useUserStore.switchUser() → Save current to localStorage → Load new user → Re-render" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1130" width="550" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="workflow-2" value="2. Add Med (Manual): AddMedication → dataService.addMedication() → Generate DayLogs → Save to localStorage → UI refresh" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="660" y="1130" width="550" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="workflow-3" value="3. Mark Dose: TimeSlotView.onStatusChange() → dataService.updateDoseStatus() → Update DayLog → localStorage → updateKey++" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="1130" width="550" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- ========== ARROWS ========== -->
+        <!-- App to TimelineContainer -->
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="app-tsx" target="timeline-container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- TimelineContainer to Cards -->
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="timeline-container" target="active-card">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="timeline-container" target="inactive-card">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Active Card to TimeSlot/List -->
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="active-card" target="timeslot-view">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="active-card" target="list-view">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Components to Stores -->
+        <mxCell id="arrow6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#0066CC;dashed=1;" edge="1" parent="1" source="user-switcher" target="user-store">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#0066CC;dashed=1;" edge="1" parent="1" source="timeline-container" target="daycard-store">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Stores to Services -->
+        <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#00CC66;dashed=1;" edge="1" parent="1" source="user-store" target="data-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#00CC66;dashed=1;" edge="1" parent="1" source="daycard-store" target="data-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Services to localStorage -->
+        <mxCell id="arrow10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;strokeColor=#FF6600;" edge="1" parent="1" source="data-service" target="localstorage">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- AI Service -->
+        <mxCell id="arrow11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#CC9900;dashed=1;" edge="1" parent="1" source="gemini-service" target="ai-server">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Legend -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="940" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="LEGEND" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1600" y="945" width="280" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend1" value="──── Component Hierarchy" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="970" width="140" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="legend2" value="- - - State Connection" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#0066CC;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="987" width="120" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="legend3" value="──── Data Flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#FF6600;" vertex="1" parent="1">
+          <mxGeometry x="1760" y="970" width="100" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="legend4" value="- - - External API" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#CC9900;" vertex="1" parent="1">
+          <mxGeometry x="1760" y="987" width="100" height="15" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
