@@ -82,16 +82,15 @@
 /* Note: Overlay component - position: absolute is necessary for dropdowns to appear */
 /* above other content without affecting the parent header's flexbox layout */
 .user-dropdown {
-  /* Position as overlay - breaks out of header flow */
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 30%;
-  transform: translateX(-50%);
+  /* Fixed position so dropdown is relative to viewport, not parent */
+  position: fixed;
+  /* top is set via inline style from button ref */
+  left: 1rem;
+  right: 1rem;
 
-  /* Layout - Wide with consistent spacing from edges */
-  width: calc(100vw - 2rem);
+  /* Layout - centered with max-width */
   max-width: 28rem;
-  min-width: 22rem;
+  margin: 0 auto;
 
   /* Appearance */
   background: white;
@@ -115,12 +114,12 @@
 @keyframes dropdownSlideIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-12px);
+    transform: translateY(-12px);
   }
 
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 }
 
@@ -563,9 +562,9 @@
 
   /* Dropdown adjustments */
   .user-dropdown {
-    width: calc(100vw - 1.5rem);
+    left: 0.75rem;
+    right: 0.75rem;
     max-width: none;
-    min-width: auto;
   }
 
   .user-name {

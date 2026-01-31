@@ -29,6 +29,7 @@ State management uses Zustand stores in `store/`:
 - **useUserStore** - multi-user profile switching with Google auth support, saves/loads per-user data. Calls `window.location.reload()` on user switch to avoid stale data.
 - **useDayCardStore** - UI expansion state for day cards (expandedSlot, isManageListOpen)
 - **useModalStore** - modal stack management (pushModal/popModal)
+- **useReminderStore** - reminder bell state: enabled, leadTimeMinutes (10/20/30/60), notifiedDoses Set, modal open/close. Persists to `pillbow_reminders` in localStorage.
 
 `App.tsx` is the root component that generates the day list, loads data, and forces re-renders via an `updateKey` state counter after data mutations.
 
@@ -52,13 +53,14 @@ The date boundary (`isDateEditable()` in dataService) is critical: past dates ca
 
 `PILL_SHAPES` in types.ts uses medical emoji icons: capsule (💊), syringe (💉), drops (💧), vitamin (🧴), stethoscope (🩻), hospital (🚑), tooth (🪥), heart (❤️), herb (🌿), eye (👁️).
 
-Some shapes represent events rather than medications. `constants/medFormConfig.ts` defines `EVENT_SHAPE_IDS = ["hospital", "stethoscope", "tooth"]` — these hide the strength field in forms since they're appointments, not pills. Use `isEventShape(shapeId)` helper to check. All UI labels must adapt: "Medicine Name" / "Add Medicine" for pills, "Event Name" / "Add Event" for event shapes. This applies to ManualAddFlow, MedicationEditForm, and any future forms.
+Some shapes represent events rather than medications. `constants/medFormConfig.ts` defines `EVENT_SHAPE_IDS = ["hospital", "stethoscope", "tooth", "vet"]` — these hide the strength field in forms since they're appointments, not pills. Use `isEventShape(shapeId)` helper to check. All UI labels must adapt: "Medicine Name" / "Add Medicine" for pills, "Event Name" / "Add Event" for event shapes. This applies to ManualAddFlow, MedicationEditForm, and any future forms.
 
 ### Key Services
 
 - `services/dataService.ts` - all CRUD operations, localStorage, date logic, medication migration
 - `services/geminiService.ts` - Google Gemini API for medication image scanning (requires `GEMINI_API_KEY` in `.env.local`)
 - `services/googleAuthService.ts` - Google auth simulation via localStorage (demo; production would use Google Identity Services)
+- `services/reminderService.ts` - `getDueReminders()` pure logic: checks today's medication times vs current time within a configurable lead window
 
 ### Form Configuration
 
@@ -161,3 +163,89 @@ Users were seeing old cached versions of the PWA app after deployments. They had
 **How it works:** SW detects new version → `needRefresh` becomes true → banner appears → user clicks → page reloads with latest code. No manual intervention needed.
 
 **Testing:** Build twice with a visible change between builds; preview server will show update banner within 60s.
+
+---
+
+## PWA Mobile Update Fix (January 31, 2026) - v0.0.3
+
+### Problem
+
+Mobile devices were not receiving PWA updates even after new deployments to Netlify. Users had to manually clear site data to see new versions.
+
+### Root Cause
+
+**Duplicate service worker registrations** causing conflicts:
+
+1. [index.tsx](index.tsx) - Had `registerSW()` with auto-reload on detection
+2. [App.tsx](App.tsx) - Had `useRegisterSW()` hook with update banner UI
+
+Both registrations competed, preventing proper update flow on mobile devices.
+
+### Solution Implemented
+
+**1. Removed Duplicate Registration** ([index.tsx](index.tsx))
+
+- Deleted entire `registerSW()` call and logic from index.tsx
+- Added comment: "PWA service worker registration is handled in App.tsx via useRegisterSW hook"
+- Now only App.tsx manages service worker lifecycle
+
+**2. Version Bump** ([package.json](package.json))
+
+- `0.0.2` → `0.0.3`
+
+**3. Documentation** ([MOBILE_UPDATE_FIX.md](MOBILE_UPDATE_FIX.md))
+
+- Created troubleshooting guide for mobile PWA updates
+- Includes immediate fixes (clear site data)
+- Deployment verification steps
+- Emergency service worker unregistration script
+
+**How it works now:** Only one registration path (App.tsx) → service worker detects updates → banner appears consistently → user clicks "Update Now" → clean reload with new version.
+
+**Mobile fix:** Users must clear site data once on their phone, then future updates will work automatically via the update banner.
+
+---
+
+## Medication Reminder Notifications (January 31, 2026)
+
+### Overview
+
+Bell icon in the header lets users enable medication reminders. Checks every 30 seconds for upcoming doses and alerts via sound, browser notification, and in-app toast.
+
+### Architecture
+
+- **`store/useReminderStore.ts`** — Zustand store for reminder state. Persists `enabled` and `leadTimeMinutes` to localStorage (`pillbow_reminders` key). `notifiedDoses` Set is session-only (resets on reload).
+- **`services/reminderService.ts`** — Pure logic. `getDueReminders()` checks today's medications against current time. Returns doses where `now` is within `[doseTime - leadMinutes, doseTime)` and dose is still Pending.
+- **`hooks/useReminderScheduler.ts`** — React hook used in App.tsx. Runs a 30-second `setInterval` when enabled. Triggers sound via `playNotificationSound()`, browser `Notification` when tab unfocused, and in-app toast when focused. Clears notified set at midnight.
+
+### UI Components
+
+- **`components/ReminderBell/`** — Circular button in AppHeader between UserSwitcher and Today button. Opacity 0.5 + gray border when inactive, full opacity + red border when active.
+- **`components/ReminderModal/`** — Config overlay. Enable/disable toggle, lead time picker (10/20/30/60 min). Requests browser notification permission on enable (user gesture).
+- **`components/ReminderToast/`** — Fixed top-center dark toast. Shows medication name + time. Auto-dismisses after 8 seconds.
+
+### Header Layout
+
+```
+[ PillBow Logo ] [ UserSwitcher ] [ Bell ] [ Today ] [ Settings ]
+```
+
+### Integration Points
+
+- **App.tsx**: `useReminderScheduler(medications)` hook + `<ReminderModal />` + `<ReminderToast />` rendering
+- **AppHeader.tsx**: `<ReminderBell />` between UserSwitcher and Today button
+
+### Notification Behavior
+
+| Condition | Sound | Browser Notification | In-app Toast |
+|-----------|-------|---------------------|--------------|
+| Tab focused | Yes | No | Yes |
+| Tab backgrounded | Yes | Yes (if permitted) | No |
+| App closed | No | No | No |
+
+### Battery / Memory
+
+- Single 30s `setInterval`, cleared when disabled
+- No web workers, no polling APIs, no DOM observers
+- `notifiedDoses` Set: max ~20 entries/day
+- Reminder settings are per-device (survive user switch, since notification permissions are per-browser)

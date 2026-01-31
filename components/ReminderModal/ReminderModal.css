@@ -1,0 +1,212 @@
+/* ========================================
+   REMINDER MODAL - CONFIG OVERLAY
+   ======================================== */
+
+.reminder-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 200;
+  animation: reminder-fade-in 0.2s ease-out;
+}
+
+@keyframes reminder-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.reminder-modal {
+  background: white;
+  border-radius: var(--radius-2xl, 1.25rem);
+  box-shadow: var(--shadow-2xl, 0 25px 50px -12px rgba(0, 0, 0, 0.25));
+  width: 100%;
+  max-width: 22rem;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+  animation: reminder-slide-up 0.3s ease-out;
+}
+
+@keyframes reminder-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Close button */
+.reminder-modal__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--color-gray-100, #f1f5f9);
+  border: 2px solid var(--color-border-default, #e2e8f0);
+  border-radius: 50%;
+  color: var(--color-text-secondary, #64748b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.reminder-modal__close:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.reminder-modal__close:active {
+  transform: scale(0.95);
+}
+
+/* Title */
+.reminder-modal__title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-text-primary, #1e293b);
+  margin: 0;
+  padding-right: 2.5rem;
+}
+
+/* Enable/Disable toggle */
+.reminder-modal__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-gray-50, #f8fafc);
+  border: 2px solid var(--color-border-default, #e2e8f0);
+  border-radius: var(--radius-lg, 0.75rem);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
+}
+
+.reminder-modal__toggle:hover {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.reminder-modal__toggle:active {
+  transform: scale(0.98);
+}
+
+.reminder-modal__toggle--on {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.reminder-modal__toggle--on:hover {
+  background: #fee2e2;
+  border-color: #dc2626;
+}
+
+.reminder-modal__toggle-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.reminder-modal__toggle-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #1e293b);
+}
+
+/* Lead time options */
+.reminder-modal__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reminder-modal__options-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.reminder-modal__options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.reminder-modal__option {
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--color-border-default, #e2e8f0);
+  border-radius: var(--radius-lg, 0.75rem);
+  background: white;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--color-text-primary, #1e293b);
+  cursor: pointer;
+  transition: all 0.15s;
+  min-height: 3rem;
+}
+
+.reminder-modal__option:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.reminder-modal__option:active {
+  transform: scale(0.97);
+}
+
+.reminder-modal__option--selected {
+  background: var(--color-primary-50, #eff6ff);
+  border-color: var(--color-primary-500, #3b82f6);
+  color: var(--color-primary-700, #1d4ed8);
+  box-shadow: 0 0 0 1px var(--color-primary-500, #3b82f6);
+}
+
+.reminder-modal__option--selected:hover {
+  background: var(--color-primary-100, #dbeafe);
+}
+
+/* Permission notice */
+.reminder-modal__notice {
+  font-size: 0.8rem;
+  color: var(--color-text-tertiary, #94a3b8);
+  margin: 0;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 375px) {
+  .reminder-modal {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+
+  .reminder-modal__title {
+    font-size: 1.25rem;
+  }
+
+  .reminder-modal__option {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}

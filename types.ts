@@ -36,6 +36,7 @@ export const PILL_SHAPES = {
   "heart": { label: "Heart", icon: "❤️", css: "pill-shape--heart" },
   "herb": { label: "Herb", icon: "🌿", css: "pill-shape--herb" },
   "eye": { label: "Eye", icon: "👁️", css: "pill-shape--eye" },
+  "vet": { label: "Vet", icon: "🐾", css: "pill-shape--vet" },
 } as const;
 
 export type PillShape = keyof typeof PILL_SHAPES;

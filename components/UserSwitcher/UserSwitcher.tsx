@@ -81,6 +81,7 @@ export const UserSwitcher: React.FC = () => {
   const { clearStack } = useModalStore();
   const currentUser = getCurrentUser();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   /**
    * Closes dropdown when clicking outside
@@ -122,6 +123,7 @@ export const UserSwitcher: React.FC = () => {
   return (
     <div className="user-switcher" ref={dropdownRef}>
       <button
+        ref={buttonRef}
         className="current-user-btn"
         onClick={() => {
           if (!isOpen) {
@@ -144,7 +146,15 @@ export const UserSwitcher: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="user-dropdown" role="menu">
+        <div
+          className="user-dropdown"
+          role="menu"
+          style={{
+            top: buttonRef.current
+              ? buttonRef.current.getBoundingClientRect().bottom + 8
+              : 0,
+          }}
+        >
           {users.map((user) => (
             <UserOption
               key={user.id}

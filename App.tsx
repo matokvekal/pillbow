@@ -16,6 +16,8 @@ import { AddMedication } from "./components/AddMedication/AddMedication";
 import { SettingsView } from "./components/SettingsView/SettingsView";
 import { TermsModal } from "./components/TermsModal/TermsModal";
 import { UpdateBanner } from "./components/UpdateBanner/UpdateBanner";
+import { ReminderModal } from "./components/ReminderModal/ReminderModal";
+import { ReminderToast } from "./components/ReminderToast/ReminderToast";
 import { useModalStore } from "./store/useModalStore";
 import { useUserStore } from "./store/useUserStore";
 import { useDayCardStore } from "./store/useDayCardStore";
@@ -31,6 +33,7 @@ import {
   getMedicationsForDate
 } from "./services/dataService";
 import { playNotificationSound } from "./utils/audioAndFileUtils";
+import { useReminderScheduler } from "./hooks/useReminderScheduler";
 import "./styles/med-colors.css";
 import "./App.css";
 
@@ -48,6 +51,9 @@ const App: React.FC = () => {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [updateKey, setUpdateKey] = useState(0); // Force re-render on dose status change
   const { pushModal } = useModalStore();
+
+  // Medication reminder scheduler
+  const { activeToast, dismissToast } = useReminderScheduler(medications);
 
   // PWA update handling with immediate prompt
   const {
@@ -443,6 +449,19 @@ const App: React.FC = () => {
             setTermsAccepted(true);
             setShowTermsModal(false);
           }}
+        />
+      )}
+
+      {/* Reminder Config Modal */}
+      <ReminderModal />
+
+      {/* Reminder Toast */}
+      {activeToast && (
+        <ReminderToast
+          medicationName={activeToast.medicationName}
+          time={activeToast.time}
+          minutesUntil={activeToast.minutesUntil}
+          onDismiss={dismissToast}
         />
       )}
     </div>

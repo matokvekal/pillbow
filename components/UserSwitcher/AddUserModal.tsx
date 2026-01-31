@@ -13,7 +13,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
     const [relationship, setRelationship] = useState<UserProfile['relationship']>('other');
     const [avatar, setAvatar] = useState('👤');
 
-    const avatarOptions = ['👤', '👩', '👨', '👵', '👴', '👧', '👦', '🧒', '👶'];
+    const avatarOptions = ['👤', '👩', '👨', '👵', '👴', '👧', '👦', '🧒', '👶', '🐶', '🐱', '🐦', '🐟'];
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

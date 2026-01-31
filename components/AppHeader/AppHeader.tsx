@@ -1,5 +1,6 @@
 import React from "react";
 import { UserSwitcher } from "../UserSwitcher/UserSwitcher";
+import { ReminderBell } from "../ReminderBell/ReminderBell";
 import "./AppHeader.css";
 
 interface AppHeaderProps {
@@ -27,6 +28,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onMenuClick, onTodayClick 
 
       {/* User Switcher - for family member selection */}
       <UserSwitcher />
+
+      <ReminderBell />
 
       {onTodayClick && (
         <button
