@@ -9,6 +9,7 @@ import {
   FORM_DURATIONS as DURATIONS,
   FORM_TIME_PRESETS as TIME_PRESETS,
   DAY_LABELS,
+  DAY_NAMES,
   isEventShape,
 } from "../../constants/medFormConfig";
 
@@ -104,6 +105,13 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
     });
   };
 
+  // Toggle day selection
+  const toggleDay = (day: number) => {
+    setSelectedDays(prev =>
+      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort()
+    );
+  };
+
   // Add custom time
   const addCustomTime = () => {
     if (customTime && !selectedTimes.includes(customTime)) {
@@ -136,6 +144,7 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
       shape: SHAPES[shapeIndex].id,
       startDate,
       endDate,
+      daysOfWeek: selectedDays.length > 0 ? selectedDays : undefined,
       instructions: "",
     };
 
@@ -453,6 +462,37 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Days of Week - only for medicines */}
+        {!isEventShape(SHAPES[shapeIndex].id) && (
+          <div className="manual-add__field">
+            <label className="manual-add__label">Which days?</label>
+            <p className="manual-add__hint">Leave empty for every day</p>
+            <div className="manual-add__day-picker">
+              {DAY_LABELS.map((label, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className={`manual-add__day-btn ${selectedDays.includes(index) ? "manual-add__day-btn--active" : ""}`}
+                  onClick={() => toggleDay(index)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="manual-add__day-summary">
+              {selectedDays.length === 0 ? (
+                <span className="manual-add__day-chip manual-add__day-chip--every">Every day</span>
+              ) : (
+                selectedDays.map(d => (
+                  <span key={d} className="manual-add__day-chip">
+                    {DAY_NAMES[d]}
+                  </span>
+                ))
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Start Date - only for medicines */}
         {!isEventShape(SHAPES[shapeIndex].id) && (
