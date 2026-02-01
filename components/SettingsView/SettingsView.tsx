@@ -5,7 +5,10 @@ import { useModalStore } from "../../store/useModalStore";
 import {
   loadAppData,
   saveAppData,
-  clearAllData
+  clearAllData,
+  exportData,
+  validateImportData,
+  restoreData,
 } from "../../services/dataService";
 import {
   isGoogleAuthenticated,
@@ -44,13 +47,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
   const handleExport = () => {
     try {
-      const appData = loadAppData();
-      const dataStr = JSON.stringify(appData, null, 2);
+      const exported = exportData(currentUser);
+      const dataStr = JSON.stringify(exported, null, 2);
       const blob = new Blob([dataStr], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `pillbow-backup-${new Date().toISOString().split("T")[0]}.json`;
+      const safeName = (currentUser?.name || "user").replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
+      link.download = `pillbow-${safeName}-${new Date().toISOString().split("T")[0]}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -99,37 +103,29 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     }
   };
 
-  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRestore = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
-    const confirmed = window.confirm(
-      "⚠️ This will REPLACE all your current data.\n\nContinue?"
-    );
-    if (!confirmed) {
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      return;
-    }
 
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const importedData = JSON.parse(e.target?.result as string);
-        // Validate all required fields
-        if (
-          !importedData.medications ||
-          !Array.isArray(importedData.medications) ||
-          !importedData.dayLogs ||
-          !Array.isArray(importedData.dayLogs) ||
-          !importedData.settings ||
-          typeof importedData.settings !== "object"
-        ) {
-          throw new Error("Invalid backup file - missing required fields");
+        const parsed = JSON.parse(e.target?.result as string);
+        const validation = validateImportData(parsed);
+        if (!validation.valid) {
+          alert(`Invalid backup file: ${validation.error}`);
+          return;
         }
-        saveAppData(importedData);
+
+        const confirmed = window.confirm(
+          "This will DELETE your current data and replace it with the backup.\n\nAre you sure?"
+        );
+        if (!confirmed) return;
+
+        restoreData(parsed);
         window.location.reload();
-      } catch (error) {
-        alert("❌ Invalid backup file. Make sure it's a valid PillBow backup.");
+      } catch {
+        alert("Invalid backup file. Make sure it's a valid PillBow backup.");
       } finally {
         if (fileInputRef.current) fileInputRef.current.value = "";
       }
@@ -291,10 +287,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               onClick={() => fileInputRef.current?.click()}
             >
               <div className="data-card__icon-wrap data-card__icon-wrap--green">
-                <span>📥</span>
+                <span>🔄</span>
               </div>
               <div className="data-card__content">
-                <span className="data-card__title">Import</span>
+                <span className="data-card__title">Restore</span>
               </div>
             </button>
 
@@ -327,7 +323,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             type="file"
             accept=".json"
             style={{ display: "none" }}
-            onChange={handleImport}
+            onChange={handleRestore}
           />
         </div>
 

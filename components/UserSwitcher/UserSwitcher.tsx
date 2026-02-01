@@ -30,6 +30,15 @@ const ChevronIcon: React.FC<{ size: number }> = ({ size }) => (
 );
 
 /**
+ * TrashIcon component - SVG trash icon for delete button
+ */
+const TrashIcon: React.FC = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+/**
  * UserOption component - Individual user option in dropdown
  */
 interface UserOptionProps {
@@ -39,6 +48,7 @@ interface UserOptionProps {
   relationship: string;
   isActive: boolean;
   onSelect: (userId: string) => void;
+  onDelete?: (userId: string) => void;
 }
 
 const UserOption: React.FC<UserOptionProps> = ({
@@ -48,36 +58,51 @@ const UserOption: React.FC<UserOptionProps> = ({
   relationship,
   isActive,
   onSelect,
+  onDelete,
 }) => {
   const isImageAvatar = avatar && (avatar.startsWith('http') || avatar.startsWith('/'));
 
   return (
-    <button
-      className={`user-option ${isActive ? "active" : ""}`}
-      onClick={() => onSelect(id)}
-    >
-      <span className="option-avatar">
-        {isImageAvatar ? (
-          <img src={avatar} alt={name} className="option-avatar-img" />
-        ) : (
-          avatar
-        )}
-      </span>
-      <div className="option-info">
-        <span className="option-name">{name}</span>
-        <span className="option-role">
-          {relationship === "self" ? `(${SELF_LABEL})` : `(${relationship})`}
+    <div className="user-option-wrapper">
+      <button
+        className={`user-option ${isActive ? "active" : ""}`}
+        onClick={() => onSelect(id)}
+      >
+        <span className="option-avatar">
+          {isImageAvatar ? (
+            <img src={avatar} alt={name} className="option-avatar-img" />
+          ) : (
+            avatar
+          )}
         </span>
-      </div>
-      {isActive && <span className="check-icon">{CHECK_ICON}</span>}
-    </button>
+        <div className="option-info">
+          <span className="option-name">{name}</span>
+          <span className="option-role">
+            {relationship === "self" ? `(${SELF_LABEL})` : `(${relationship})`}
+          </span>
+        </div>
+        {isActive && <span className="check-icon">{CHECK_ICON}</span>}
+      </button>
+      {onDelete && !isActive && (
+        <button
+          className="delete-user-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(id);
+          }}
+          aria-label={`Delete ${name}`}
+        >
+          <TrashIcon />
+        </button>
+      )}
+    </div>
   );
 };
 
 export const UserSwitcher: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const { users, currentUserId, switchUser, getCurrentUser } = useUserStore();
+  const { users, currentUserId, switchUser, removeUser, getCurrentUser } = useUserStore();
   const { clearStack } = useModalStore();
   const currentUser = getCurrentUser();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -110,6 +135,24 @@ export const UserSwitcher: React.FC = () => {
       setIsOpen(false);
     },
     [switchUser],
+  );
+
+  /**
+   * Handles deleting a family member
+   */
+  const handleDeleteUser = useCallback(
+    (userId: string) => {
+      const user = users.find((u) => u.id === userId);
+      if (!user) return;
+      const confirmed = window.confirm(
+        `Remove ${user.name}?\n\nThis will delete all their medications and history.`
+      );
+      if (confirmed) {
+        removeUser(userId);
+        setIsOpen(false);
+      }
+    },
+    [users, removeUser],
   );
 
   /**
@@ -160,10 +203,11 @@ export const UserSwitcher: React.FC = () => {
               key={user.id}
               id={user.id}
               name={user.name}
-              avatar={user.avatar}
+              avatar={user.avatar || DEFAULT_AVATAR}
               relationship={user.relationship}
               isActive={user.id === currentUserId}
               onSelect={handleSelectUser}
+              onDelete={users.length > 1 ? handleDeleteUser : undefined}
             />
           ))}
 

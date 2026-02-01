@@ -185,8 +185,8 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
                           slotIcons.push(getShapeIcon(shape));
                         }
                       }
-                      // Truncate: if many slices or many icons, show fewer
-                      const maxIcons = allTimes.length >= 4 ? 1 : slotIcons.length >= 3 ? 2 : slotIcons.length;
+                      // Truncate: if more than 2 icon types, show 2 + ".."; otherwise show all
+                      const maxIcons = slotIcons.length > 2 ? 2 : slotIcons.length;
                       const visibleIcons = slotIcons.slice(0, maxIcons);
                       const hasMore = slotIcons.length > maxIcons;
 
@@ -267,10 +267,15 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
                       icons.push(getShapeIcon(shape));
                     }
                   }
-                  // Show up to 2 unique icons
-                  return icons.slice(0, 2).map((icon, i) => (
-                    <span key={i} className="inactive-pillbox-card__item-icon">{icon}</span>
-                  ));
+                  // Show up to 2 unique icons, add "..." if more
+                  return (
+                    <>
+                      {icons.slice(0, 2).map((icon, i) => (
+                        <span key={i} className="inactive-pillbox-card__item-icon">{icon}</span>
+                      ))}
+                      {icons.length > 2 && <span className="inactive-pillbox-card__item-more">...</span>}
+                    </>
+                  );
                 })()}
                 <span className="inactive-pillbox-card__item-count">
                   {medications.length}

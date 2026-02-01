@@ -12,7 +12,7 @@
  * 3. Make all methods async (they already return promises-compatible values)
  */
 
-import { AppData, Medication, DayLog, DoseRecord, DoseStatus, AppSettings } from '../types';
+import { AppData, Medication, DayLog, DoseRecord, DoseStatus, AppSettings, ExportedData, ExportMetadata, UserProfile } from '../types';
 
 const STORAGE_KEY = 'pillbow_app_data';
 
@@ -244,24 +244,65 @@ export const updateSettings = (updates: Partial<AppSettings>): void => {
   saveAppData(data);
 };
 
-// Export data as JSON string (for backup)
-export const exportData = (): string => {
+// Export data as JSON string with metadata (for backup)
+export const exportData = (userProfile?: UserProfile): ExportedData => {
   const data = loadAppData();
-  return JSON.stringify(data, null, 2);
+  const exported: ExportedData = {
+    metadata: {
+      formatVersion: 1,
+      userId: userProfile?.id || 'unknown',
+      userName: userProfile?.name || 'User',
+      exportDate: new Date().toISOString(),
+      appVersion: '0.0.3',
+    },
+    userProfile: userProfile || {
+      id: 'unknown',
+      name: 'User',
+      relationship: 'self',
+      avatar: '👤',
+      color: 'blue',
+      createdAt: new Date().toISOString(),
+    },
+    medications: data.medications,
+    dayLogs: data.dayLogs,
+    settings: data.settings,
+  };
+  return exported;
 };
 
-// Import data from JSON string (for restore)
-export const importData = (jsonStr: string): boolean => {
-  try {
-    const data = JSON.parse(jsonStr) as AppData;
-    if (data.medications && data.dayLogs && data.settings) {
-      saveAppData(data);
-      return true;
-    }
-    return false;
-  } catch {
-    return false;
+// Validate an imported file has the required structure
+export const validateImportData = (data: any): { valid: boolean; error?: string } => {
+  if (!data || typeof data !== 'object') {
+    return { valid: false, error: 'File is not valid JSON' };
   }
+  // Support both new format (with metadata) and legacy format
+  const meds = data.medications;
+  const logs = data.dayLogs;
+  const settings = data.settings;
+
+  if (!meds || !Array.isArray(meds)) {
+    return { valid: false, error: 'Missing or invalid medications array' };
+  }
+  if (!logs || !Array.isArray(logs)) {
+    return { valid: false, error: 'Missing or invalid dayLogs array' };
+  }
+  if (!settings || typeof settings !== 'object') {
+    return { valid: false, error: 'Missing or invalid settings' };
+  }
+  return { valid: true };
+};
+
+// Restore data from imported file (overwrites current user's data)
+export const restoreData = (data: any): boolean => {
+  // Support both new exported format and legacy AppData format
+  const appData: AppData = {
+    medications: data.medications,
+    dayLogs: data.dayLogs,
+    settings: data.settings,
+    lastUpdated: new Date().toISOString(),
+  };
+  saveAppData(appData);
+  return true;
 };
 
 // Clear all data

@@ -403,6 +403,14 @@
   margin-left: 1px;
 }
 
+.inactive-pillbox-card__item-more {
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: var(--color-indigo-400, #818cf8);
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
 /* Future day styling */
 .inactive-pillbox-card--future {
   background: linear-gradient(135deg, #fff 0%, #f0fdf4 100%);

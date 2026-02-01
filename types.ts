@@ -94,6 +94,22 @@ export interface AppSettings {
   soundEnabled: boolean;
 }
 
+export interface ExportMetadata {
+  formatVersion: number;
+  userId: string;
+  userName: string;
+  exportDate: string;
+  appVersion: string;
+}
+
+export interface ExportedData {
+  metadata: ExportMetadata;
+  userProfile: UserProfile;
+  medications: Medication[];
+  dayLogs: DayLog[];
+  settings: AppSettings;
+}
+
 export type ViewState = 'timeline' | 'manage' | 'scan' | 'review' | 'settings';
 
 // Time slot configuration for display
