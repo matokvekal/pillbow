@@ -127,14 +127,27 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
 
   const handleSave = () => {
     const today = new Date();
-    const startDate = format(today, "yyyy-MM-dd");
 
-    // Calculate end date
+    // Respect the start date selection
+    let startDate: string;
+    if (startDateOption === 'tomorrow') {
+      startDate = format(addDays(today, 1), "yyyy-MM-dd");
+    } else if (startDateOption === 'custom' && customStartDate) {
+      startDate = customStartDate;
+    } else {
+      startDate = format(today, "yyyy-MM-dd");
+    }
+
+    const startDateObj = startDateOption === 'tomorrow' ? addDays(today, 1)
+      : startDateOption === 'custom' && customStartDate ? new Date(customStartDate)
+      : today;
+
+    // Calculate end date from start date
     let endDate: string | undefined;
     if (durationIndex === -1 && customEndDate) {
       endDate = customEndDate;
     } else if (durationIndex > -1 && durationIndex < 3 && DURATIONS[durationIndex].days > 0) {
-      endDate = format(addDays(today, DURATIONS[durationIndex].days), "yyyy-MM-dd");
+      endDate = format(addDays(startDateObj, DURATIONS[durationIndex].days), "yyyy-MM-dd");
     }
 
     const medication: Partial<Medication> = {

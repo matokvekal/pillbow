@@ -31,7 +31,7 @@ export const PILL_SHAPES = {
   "syringe": { label: "Injection", icon: "💉", css: "pill-shape--syringe" },
   "drops": { label: "Drops", icon: "💧", css: "pill-shape--drops" },
   "vitamin": { label: "Vitamin", icon: "🧴", css: "pill-shape--vitamin" },
-  "stethoscope": { label: "Doctor", icon: "🩻", css: "pill-shape--stethoscope" },
+  "stethoscope": { label: "Doctor", icon: "🩺", css: "pill-shape--stethoscope" },
   "hospital": { label: "Hospital", icon: "🚑", css: "pill-shape--hospital" },
   "tooth": { label: "Dental", icon: "🪥", css: "pill-shape--tooth" },
   "heart": { label: "Heart", icon: "❤️", css: "pill-shape--heart" },
