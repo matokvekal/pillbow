@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Medication } from "../../types";
+import { Medication, getShapeIcon } from "../../types";
 import "./ScanScreen.css";
 
 interface ScanScreenProps {
@@ -157,7 +157,7 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({
         {state === "result" && detectedMed && (
           <div className="scan__result">
             <div className="scan__detected">
-              <div className={`scan__med-icon ${detectedMed.color}`}>💊</div>
+              <div className={`scan__med-icon ${detectedMed.color}`}>{getShapeIcon(detectedMed.shape)}</div>
               <div className="scan__med-info">
                 <p className="scan__med-name">{detectedMed.name}</p>
                 <p className="scan__med-strength">{detectedMed.strength}</p>

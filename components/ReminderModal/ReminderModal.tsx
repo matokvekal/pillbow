@@ -50,7 +50,7 @@ export const ReminderModal: React.FC = () => {
         {/* Enable/Disable */}
         <button
           className={`reminder-modal__toggle ${enabled ? 'reminder-modal__toggle--on' : ''}`}
-          onClick={handleToggle}
+          onClick={(e) => { e.stopPropagation(); handleToggle(); }}
         >
           <span className="reminder-modal__toggle-icon">{enabled ? '🔔' : '🔕'}</span>
           <span className="reminder-modal__toggle-label">
@@ -69,7 +69,7 @@ export const ReminderModal: React.FC = () => {
                   className={`reminder-modal__option ${
                     leadTimeMinutes === opt.value ? 'reminder-modal__option--selected' : ''
                   }`}
-                  onClick={() => setLeadTime(opt.value)}
+                  onClick={(e) => { e.stopPropagation(); setLeadTime(opt.value); }}
                 >
                   {opt.label}
                 </button>

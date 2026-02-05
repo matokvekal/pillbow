@@ -9,6 +9,7 @@ interface UserStore {
     // Actions
     switchUser: (userId: string) => void;
     addUser: (name: string, relationship: UserProfile['relationship'], avatar: string) => void;
+    updateUser: (userId: string, updates: Partial<Pick<UserProfile, 'name' | 'avatar' | 'relationship'>>) => void;
     removeUser: (userId: string) => void;
     init: () => void;
 
@@ -132,6 +133,19 @@ export const useUserStore = create<UserStore>((set, get) => ({
             lastUpdated: new Date().toISOString()
         };
         localStorage.setItem(`pillbow_data_${newUser.id}`, JSON.stringify(emptyData));
+    },
+
+    updateUser: (userId: string, updates: Partial<Pick<UserProfile, 'name' | 'avatar' | 'relationship'>>) => {
+        set(state => {
+            const updatedUsers = state.users.map(user => {
+                if (user.id === userId) {
+                    return { ...user, ...updates };
+                }
+                return user;
+            });
+            localStorage.setItem('pillbow_users', JSON.stringify(updatedUsers));
+            return { users: updatedUsers };
+        });
     },
 
     removeUser: (userId: string) => {

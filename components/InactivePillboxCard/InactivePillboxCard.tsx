@@ -2,6 +2,8 @@ import React from "react";
 import { format, isToday as checkIsToday, isPast, isFuture, startOfDay, differenceInDays, parseISO } from "date-fns";
 import classNames from "classnames";
 import { Medication, DoseStatus, DayLog, getShapeIcon } from "../../types";
+import { isEventShape } from "../../constants/medFormConfig";
+import { useReminderStore } from "../../store/useReminderStore";
 import "./InactivePillboxCard.css";
 
 // Check medication status for a given date
@@ -69,6 +71,9 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
   const normalizedDate = startOfDay(date);
   const isPastDay = isPast(normalizedDate) && !isTodayDate;
   const isFutureDay = isFuture(normalizedDate) && !isTodayDate;
+
+  // Get reminder enabled state
+  const reminderEnabled = useReminderStore((state) => state.enabled);
 
   // Get medication status for this day
   const medStatus = getDayMedStatus(medications, date);
@@ -141,6 +146,29 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
             <span className="inactive-pillbox-card__day-num">{dayNum}</span>
             <span className="inactive-pillbox-card__month">{format(date, "MMM")}</span>
           </div>
+
+          {/* Event badges - show unique event-type icons at day level */}
+          {(() => {
+            const seenEvents = new Set<string>();
+            const eventIcons: { shape: string; icon: string }[] = [];
+            for (const med of medications) {
+              const shape = med.shape || "capsule";
+              if (isEventShape(shape) && !seenEvents.has(shape)) {
+                seenEvents.add(shape);
+                eventIcons.push({ shape, icon: getShapeIcon(shape) });
+              }
+            }
+            if (eventIcons.length === 0) return null;
+            return (
+              <div className="inactive-pillbox-card__event-badges">
+                {eventIcons.map(({ shape, icon }) => (
+                  <span key={shape} className="inactive-pillbox-card__event-badge">
+                    {icon}
+                  </span>
+                ))}
+              </div>
+            );
+          })()}
 
           {/* Time Slice Preview - only show if there are medications */}
           {!hasNoPills && (
@@ -238,21 +266,23 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
           {/* Only show clock and pill count when there are medications */}
           {!hasNoPills && (
             <>
-              {/* Reminder Clock Icon */}
-              <button
-                className="inactive-pillbox-card__clock-btn"
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent card click
-                  // Placeholder for clock action
-                  console.log("Open reminders for", date);
-                }}
-                aria-label="Set Reminder"
-              >
-                <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-              </button>
+              {/* Reminder Clock Icon - only shown when reminders are enabled */}
+              {reminderEnabled && (
+                <button
+                  className="inactive-pillbox-card__clock-btn"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card click
+                    // Placeholder for clock action
+                    console.log("Open reminders for", date);
+                  }}
+                  aria-label="Set Reminder"
+                >
+                  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </button>
+              )}
 
               {/* Item type icon with count */}
               <div className="inactive-pillbox-card__item-badge">

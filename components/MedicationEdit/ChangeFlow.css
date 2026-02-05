@@ -195,3 +195,62 @@
   font-size: 0.875rem;
   color: #94a3b8;
 }
+
+/* Date Selection */
+.change-flow__date-options {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.change-flow__date-btn {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.change-flow__date-btn:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.change-flow__date-btn--active {
+  border-color: #6366f1;
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.change-flow__date-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #1e293b;
+  margin-top: 0.5rem;
+}
+
+.change-flow__date-input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.change-flow__date-note {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0.75rem 0 0 0;
+  padding: 0.5rem;
+  background: #fef3c7;
+  border-radius: 0.5rem;
+  border-left: 3px solid #f59e0b;
+}

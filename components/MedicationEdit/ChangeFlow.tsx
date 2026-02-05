@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Medication } from "../../types";
+import { format, addDays } from "date-fns";
+import { Medication, getShapeIcon } from "../../types";
 import "./ChangeFlow.css";
 
 interface ChangeFlowProps {
   medication: Medication;
   onBack: () => void;
-  onChange: (data: { strength: string; timesPerDay: number }) => void;
+  onChange: (data: { strength: string; timesPerDay: number; changeDate?: string }) => void;
 }
 
 // Common strength options
@@ -28,6 +29,8 @@ export const ChangeFlow: React.FC<ChangeFlowProps> = ({
     currentStrengthIndex >= 0 ? currentStrengthIndex : 4 // default to 200mg
   );
   const [timesPerDay, setTimesPerDay] = useState(medication.dosesPerDay || 1);
+  const [changeDateOption, setChangeDateOption] = useState<'today' | 'tomorrow' | 'custom'>('today');
+  const [customChangeDate, setCustomChangeDate] = useState("");
 
   const handleStrengthDown = () => {
     if (strengthIndex > 0) {
@@ -54,9 +57,20 @@ export const ChangeFlow: React.FC<ChangeFlowProps> = ({
   };
 
   const handleSave = () => {
+    let changeDate: string | undefined;
+
+    if (changeDateOption === 'today') {
+      changeDate = format(new Date(), "yyyy-MM-dd");
+    } else if (changeDateOption === 'tomorrow') {
+      changeDate = format(addDays(new Date(), 1), "yyyy-MM-dd");
+    } else if (changeDateOption === 'custom' && customChangeDate) {
+      changeDate = customChangeDate;
+    }
+
     onChange({
       strength: STRENGTH_OPTIONS[strengthIndex],
       timesPerDay,
+      changeDate,
     });
   };
 
@@ -78,7 +92,7 @@ export const ChangeFlow: React.FC<ChangeFlowProps> = ({
       <div className="change-flow__content">
         {/* Icon */}
         <div className={`change-flow__icon ${medication.color}`}>
-          <span>💊</span>
+          <span>{getShapeIcon(medication.shape)}</span>
         </div>
 
         {/* Title */}
@@ -139,6 +153,53 @@ export const ChangeFlow: React.FC<ChangeFlowProps> = ({
           {timesPerDay !== medication.dosesPerDay && (
             <p className="change-flow__change-hint">
               was {medication.dosesPerDay}x
+            </p>
+          )}
+        </div>
+
+        {/* Change Date Selection */}
+        <div className="change-flow__control">
+          <p className="change-flow__label">When does this change start?</p>
+          <div className="change-flow__date-options">
+            <button
+              type="button"
+              className={`change-flow__date-btn ${changeDateOption === 'today' ? "change-flow__date-btn--active" : ""}`}
+              onClick={() => setChangeDateOption('today')}
+            >
+              📅 Today
+            </button>
+            <button
+              type="button"
+              className={`change-flow__date-btn ${changeDateOption === 'tomorrow' ? "change-flow__date-btn--active" : ""}`}
+              onClick={() => setChangeDateOption('tomorrow')}
+            >
+              ⏭️ Tomorrow
+            </button>
+            <button
+              type="button"
+              className={`change-flow__date-btn ${changeDateOption === 'custom' ? "change-flow__date-btn--active" : ""}`}
+              onClick={() => setChangeDateOption('custom')}
+            >
+              🗓️ Pick date
+            </button>
+          </div>
+          {changeDateOption === 'custom' && (
+            <input
+              type="date"
+              className="change-flow__date-input"
+              value={customChangeDate}
+              onChange={(e) => setCustomChangeDate(e.target.value)}
+              min={format(addDays(new Date(), 2), "yyyy-MM-dd")}
+            />
+          )}
+          {changeDateOption !== 'today' && (
+            <p className="change-flow__date-note">
+              Current dose ({medication.strength}) will continue until{' '}
+              {changeDateOption === 'tomorrow'
+                ? 'today'
+                : customChangeDate
+                  ? format(addDays(new Date(customChangeDate), -1), "MMM d")
+                  : 'the day before'}
             </p>
           )}
         </div>

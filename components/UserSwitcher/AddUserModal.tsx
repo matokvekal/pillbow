@@ -4,13 +4,30 @@ import { validateImportData } from '../../services/dataService';
 import { AppData, UserProfile } from '../../types';
 import './UserSwitcher.css';
 
+// Helper to get next available "User N" name
+const getNextUserNumber = (users: UserProfile[]): string => {
+    const userNumbers = users
+        .map(u => {
+            const match = u.name.match(/^User (\d+)$/);
+            return match ? parseInt(match[1], 10) : 0;
+        })
+        .filter(n => n > 0);
+
+    let nextNum = 1;
+    while (userNumbers.includes(nextNum)) {
+        nextNum++;
+    }
+    return `User ${nextNum}`;
+};
+
 interface AddUserModalProps {
     onClose: () => void;
 }
 
 export const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
-    const { addUser } = useUserStore();
+    const { addUser, users } = useUserStore();
     const [name, setName] = useState('');
+    const [nameSource, setNameSource] = useState<'manual' | 'auto'>('auto');
     const [relationship, setRelationship] = useState<UserProfile['relationship']>('other');
     const [avatar, setAvatar] = useState('👤');
     const [importedData, setImportedData] = useState<any>(null);
@@ -57,11 +74,16 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
                     return;
                 }
                 setImportedData(parsed);
-                // Pre-fill name from metadata if available
-                if (parsed.metadata?.userName) {
-                    setName(parsed.metadata.userName);
-                } else if (parsed.userProfile?.name) {
-                    setName(parsed.userProfile.name);
+                // Only auto-fill name if user hasn't manually entered one
+                if (nameSource === 'auto') {
+                    if (parsed.metadata?.userName) {
+                        setName(parsed.metadata.userName);
+                    } else if (parsed.userProfile?.name) {
+                        setName(parsed.userProfile.name);
+                    } else {
+                        // Auto-generate name like "User 1", "User 2", etc.
+                        setName(getNextUserNumber(users));
+                    }
                 }
                 // Pre-fill avatar from user profile if available
                 if (parsed.userProfile?.avatar && !parsed.userProfile.avatar.startsWith('http')) {
@@ -83,6 +105,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
     const clearImport = () => {
         setImportedData(null);
         setName('');
+        setNameSource('auto');
         setAvatar('👤');
         setRelationship('other');
     };
@@ -126,7 +149,10 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
                         <input
                             type="text"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => {
+                                setName(e.target.value);
+                                setNameSource('manual');
+                            }}
                             placeholder="e.g. Mom, Dad, Michael"
                             className="user-input"
                             autoFocus

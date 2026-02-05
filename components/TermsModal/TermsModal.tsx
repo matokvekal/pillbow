@@ -1,23 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import "./TermsModal.css";
 
 interface TermsModalProps {
     onClose: () => void;
     onAgree: () => void;
+    isFirstLaunch?: boolean;
 }
 
-export const TermsModal: React.FC<TermsModalProps> = ({ onClose, onAgree }) => {
+export const TermsModal: React.FC<TermsModalProps> = ({ onClose, onAgree, isFirstLaunch = false }) => {
+    const [checked, setChecked] = useState(false);
+
     return (
         <div className="terms-modal-overlay">
             <div className="terms-modal">
                 {/* Header */}
                 <div className="terms-modal__header">
                     <h2 className="terms-modal__title">Terms & Conditions</h2>
-                    <button className="terms-modal__close" onClick={onClose} aria-label="Close">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                    </button>
+                    {!isFirstLaunch && (
+                        <button className="terms-modal__close" onClick={onClose} aria-label="Close">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </button>
+                    )}
                 </div>
 
                 {/* Scrollable Content */}
@@ -126,12 +131,29 @@ export const TermsModal: React.FC<TermsModalProps> = ({ onClose, onAgree }) => {
                     </div>
                 </div>
 
+                {/* Checkbox for agreement */}
+                <label className="terms-modal__checkbox-label">
+                    <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) => setChecked(e.target.checked)}
+                        className="terms-modal__checkbox"
+                    />
+                    <span>I have read and agree to the Terms & Conditions</span>
+                </label>
+
                 {/* Footer Actions */}
                 <div className="terms-modal__actions">
-                    <button className="terms-modal__btn terms-modal__btn--secondary" onClick={onClose}>
-                        Cancel
-                    </button>
-                    <button className="terms-modal__btn terms-modal__btn--primary" onClick={onAgree}>
+                    {!isFirstLaunch && (
+                        <button className="terms-modal__btn terms-modal__btn--secondary" onClick={onClose}>
+                            Cancel
+                        </button>
+                    )}
+                    <button
+                        className="terms-modal__btn terms-modal__btn--primary"
+                        onClick={onAgree}
+                        disabled={!checked}
+                    >
                         I Agree
                     </button>
                 </div>

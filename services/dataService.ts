@@ -13,6 +13,7 @@
  */
 
 import { AppData, Medication, DayLog, DoseRecord, DoseStatus, AppSettings, ExportedData, ExportMetadata, UserProfile } from '../types';
+import { differenceInDays, startOfDay, parseISO } from 'date-fns';
 
 const STORAGE_KEY = 'pillbow_app_data';
 
@@ -326,19 +327,26 @@ export const clearAllData = (): void => {
 export const getMedicationsForDate = (dateStr: string, medications: Medication[]): Medication[] => {
   if (!medications || !Array.isArray(medications)) return [];
 
-  const date = new Date(dateStr);
+  const date = startOfDay(new Date(dateStr));
   return medications.filter(med => {
     if (!med) return false;
 
-    const startDate = med.startDate ? new Date(med.startDate) : null;
-    const endDate = med.endDate ? new Date(med.endDate) : null;
+    const startDate = med.startDate ? startOfDay(parseISO(med.startDate)) : null;
+    const endDate = med.endDate ? startOfDay(parseISO(med.endDate)) : null;
 
     if (startDate && date < startDate) return false;
     if (endDate && date > endDate) return false;
 
-    // Day-of-week filter
-    if (med.daysOfWeek && med.daysOfWeek.length > 0) {
+    // Day-of-week filter (only applies if not using alternating pattern)
+    if (!med.alternatingPattern && med.daysOfWeek && med.daysOfWeek.length > 0) {
       if (!med.daysOfWeek.includes(date.getDay())) return false;
+    }
+
+    // Alternating pattern: every other day from start date
+    if (med.alternatingPattern && startDate) {
+      const daysSinceStart = differenceInDays(date, startDate);
+      // Only include if even number of days since start (0, 2, 4, 6...)
+      if (daysSinceStart % 2 !== 0) return false;
     }
 
     return true;

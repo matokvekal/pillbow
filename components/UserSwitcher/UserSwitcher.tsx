@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useUserStore } from "../../store/useUserStore";
 import { useModalStore } from "../../store/useModalStore";
 import { AddUserModal } from "./AddUserModal";
+import { EditUserModal } from "./EditUserModal";
+import { UserProfile } from "../../types";
 import "./UserSwitcher.css";
 
 // Constants for UI elements
@@ -39,6 +41,16 @@ const TrashIcon: React.FC = () => (
 );
 
 /**
+ * EditIcon component - SVG pencil icon for edit button
+ */
+const EditIcon: React.FC = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+/**
  * UserOption component - Individual user option in dropdown
  */
 interface UserOptionProps {
@@ -48,6 +60,7 @@ interface UserOptionProps {
   relationship: string;
   isActive: boolean;
   onSelect: (userId: string) => void;
+  onEdit?: (userId: string) => void;
   onDelete?: (userId: string) => void;
 }
 
@@ -58,6 +71,7 @@ const UserOption: React.FC<UserOptionProps> = ({
   relationship,
   isActive,
   onSelect,
+  onEdit,
   onDelete,
 }) => {
   const isImageAvatar = avatar && (avatar.startsWith('http') || avatar.startsWith('/'));
@@ -83,18 +97,32 @@ const UserOption: React.FC<UserOptionProps> = ({
         </div>
         {isActive && <span className="check-icon">{CHECK_ICON}</span>}
       </button>
-      {onDelete && !isActive && (
-        <button
-          className="delete-user-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(id);
-          }}
-          aria-label={`Delete ${name}`}
-        >
-          <TrashIcon />
-        </button>
-      )}
+      <div className="user-option-actions">
+        {onEdit && (
+          <button
+            className="edit-user-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(id);
+            }}
+            aria-label={`Edit ${name}`}
+          >
+            <EditIcon />
+          </button>
+        )}
+        {onDelete && !isActive && (
+          <button
+            className="delete-user-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(id);
+            }}
+            aria-label={`Delete ${name}`}
+          >
+            <TrashIcon />
+          </button>
+        )}
+      </div>
     </div>
   );
 };
@@ -102,6 +130,7 @@ const UserOption: React.FC<UserOptionProps> = ({
 export const UserSwitcher: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
   const { users, currentUserId, switchUser, removeUser, getCurrentUser } = useUserStore();
   const { clearStack } = useModalStore();
   const currentUser = getCurrentUser();
@@ -163,6 +192,20 @@ export const UserSwitcher: React.FC = () => {
     setShowAddModal(true);
   }, []);
 
+  /**
+   * Handles editing a user profile
+   */
+  const handleEditUser = useCallback(
+    (userId: string) => {
+      const user = users.find((u) => u.id === userId);
+      if (user) {
+        setIsOpen(false);
+        setEditingUser(user);
+      }
+    },
+    [users],
+  );
+
   return (
     <div className="user-switcher" ref={dropdownRef}>
       <button
@@ -207,6 +250,7 @@ export const UserSwitcher: React.FC = () => {
               relationship={user.relationship}
               isActive={user.id === currentUserId}
               onSelect={handleSelectUser}
+              onEdit={handleEditUser}
               onDelete={users.length > 1 ? handleDeleteUser : undefined}
             />
           ))}
@@ -225,6 +269,7 @@ export const UserSwitcher: React.FC = () => {
       )}
 
       {showAddModal && <AddUserModal onClose={() => setShowAddModal(false)} />}
+      {editingUser && <EditUserModal user={editingUser} onClose={() => setEditingUser(null)} />}
     </div>
   );
 };

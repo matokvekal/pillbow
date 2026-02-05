@@ -41,6 +41,7 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
   const [colorIndex, setColorIndex] = useState(0);
   const [shapeIndex, setShapeIndex] = useState(0);
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
+  const [schedulePattern, setSchedulePattern] = useState<'daily' | 'specific' | 'alternating'>('daily');
   const [eventDate, setEventDate] = useState(""); // For one-time events like doctor appointments
   const [isRecurring, setIsRecurring] = useState(false); // Toggle for event: one-time vs recurring
   const [recurringWeeks, setRecurringWeeks] = useState(1); // Every X weeks
@@ -51,14 +52,17 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
   // Track previous values to detect changes
   const prevStrengthUnit = useRef(strengthUnit);
   const prevShapeIndex = useRef(shapeIndex);
+  const valueManuallySet = useRef(false);
 
-  // Phase 1: Auto-adjust amount when unit changes
+  // Phase 1: Auto-adjust amount when unit changes (only if user hasn't manually entered a value)
   useEffect(() => {
-    // Only adjust if unit actually changed and we have a value
+    // Only adjust if unit actually changed and user hasn't manually set a value
     if (prevStrengthUnit.current !== strengthUnit && strengthUnit) {
-      const unitConfig = FORM_UNITS.find(u => u.unit === strengthUnit);
-      if (unitConfig && strengthUnit) {
-        setStrengthValue(unitConfig.defaultValue);
+      if (!valueManuallySet.current) {
+        const unitConfig = FORM_UNITS.find(u => u.unit === strengthUnit);
+        if (unitConfig && strengthUnit) {
+          setStrengthValue(unitConfig.defaultValue);
+        }
       }
     }
     prevStrengthUnit.current = strengthUnit;
@@ -144,7 +148,8 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
       shape: SHAPES[shapeIndex].id,
       startDate,
       endDate,
-      daysOfWeek: selectedDays.length > 0 ? selectedDays : undefined,
+      daysOfWeek: schedulePattern === 'specific' && selectedDays.length > 0 ? selectedDays : undefined,
+      alternatingPattern: schedulePattern === 'alternating' ? true : undefined,
       instructions: "",
     };
 
@@ -242,7 +247,10 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
                 <button
                   type="button"
                   className="manual-add__amount-btn"
-                  onClick={() => setStrengthValue(prev => String(Math.max(1, Number(prev) - 1)))}
+                  onClick={() => {
+                    setStrengthValue(prev => String(Math.max(1, Number(prev) - 1)));
+                    valueManuallySet.current = true;
+                  }}
                   disabled={!strengthValue || Number(strengthValue) <= 1}
                 >
                   −
@@ -251,14 +259,20 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
                   type="number"
                   className="manual-add__strength-input"
                   value={strengthValue}
-                  onChange={(e) => setStrengthValue(e.target.value)}
+                  onChange={(e) => {
+                    setStrengthValue(e.target.value);
+                    valueManuallySet.current = true;
+                  }}
                   min="1"
                   max="9999"
                 />
                 <button
                   type="button"
                   className="manual-add__amount-btn"
-                  onClick={() => setStrengthValue(prev => String(Number(prev || 0) + 1))}
+                  onClick={() => {
+                    setStrengthValue(prev => String(Number(prev || 0) + 1));
+                    valueManuallySet.current = true;
+                  }}
                 >
                   +
                 </button>
@@ -467,29 +481,73 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
         {!isEventShape(SHAPES[shapeIndex].id) && (
           <div className="manual-add__field">
             <label className="manual-add__label">Which days?</label>
-            <p className="manual-add__hint">Leave empty for every day</p>
-            <div className="manual-add__day-picker">
-              {DAY_LABELS.map((label, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  className={`manual-add__day-btn ${selectedDays.includes(index) ? "manual-add__day-btn--active" : ""}`}
-                  onClick={() => toggleDay(index)}
-                >
-                  {label}
-                </button>
-              ))}
+
+            {/* Schedule Pattern Toggle */}
+            <div className="manual-add__schedule-toggle">
+              <button
+                type="button"
+                className={`manual-add__toggle-btn ${schedulePattern === 'daily' ? "manual-add__toggle-btn--active" : ""}`}
+                onClick={() => {
+                  setSchedulePattern('daily');
+                  setSelectedDays([]);
+                }}
+              >
+                📅 Every day
+              </button>
+              <button
+                type="button"
+                className={`manual-add__toggle-btn ${schedulePattern === 'specific' ? "manual-add__toggle-btn--active" : ""}`}
+                onClick={() => setSchedulePattern('specific')}
+              >
+                🗓️ Specific days
+              </button>
+              <button
+                type="button"
+                className={`manual-add__toggle-btn ${schedulePattern === 'alternating' ? "manual-add__toggle-btn--active" : ""}`}
+                onClick={() => {
+                  setSchedulePattern('alternating');
+                  setSelectedDays([]);
+                }}
+              >
+                🔄 Alternating
+              </button>
             </div>
+
+            {/* Day picker - only show for specific days */}
+            {schedulePattern === 'specific' && (
+              <>
+                <p className="manual-add__hint">Select which days of the week</p>
+                <div className="manual-add__day-picker">
+                  {DAY_LABELS.map((label, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      className={`manual-add__day-btn ${selectedDays.includes(index) ? "manual-add__day-btn--active" : ""}`}
+                      onClick={() => toggleDay(index)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Summary */}
             <div className="manual-add__day-summary">
-              {selectedDays.length === 0 ? (
+              {schedulePattern === 'daily' && (
                 <span className="manual-add__day-chip manual-add__day-chip--every">Every day</span>
-              ) : (
-                selectedDays.map(d => (
-                  <span key={d} className="manual-add__day-chip">
-                    {DAY_NAMES[d]}
-                  </span>
-                ))
               )}
+              {schedulePattern === 'alternating' && (
+                <span className="manual-add__day-chip manual-add__day-chip--alternating">Every other day (from start date)</span>
+              )}
+              {schedulePattern === 'specific' && selectedDays.length === 0 && (
+                <span className="manual-add__day-chip manual-add__day-chip--hint">Select days above</span>
+              )}
+              {schedulePattern === 'specific' && selectedDays.length > 0 && selectedDays.map(d => (
+                <span key={d} className="manual-add__day-chip">
+                  {DAY_NAMES[d]}
+                </span>
+              ))}
             </div>
           </div>
         )}

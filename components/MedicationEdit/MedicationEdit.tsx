@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Medication } from "../../types";
+import { Medication, getShapeIcon } from "../../types";
 import { StopFlow } from "./StopFlow";
 import { ChangeFlow } from "./ChangeFlow";
 import { SuccessScreen } from "./SuccessScreen";
@@ -31,9 +31,15 @@ export const MedicationEdit: React.FC<MedicationEditProps> = ({
     setScreen("success");
   };
 
-  const handleChange = (data: { strength: string; timesPerDay: number }) => {
+  const handleChange = (data: { strength: string; timesPerDay: number; changeDate?: string }) => {
     onSave("change", data);
-    setSuccessMessage(`${medication.name} updated to ${data.strength}, ${data.timesPerDay}x daily`);
+    const today = new Date().toISOString().split('T')[0];
+    const isFutureChange = data.changeDate && data.changeDate > today;
+    setSuccessMessage(
+      isFutureChange
+        ? `${medication.name} will change to ${data.strength}, ${data.timesPerDay}x daily from ${data.changeDate}`
+        : `${medication.name} updated to ${data.strength}, ${data.timesPerDay}x daily`
+    );
     setScreen("success");
   };
 
@@ -56,7 +62,7 @@ export const MedicationEdit: React.FC<MedicationEditProps> = ({
         <div className="med-edit__content">
           {/* Medication Icon */}
           <div className={`med-edit__icon ${medication.color}`}>
-            <span>💊</span>
+            <span>{getShapeIcon(medication.shape)}</span>
           </div>
 
           {/* Medication Name */}

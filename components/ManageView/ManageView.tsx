@@ -1,7 +1,8 @@
 import React from "react";
 import { format, parseISO, differenceInDays, startOfDay } from "date-fns";
 import classNames from "classnames";
-import { Medication } from "../../types";
+import { Medication, getShapeIcon } from "../../types";
+import { isEventShape } from "../../constants/medFormConfig";
 import "./ManageView.css";
 
 interface ManageViewProps {
@@ -10,9 +11,11 @@ interface ManageViewProps {
   onBack: () => void;
 }
 
-type MedStatus = "active" | "ending-soon" | "ended";
+type MedStatus = "active" | "ending-soon" | "ended" | "upcoming";
 
 const getMedStatus = (med: Medication): MedStatus => {
+  const isEvent = isEventShape(med.shape);
+
   if (!med.endDate) return "active";
 
   const today = startOfDay(new Date());
@@ -20,16 +23,26 @@ const getMedStatus = (med: Medication): MedStatus => {
   const daysUntilEnd = differenceInDays(endDate, today);
 
   if (daysUntilEnd < 0) return "ended";
+
+  // One-time events show "upcoming" instead of "ending soon"
+  if (isEvent) return "upcoming";
+
   if (daysUntilEnd <= 7) return "ending-soon";
   return "active";
 };
 
-const getStatusLabel = (status: MedStatus): string => {
+const getStatusLabel = (status: MedStatus, med?: Medication): string => {
   switch (status) {
     case "ending-soon":
       return "Ending soon";
     case "ended":
       return "Completed";
+    case "upcoming":
+      // Show the date for events
+      if (med?.endDate) {
+        return format(parseISO(med.endDate), "MMM d");
+      }
+      return "Upcoming";
     default:
       return "Active";
   }
@@ -41,7 +54,10 @@ export const ManageView: React.FC<ManageViewProps> = ({
   onBack
 }) => {
   // Group medications by status
-  const activeMeds = medications.filter((m) => getMedStatus(m) === "active");
+  const activeMeds = medications.filter((m) => {
+    const status = getMedStatus(m);
+    return status === "active" || status === "upcoming";
+  });
   const endingSoonMeds = medications.filter(
     (m) => getMedStatus(m) === "ending-soon"
   );
@@ -60,7 +76,7 @@ export const ManageView: React.FC<ManageViewProps> = ({
         onClick={() => onMedicationClick(med)}
       >
         <div className={classNames("manage-med-card__icon", med.color)}>
-          <span>💊</span>
+          <span>{getShapeIcon(med.shape)}</span>
         </div>
 
         <div className="manage-med-card__info">
@@ -75,11 +91,12 @@ export const ManageView: React.FC<ManageViewProps> = ({
           <span
             className={classNames("manage-med-card__status", {
               "manage-med-card__status--active": status === "active",
+              "manage-med-card__status--upcoming": status === "upcoming",
               "manage-med-card__status--ending": status === "ending-soon",
               "manage-med-card__status--ended": status === "ended"
             })}
           >
-            {getStatusLabel(status)}
+            {getStatusLabel(status, med)}
           </span>
           <svg
             className="manage-med-card__chevron"

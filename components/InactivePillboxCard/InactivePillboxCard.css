@@ -87,6 +87,29 @@
   line-height: 1;
 }
 
+/* Event badges - prominent day-level icons for events (doctor, vet, etc.) */
+.inactive-pillbox-card__event-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.inactive-pillbox-card__event-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1.5px solid #f59e0b;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(245, 158, 11, 0.3);
+}
+
 /* Timeline Preview Container */
 .inactive-pillbox-card__timeline-preview {
   flex: 1;

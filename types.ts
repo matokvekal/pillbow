@@ -20,6 +20,7 @@ export interface Medication {
   startDate?: string;         // ISO date string
   endDate?: string;           // ISO date string
   daysOfWeek?: number[];      // 0=Sun, 1=Mon, ..., 6=Sat. Undefined = every day
+  alternatingPattern?: boolean; // Take every other day starting from startDate
   notes?: string;
   refillDismissed?: boolean;  // User dismissed the refill alert
 }
@@ -34,8 +35,8 @@ export const PILL_SHAPES = {
   "hospital": { label: "Hospital", icon: "🚑", css: "pill-shape--hospital" },
   "tooth": { label: "Dental", icon: "🪥", css: "pill-shape--tooth" },
   "heart": { label: "Heart", icon: "❤️", css: "pill-shape--heart" },
-  "herb": { label: "Herb", icon: "🌿", css: "pill-shape--herb" },
-  "eye": { label: "Eye", icon: "👁️", css: "pill-shape--eye" },
+  "veterinar": { label: "Veterinar", icon: "🐕", css: "pill-shape--veterinar" },
+  "physiotherapy": { label: "Physiotherapy", icon: "💆", css: "pill-shape--physiotherapy" },
   "vet": { label: "Vet", icon: "🐾", css: "pill-shape--vet" },
 } as const;
 

@@ -24,8 +24,8 @@ export const FORM_SHAPES = [
   { id: "stethoscope", label: "Doctor", icon: "🩺" },
   { id: "hospital", label: "Hospital", icon: "🚑" },
   { id: "tooth", label: "Dental", icon: "🪥" },
-  { id: "herb", label: "Herb", icon: "🌿" },
-  { id: "eye", label: "Eye", icon: "👁️" },
+  { id: "veterinar", label: "Veterinar", icon: "🐕" },
+  { id: "physiotherapy", label: "Physiotherapy", icon: "💆" },
   { id: "vet", label: "Vet", icon: "🐾" },
 ];
 
@@ -59,7 +59,7 @@ export const DAY_LABELS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 export const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // Event-type shapes (hide strength field for these)
-export const EVENT_SHAPE_IDS = ["hospital", "stethoscope", "tooth", "vet"];
+export const EVENT_SHAPE_IDS = ["hospital", "stethoscope", "tooth", "vet", "veterinar", "physiotherapy"];
 
 // Helper: is this shape an event (not a medicine)?
 export const isEventShape = (shapeId: string) => EVENT_SHAPE_IDS.includes(shapeId);
