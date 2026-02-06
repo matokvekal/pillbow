@@ -11,7 +11,14 @@
       "Bash(ping:*)",
       "Bash(grep:*)",
       "Bash(git checkout:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(git -C \"E:\\\\DEV2026\\\\pillBow-v1\" status)",
+      "Bash(git -C \"E:\\\\DEV2026\\\\pillBow-v1\" diff)",
+      "Bash(git -C \"E:\\\\DEV2026\\\\pillBow-v1\" log --oneline -5)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd veterinar/physiotherapy shapes, event day badges, user switcher, and UI improvements\n\n- Replace eye/herb shapes with veterinar and physiotherapy event types\n- Add prominent event badges on day cards for doctor/vet/dental/hospital/physio\n- Add EditUserModal for user profile editing\n- Update ManualAddFlow with alternating schedule pattern support\n- Various UI and styling improvements across components\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git -C \"E:\\\\DEV2026\\\\pillBow-v1\" add types.ts components/AddMedication/ManualAddFlow.tsx)",
+      "Bash(git -C \"E:\\\\DEV2026\\\\pillBow-v1\" commit -m \"$\\(cat <<''EOF''\nFix stethoscope icon mismatch and start date selection bug\n\n- Sync stethoscope icon to 🩺 in types.ts \\(was 🩻, mismatched with medFormConfig\\)\n- Fix handleSave to respect start date option \\(today/tomorrow/custom\\) instead of always using today\n- End date now calculated from chosen start date, not always from today\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(node -p:*)"
     ]
   }
 }

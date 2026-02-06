@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { addDays, subDays, startOfDay, format } from "date-fns";
+import { addDays, subDays, startOfDay, format, parseISO } from "date-fns";
 import { ViewState, Medication, DoseStatus, DayLog } from "./types";
 import {
   INITIAL_SCROLL_DELAY,
@@ -163,9 +163,9 @@ const App: React.FC = () => {
       if (!med.startDate || !med.endDate) {
         // Still check day-of-week even without date range
       } else {
-        const medDate = day.getTime();
-        const startDate = new Date(med.startDate).getTime();
-        const endDate = new Date(med.endDate).getTime();
+        const medDate = startOfDay(day).getTime();
+        const startDate = startOfDay(parseISO(med.startDate)).getTime();
+        const endDate = startOfDay(parseISO(med.endDate)).getTime();
         if (medDate < startDate || medDate > endDate) return false;
       }
       // Day-of-week filter
@@ -224,11 +224,13 @@ const App: React.FC = () => {
       timesOfDay: medData.timesOfDay || ["06:00"],
       instructions: medData.instructions || "",
       color: medData.color || "bg-blue-300",
+      shape: medData.shape || "capsule",
       company: medData.company,
       pillImageUrl: medData.pillImageUrl,
       startDate: medData.startDate || new Date().toISOString().split("T")[0],
       endDate: medData.endDate,
       daysOfWeek: medData.daysOfWeek,
+      alternatingPattern: medData.alternatingPattern,
       notes: medData.notes
     };
 
@@ -373,29 +375,13 @@ const App: React.FC = () => {
       {showOnboarding && (
         <div className="onboarding-overlay">
           <div className="onboarding-modal">
-            <button
-              className="onboarding-close"
-              onClick={handleDismissOnboarding}
-              aria-label="Close"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  d="M18 6L6 18M6 6l12 12"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
             <div className="onboarding-icon">💊</div>
             <h2 className="onboarding-title">Welcome to PillBow</h2>
-            <p className="onboarding-text">No medications yet</p>
+            <p className="onboarding-text">
+              {termsAccepted
+                ? "No medications yet"
+                : "Please accept the Terms & Conditions to continue"}
+            </p>
 
             {/* Terms & Conditions Agreement */}
             <div className="onboarding-terms">

@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import classNames from "classnames";
-import { isToday, format } from "date-fns";
+import { isToday, format, parseISO, startOfDay } from "date-fns";
 import { Medication, DoseStatus, DayLog } from "../../types";
 import { InactivePillboxCard } from "../InactivePillboxCard/InactivePillboxCard";
 import { ActivePillboxCard } from "../ActivePillboxCard/ActivePillboxCard";
@@ -44,9 +44,9 @@ export const TimelineContainer: React.FC<TimelineContainerProps> = ({
       if (!med.startDate || !med.endDate) {
         // Still check day-of-week even without date range
       } else {
-        const medDate = day.getTime();
-        const startDate = new Date(med.startDate).getTime();
-        const endDate = new Date(med.endDate).getTime();
+        const medDate = startOfDay(day).getTime();
+        const startDate = startOfDay(parseISO(med.startDate)).getTime();
+        const endDate = startOfDay(parseISO(med.endDate)).getTime();
         if (medDate < startDate || medDate > endDate) return false;
       }
       // Day-of-week filter

@@ -13,6 +13,10 @@ const getMedicationStatus = (med: Medication, date: Date): MedStatus => {
   if (!med.endDate) return "active";
   if (med.refillDismissed) return "active";
 
+  // One-time events (startDate === endDate) don't need "last-day" or "ending-soon" badges
+  const isOneTimeEvent = med.startDate && med.endDate && med.startDate === med.endDate;
+  if (isOneTimeEvent) return "active";
+
   const endDate = startOfDay(parseISO(med.endDate));
   const checkDate = startOfDay(date);
   const daysUntilEnd = differenceInDays(endDate, checkDate);
@@ -147,117 +151,94 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
             <span className="inactive-pillbox-card__month">{format(date, "MMM")}</span>
           </div>
 
-          {/* Event badges - show unique event-type icons at day level */}
-          {(() => {
-            const seenEvents = new Set<string>();
-            const eventIcons: { shape: string; icon: string }[] = [];
-            for (const med of medications) {
-              const shape = med.shape || "capsule";
-              if (isEventShape(shape) && !seenEvents.has(shape)) {
-                seenEvents.add(shape);
-                eventIcons.push({ shape, icon: getShapeIcon(shape) });
-              }
-            }
-            if (eventIcons.length === 0) return null;
-            return (
-              <div className="inactive-pillbox-card__event-badges">
-                {eventIcons.map(({ shape, icon }) => (
-                  <span key={shape} className="inactive-pillbox-card__event-badge">
-                    {icon}
-                  </span>
-                ))}
-              </div>
-            );
-          })()}
-
-          {/* Time Slice Preview - only show if there are medications */}
+          {/* Timeline area: icon row on top, slice bars below */}
           {!hasNoPills && (
-            <div className="inactive-pillbox-card__timeline-preview">
+            <div className="inactive-pillbox-card__timeline-area">
+              {/* Unique type icons row - above the bars, left-aligned */}
               {(() => {
-                // 1. Get all unique times for active meds on this day
-                const allTimes: string[] = Array.from(new Set(
-                  (medications.flatMap(m => m.timesOfDay || ["06:00"]) as string[])
-                )).sort();
-
-                if (allTimes.length === 0) return <div className="timeline-empty-bar" />;
-
+                const seen = new Set<string>();
+                const typeIcons: { shape: string; icon: string; isEvent: boolean }[] = [];
+                for (const med of medications) {
+                  const shape = med.shape || "capsule";
+                  if (!seen.has(shape)) {
+                    seen.add(shape);
+                    typeIcons.push({ shape, icon: getShapeIcon(shape), isEvent: isEventShape(shape) });
+                  }
+                }
+                if (typeIcons.length === 0) return null;
                 return (
-                  <div className="timeline-bar-container">
-                    {allTimes.slice(0, 5).map((time, idx) => {
-                      const hour = parseInt(time.split(':')[0], 10);
-
-                      // Determine time group class for coloring
-                      let timeGroupClass = "time-group-night";
-                      if (hour < 6) timeGroupClass = "time-group-early";
-                      else if (hour < 9) timeGroupClass = "time-group-morning";
-                      else if (hour < 12) timeGroupClass = "time-group-midmorning";
-                      else if (hour < 15) timeGroupClass = "time-group-noon";
-                      else if (hour < 18) timeGroupClass = "time-group-afternoon";
-                      else if (hour < 21) timeGroupClass = "time-group-evening";
-
-                      // Determine status for this slot
-                      const medsInSlot = medications.filter(m =>
-                        (m.timesOfDay || ["06:00"]).includes(time)
-                      );
-                      const isSlotTaken = medsInSlot.every(m =>
-                        getDoseStatusFromLog(dayLog, m.id, time) === DoseStatus.TAKEN
-                      );
-
-                      // Build shape icons for this slot (deduplicated)
-                      const slotIcons: string[] = [];
-                      const seenShapes = new Set<string>();
-                      for (const m of medsInSlot) {
-                        const shape = m.shape || "capsule";
-                        if (!seenShapes.has(shape)) {
-                          seenShapes.add(shape);
-                          slotIcons.push(getShapeIcon(shape));
-                        }
-                      }
-                      // Truncate: if more than 2 icon types, show 2 + ".."; otherwise show all
-                      const maxIcons = slotIcons.length > 2 ? 2 : slotIcons.length;
-                      const visibleIcons = slotIcons.slice(0, maxIcons);
-                      const hasMore = slotIcons.length > maxIcons;
-
-                      return (
-                        <div
-                          key={`${time}-${idx}`}
-                          className={classNames("timeline-slice-group", timeGroupClass)}
-                          style={{ flex: 1 }}
-                        >
-                          <div
-                            className={classNames("timeline-slice", {
-                              "timeline-slice--taken": isSlotTaken
-                            })}
-                            data-time-hour={hour}
-                          >
-                            {/* Shape icons on the slice */}
-                            <div className="timeline-slice-icons">
-                              {visibleIcons.map((icon, i) => (
-                                <span key={i} className="timeline-slice-icon">{icon}</span>
-                              ))}
-                              {hasMore && <span className="timeline-slice-icon-more">..</span>}
-                            </div>
-
-                            {/* Taken Checkmark (Small, at the side) */}
-                            {isSlotTaken && (
-                              <div className="timeline-slice-check">
-                                <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-                                  <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Time label below */}
-                          <div className="timeline-slice-label">
-                            <span className="timeline-slice-time">{time}</span>
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <div className="inactive-pillbox-card__type-icons">
+                    {typeIcons.map(({ shape, icon, isEvent }) => (
+                      <span key={shape} className={classNames("inactive-pillbox-card__type-icon", {
+                        "inactive-pillbox-card__type-icon--event": isEvent,
+                      })}>
+                        {icon}
+                      </span>
+                    ))}
                   </div>
                 );
               })()}
+
+              {/* Time Slice Bars */}
+              <div className="inactive-pillbox-card__timeline-preview">
+                {(() => {
+                  const allTimes: string[] = Array.from(new Set(
+                    (medications.flatMap(m => m.timesOfDay || ["06:00"]) as string[])
+                  )).sort();
+
+                  if (allTimes.length === 0) return <div className="timeline-empty-bar" />;
+
+                  return (
+                    <div className="timeline-bar-container">
+                      {allTimes.slice(0, 5).map((time, idx) => {
+                        const hour = parseInt(time.split(':')[0], 10);
+
+                        let timeGroupClass = "time-group-night";
+                        if (hour < 6) timeGroupClass = "time-group-early";
+                        else if (hour < 9) timeGroupClass = "time-group-morning";
+                        else if (hour < 12) timeGroupClass = "time-group-midmorning";
+                        else if (hour < 15) timeGroupClass = "time-group-noon";
+                        else if (hour < 18) timeGroupClass = "time-group-afternoon";
+                        else if (hour < 21) timeGroupClass = "time-group-evening";
+
+                        const medsInSlot = medications.filter(m =>
+                          (m.timesOfDay || ["06:00"]).includes(time)
+                        );
+                        const isSlotTaken = medsInSlot.every(m =>
+                          getDoseStatusFromLog(dayLog, m.id, time) === DoseStatus.TAKEN
+                        );
+
+                        return (
+                          <div
+                            key={`${time}-${idx}`}
+                            className={classNames("timeline-slice-group", timeGroupClass)}
+                            style={{ flex: 1 }}
+                          >
+                            <div
+                              className={classNames("timeline-slice", {
+                                "timeline-slice--taken": isSlotTaken
+                              })}
+                              data-time-hour={hour}
+                            >
+                              {isSlotTaken && (
+                                <div className="timeline-slice-check">
+                                  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="timeline-slice-label">
+                              <span className="timeline-slice-time">{time}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+              </div>
             </div>
           )}
         </div>
@@ -284,29 +265,8 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
                 </button>
               )}
 
-              {/* Item type icon with count */}
+              {/* Item count badge */}
               <div className="inactive-pillbox-card__item-badge">
-                {(() => {
-                  // Get unique shape icons for this day
-                  const seen = new Set<string>();
-                  const icons: string[] = [];
-                  for (const med of medications) {
-                    const shape = med.shape || "capsule";
-                    if (!seen.has(shape)) {
-                      seen.add(shape);
-                      icons.push(getShapeIcon(shape));
-                    }
-                  }
-                  // Show up to 2 unique icons, add "..." if more
-                  return (
-                    <>
-                      {icons.slice(0, 2).map((icon, i) => (
-                        <span key={i} className="inactive-pillbox-card__item-icon">{icon}</span>
-                      ))}
-                      {icons.length > 2 && <span className="inactive-pillbox-card__item-more">...</span>}
-                    </>
-                  );
-                })()}
                 <span className="inactive-pillbox-card__item-count">
                   {medications.length}
                 </span>

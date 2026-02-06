@@ -1,5 +1,5 @@
 {
-  "version": "0.0.2",
-  "buildDate": "2026-01-31",
-  "description": "PWA cache update fix - automatic version detection and reload"
+  "version": "0.0.4",
+  "buildDate": "2026-02-06",
+  "description": "Fix date comparisons, event scheduling, timeline redesign, edit form event support"
 }

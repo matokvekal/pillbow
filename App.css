@@ -49,6 +49,12 @@
   transform: scale(0.95);
 }
 
+/* Hide FAB when add-member, edit-user, or onboarding modal is open */
+.app-container:has(.modal-overlay) .fab-add,
+.app-container:has(.onboarding-overlay) .fab-add {
+  display: none;
+}
+
 /* ========================================
    SETTINGS VIEW
    ======================================== */

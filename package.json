@@ -1,7 +1,7 @@
 {
   "name": "pillbow---medication-pillbox-timeline",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +12,7 @@
     "@google/genai": "^1.35.0",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
+    "firebase": "^12.9.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "zustand": "^5.0.10"

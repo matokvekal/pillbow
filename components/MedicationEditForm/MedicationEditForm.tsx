@@ -136,9 +136,10 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
     }
     // durationIndex === 3 means "Ongoing" -> no endDate
 
+    const currentIsEvent = isEventShape(FORM_SHAPES[shapeIndex]?.id);
     const updates: Partial<Medication> = {
       name: name.trim(),
-      strength: `${strengthValue} ${strengthUnit}`,
+      strength: currentIsEvent ? "" : `${strengthValue} ${strengthUnit}`,
       dosesPerDay: selectedTimes.length,
       timesOfDay: selectedTimes,
       startDate,
@@ -175,11 +176,13 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
           </svg>
         </button>
         <div className={`med-edit-form__med-icon ${medication.color}`}>
-          <span>{getShapeIcon(medication.shape)}</span>
+          <span>{getShapeIcon(FORM_SHAPES[shapeIndex]?.id)}</span>
         </div>
         <div className="med-edit-form__med-details">
           <h3 className="med-edit-form__med-name">{medication.name}</h3>
-          <p className="med-edit-form__med-current">Edit Medicine</p>
+          <p className="med-edit-form__med-current">
+            {isEventShape(FORM_SHAPES[shapeIndex]?.id) ? "Edit Event" : "Edit Medicine"}
+          </p>
         </div>
       </div>
 
@@ -188,48 +191,56 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
         {/* Name */}
         <div className="med-edit-form__field">
           <label className="med-edit-form__label">
-            {isEventShape(medication.shape || "") ? "Event Name" : "Medicine Name"}
+            {isEventShape(FORM_SHAPES[shapeIndex]?.id) ? "Event Name" : "Medicine Name"}
           </label>
           <input
             type="text"
             className="med-edit-form__input"
-            placeholder={isEventShape(medication.shape || "") ? "e.g. Dentist Visit" : "e.g. Aspirin"}
+            placeholder={isEventShape(FORM_SHAPES[shapeIndex]?.id) ? "e.g. Dentist Visit" : "e.g. Aspirin"}
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoComplete="off"
           />
         </div>
 
-        {/* Amount / Strength */}
-        <div className="med-edit-form__field">
-          <label className="med-edit-form__label">Amount / Strength</label>
-          <div className="med-edit-form__strength-row">
-            <input
-              type="number"
-              className="med-edit-form__strength-input"
-              value={strengthValue}
-              onChange={(e) => setStrengthValue(e.target.value)}
-              min="1"
-              max="9999"
-            />
-            <div className="med-edit-form__unit-picker">
-              {FORM_UNITS.map(({ unit }) => (
-                <button
-                  key={unit}
-                  className={`med-edit-form__unit-btn ${strengthUnit === unit ? "med-edit-form__unit-btn--active" : ""}`}
-                  onClick={() => setStrengthUnit(unit)}
-                >
-                  {unit}
-                </button>
-              ))}
+        {/* Amount / Strength - only for medicines, not events */}
+        {!isEventShape(FORM_SHAPES[shapeIndex]?.id) && (
+          <div className="med-edit-form__field">
+            <label className="med-edit-form__label">Amount / Strength</label>
+            <div className="med-edit-form__strength-row">
+              <input
+                type="number"
+                className="med-edit-form__strength-input"
+                value={strengthValue}
+                onChange={(e) => setStrengthValue(e.target.value)}
+                min="1"
+                max="9999"
+              />
+              <div className="med-edit-form__unit-picker">
+                {FORM_UNITS.map(({ unit }) => (
+                  <button
+                    key={unit}
+                    className={`med-edit-form__unit-btn ${strengthUnit === unit ? "med-edit-form__unit-btn--active" : ""}`}
+                    onClick={() => setStrengthUnit(unit)}
+                  >
+                    {unit}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* When to Take - Time Picker */}
         <div className="med-edit-form__field">
-          <label className="med-edit-form__label">When to take?</label>
-          <p className="med-edit-form__hint">Tap to select times (can pick multiple)</p>
+          <label className="med-edit-form__label">
+            {isEventShape(FORM_SHAPES[shapeIndex]?.id) ? "At what time?" : "When to take?"}
+          </label>
+          <p className="med-edit-form__hint">
+            {isEventShape(FORM_SHAPES[shapeIndex]?.id)
+              ? "Select appointment time"
+              : "Tap to select times (can pick multiple)"}
+          </p>
 
           <div className="med-edit-form__time-grid">
             {FORM_TIME_PRESETS.map((preset) => (

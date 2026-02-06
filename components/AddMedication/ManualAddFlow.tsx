@@ -127,33 +127,56 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
 
   const handleSave = () => {
     const today = new Date();
+    const currentIsEvent = isEventShape(SHAPES[shapeIndex].id);
 
-    // Respect the start date selection
     let startDate: string;
-    if (startDateOption === 'tomorrow') {
-      startDate = format(addDays(today, 1), "yyyy-MM-dd");
-    } else if (startDateOption === 'custom' && customStartDate) {
-      startDate = customStartDate;
-    } else {
-      startDate = format(today, "yyyy-MM-dd");
-    }
-
-    const startDateObj = startDateOption === 'tomorrow' ? addDays(today, 1)
-      : startDateOption === 'custom' && customStartDate ? new Date(customStartDate)
-      : today;
-
-    // Calculate end date from start date
     let endDate: string | undefined;
-    if (durationIndex === -1 && customEndDate) {
-      endDate = customEndDate;
-    } else if (durationIndex > -1 && durationIndex < 3 && DURATIONS[durationIndex].days > 0) {
-      endDate = format(addDays(startDateObj, DURATIONS[durationIndex].days), "yyyy-MM-dd");
+    let daysOfWeek: number[] | undefined;
+
+    if (currentIsEvent) {
+      // Events: use eventDate for scheduling
+      if (!isRecurring && eventDate) {
+        // One-time event: show only on that specific day
+        startDate = eventDate;
+        endDate = eventDate;
+      } else if (isRecurring && eventDate) {
+        // Recurring event: start from eventDate, specific day of week, ongoing
+        startDate = eventDate;
+        endDate = undefined;
+        daysOfWeek = [recurringDay];
+      } else {
+        // Fallback: today
+        startDate = format(today, "yyyy-MM-dd");
+        endDate = startDate;
+      }
+    } else {
+      // Medicines: use start date option
+      if (startDateOption === 'tomorrow') {
+        startDate = format(addDays(today, 1), "yyyy-MM-dd");
+      } else if (startDateOption === 'custom' && customStartDate) {
+        startDate = customStartDate;
+      } else {
+        startDate = format(today, "yyyy-MM-dd");
+      }
+
+      const startDateObj = startDateOption === 'tomorrow' ? addDays(today, 1)
+        : startDateOption === 'custom' && customStartDate ? new Date(customStartDate)
+        : today;
+
+      // Calculate end date from start date
+      if (durationIndex === -1 && customEndDate) {
+        endDate = customEndDate;
+      } else if (durationIndex > -1 && durationIndex < 3 && DURATIONS[durationIndex].days > 0) {
+        endDate = format(addDays(startDateObj, DURATIONS[durationIndex].days), "yyyy-MM-dd");
+      }
+
+      daysOfWeek = schedulePattern === 'specific' && selectedDays.length > 0 ? selectedDays : undefined;
     }
 
     const medication: Partial<Medication> = {
       id: `med-${Date.now()}`,
       name: name.trim(),
-      strength: `${strengthValue}${strengthUnit}`,
+      strength: currentIsEvent ? "" : `${strengthValue}${strengthUnit}`,
       dosage: "1 dose",
       dosesPerDay: selectedTimes.length,
       timesOfDay: selectedTimes,
@@ -161,8 +184,8 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
       shape: SHAPES[shapeIndex].id,
       startDate,
       endDate,
-      daysOfWeek: schedulePattern === 'specific' && selectedDays.length > 0 ? selectedDays : undefined,
-      alternatingPattern: schedulePattern === 'alternating' ? true : undefined,
+      daysOfWeek,
+      alternatingPattern: !currentIsEvent && schedulePattern === 'alternating' ? true : undefined,
       instructions: "",
     };
 
