@@ -1,10 +1,8 @@
-// Google Authentication Service
-// Uses localStorage to simulate auth state (for demo purposes)
-// In production, this would integrate with Google Identity Services
+// Google Authentication Service — Firebase Auth implementation
 
+import { signInWithPopup, signOut, onAuthStateChanged, User } from "firebase/auth";
+import { auth, googleProvider } from "./firebase";
 import { UserProfile } from '../types';
-
-const GOOGLE_USER_KEY = 'pillbow_google_user';
 
 export interface GoogleUserInfo {
     id: string;
@@ -17,71 +15,69 @@ export interface GoogleUserInfo {
  * Check if user is authenticated with Google
  */
 export const isGoogleAuthenticated = (): boolean => {
-    const stored = localStorage.getItem(GOOGLE_USER_KEY);
-    return !!stored;
+    return !!auth.currentUser;
 };
 
 /**
- * Get stored Google user profile
+ * Get current Google user profile
  */
 export const getStoredGoogleUser = (): GoogleUserInfo | null => {
-    const stored = localStorage.getItem(GOOGLE_USER_KEY);
-    if (stored) {
-        try {
-            return JSON.parse(stored);
-        } catch {
-            return null;
-        }
-    }
-    return null;
+    const user = auth.currentUser;
+    if (!user) return null;
+    return {
+        id: user.uid,
+        name: user.displayName || "Google User",
+        email: user.email || "",
+        photoURL: user.photoURL || "",
+    };
 };
 
 /**
- * Sign in with Google
- * Note: This is a placeholder. Real implementation requires:
- * 1. Google Cloud Console setup with OAuth credentials
- * 2. Adding the GSI script to index.html
- * 3. Initializing google.accounts.id.initialize()
- * 
- * For now, we'll show how the UI should work.
+ * Sign in with Google via Firebase popup
  */
 export const signInWithGoogle = async (): Promise<GoogleUserInfo | null> => {
-    // Check if Google Identity Services is loaded
-    if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
-        return new Promise((resolve) => {
-            (window as any).google.accounts.id.prompt((notification: any) => {
-                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                    console.log('Google sign-in prompt not shown');
-                    resolve(null);
-                }
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        return {
+            id: user.uid,
+            name: user.displayName || "Google User",
+            email: user.email || "",
+            photoURL: user.photoURL || "",
+        };
+    } catch (error: any) {
+        // User closed popup or other error
+        if (error.code === "auth/popup-closed-by-user") {
+            return null;
+        }
+        console.error("Google sign-in error:", error);
+        throw error;
+    }
+};
+
+/**
+ * Sign out from Google via Firebase
+ */
+export const signOutGoogle = async (): Promise<void> => {
+    await signOut(auth);
+};
+
+/**
+ * Listen for auth state changes
+ */
+export const onAuthChanged = (callback: (user: GoogleUserInfo | null) => void): (() => void) => {
+    return onAuthStateChanged(auth, (firebaseUser: User | null) => {
+        if (firebaseUser) {
+            callback({
+                id: firebaseUser.uid,
+                name: firebaseUser.displayName || "Google User",
+                email: firebaseUser.email || "",
+                photoURL: firebaseUser.photoURL || "",
             });
-            // The actual user info will come from the callback set in initGoogleAuth
-        });
-    } else {
-        // GSI not loaded - show alert for now
-        console.warn('Google Identity Services not loaded. Please add the GSI script to index.html');
-        alert('Google Sign-In requires setup. Please configure Google Cloud Console and add the GSI script.');
-        return null;
-    }
-};
-
-/**
- * Sign out from Google
- */
-export const signOutGoogle = (): void => {
-    localStorage.removeItem(GOOGLE_USER_KEY);
-
-    // Revoke Google session if GSI is available
-    if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
-        (window as any).google.accounts.id.disableAutoSelect();
-    }
-};
-
-/**
- * Save Google user to localStorage
- */
-export const saveGoogleUser = (user: GoogleUserInfo): void => {
-    localStorage.setItem(GOOGLE_USER_KEY, JSON.stringify(user));
+        } else {
+            callback(null);
+        }
+    });
 };
 
 /**
@@ -93,35 +89,11 @@ export const googleUserToProfile = (googleUser: GoogleUserInfo): Partial<UserPro
         name: googleUser.name,
         email: googleUser.email,
         photoURL: googleUser.photoURL,
-        avatar: googleUser.photoURL, // Use photo as avatar
+        avatar: googleUser.photoURL,
         isGoogleUser: true,
         googleId: googleUser.id,
         relationship: 'self',
         color: 'blue',
         createdAt: new Date().toISOString(),
     };
-};
-
-/**
- * Initialize Google Identity Services
- * Call this in App.tsx or index.tsx on load
- */
-export const initGoogleAuth = (clientId: string, onSignIn: (user: GoogleUserInfo) => void): void => {
-    if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
-        (window as any).google.accounts.id.initialize({
-            client_id: clientId,
-            callback: (response: any) => {
-                // Decode the JWT credential
-                const payload = JSON.parse(atob(response.credential.split('.')[1]));
-                const user: GoogleUserInfo = {
-                    id: payload.sub,
-                    name: payload.name,
-                    email: payload.email,
-                    photoURL: payload.picture,
-                };
-                saveGoogleUser(user);
-                onSignIn(user);
-            },
-        });
-    }
 };

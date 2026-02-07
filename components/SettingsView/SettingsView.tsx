@@ -13,6 +13,7 @@ import {
 import {
   isGoogleAuthenticated,
   getStoredGoogleUser,
+  signInWithGoogle,
   signOutGoogle
 } from "../../services/googleAuthService";
 import { MOCK_VITAMINS } from "../../constants";
@@ -39,6 +40,24 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const { pushModal } = useModalStore();
   const currentUser = getCurrentUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [signingIn, setSigningIn] = useState(false);
+  const [signInError, setSignInError] = useState<string | null>(null);
+
+  const handleGoogleSignIn = async () => {
+    setSigningIn(true);
+    setSignInError(null);
+    try {
+      const googleUser = await signInWithGoogle();
+      if (googleUser) {
+        useUserStore.getState().syncGoogleUser(googleUser);
+        window.location.reload();
+      }
+    } catch (error: any) {
+      setSignInError(error.message || "Sign-in failed");
+    } finally {
+      setSigningIn(false);
+    }
+  };
 
   const handleManageMeds = () => {
     onBack(); // Close settings view
@@ -352,13 +371,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="settings-v2__section">
           <h3 className="settings-v2__section-title">Account</h3>
           {!isGoogleAuthenticated() ? (
+            <>
             <button
               className="google-signin-card"
-              onClick={() => {
-                alert(
-                  "Google Sign-In will be active once you configure the OAuth Client ID in Google Cloud Console."
-                );
-              }}
+              onClick={handleGoogleSignIn}
+              disabled={signingIn}
+              style={{ opacity: signingIn ? 0.6 : 1 }}
             >
               <div className="google-signin-card__icon">
                 <svg width="24" height="24" viewBox="0 0 48 48">
@@ -382,13 +400,19 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               </div>
               <div className="google-signin-card__content">
                 <span className="google-signin-card__title">
-                  Sign in with Google
+                  {signingIn ? "Signing in..." : "Sign in with Google"}
                 </span>
                 <span className="google-signin-card__desc">
                   Sync your data and get 50 AI credits
                 </span>
               </div>
             </button>
+            {signInError && (
+              <p style={{ color: "#ef4444", fontSize: "0.85rem", margin: "8px 0 0", textAlign: "center" }}>
+                {signInError}
+              </p>
+            )}
+            </>
           ) : (
             <div className="google-profile-card">
               <img
@@ -406,8 +430,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               </div>
               <button
                 className="google-profile-card__signout"
-                onClick={() => {
-                  signOutGoogle();
+                onClick={async () => {
+                  await signOutGoogle();
+                  useUserStore.getState().clearGoogleUser();
                   window.location.reload();
                 }}
               >
@@ -463,6 +488,64 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               </span>
             </div>
           </button>
+        </div>
+
+        {/* Contact */}
+        <div className="settings-v2__section">
+          <h3 className="settings-v2__section-title">Get in Touch</h3>
+          <div className="contact-card">
+            <div className="contact-card__glow" />
+            <div className="contact-card__header">
+              <div className="contact-card__avatar-ring">
+                <div className="contact-card__avatar">GD</div>
+              </div>
+              <div className="contact-card__intro">
+                <span className="contact-card__name">Gilad Dolev</span>
+                <span className="contact-card__role">Developer & Creator</span>
+              </div>
+            </div>
+            <div className="contact-card__links">
+              <a
+                href="mailto:tipusharim@gmail.com"
+                className="contact-link contact-link--email"
+              >
+                <div className="contact-link__icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="M22 4L12 13L2 4" />
+                  </svg>
+                </div>
+                <div className="contact-link__text">
+                  <span className="contact-link__label">Email</span>
+                  <span className="contact-link__value">tipusharim@gmail.com</span>
+                </div>
+                <svg className="contact-link__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17L17 7" />
+                  <path d="M7 7h10v10" />
+                </svg>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/giladdolev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-link contact-link--linkedin"
+              >
+                <div className="contact-link__icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                  </svg>
+                </div>
+                <div className="contact-link__text">
+                  <span className="contact-link__label">LinkedIn</span>
+                  <span className="contact-link__value">giladdolev</span>
+                </div>
+                <svg className="contact-link__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17L17 7" />
+                  <path d="M7 7h10v10" />
+                </svg>
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* App Info */}

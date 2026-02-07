@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { format, addDays } from "date-fns";
 import { Medication, getShapeIcon } from "../../types";
 import { useModalStore } from "../../store/useModalStore";
@@ -57,6 +57,11 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
   const initShapeIndex = FORM_SHAPES.findIndex(s => s.id === medication.shape);
   const initDurationIndex = findDurationIndex(medication.startDate, medication.endDate);
 
+  // Detect if the medication is an event type
+  const initIsEvent = isEventShape(medication.shape);
+  // Detect if event is recurring: has daysOfWeek set and startDate !== endDate
+  const initIsRecurring = initIsEvent && !!(medication.daysOfWeek && medication.daysOfWeek.length > 0);
+
   // Form state
   const [name, setName] = useState(medication.name);
   const [strengthValue, setStrengthValue] = useState(parsed.value);
@@ -71,6 +76,16 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
   const [colorIndex, setColorIndex] = useState(initColorIndex >= 0 ? initColorIndex : 0);
   const [shapeIndex, setShapeIndex] = useState(initShapeIndex >= 0 ? initShapeIndex : 0);
   const [showStopConfirm, setShowStopConfirm] = useState(false);
+
+  // Event-specific state
+  const [isRecurring, setIsRecurring] = useState(initIsRecurring);
+  const [eventDate, setEventDate] = useState(medication.startDate || format(new Date(), "yyyy-MM-dd"));
+  const [recurringDay, setRecurringDay] = useState(
+    initIsRecurring && medication.daysOfWeek ? medication.daysOfWeek[0] : new Date().getDay()
+  );
+
+  // Whether the current shape is an event
+  const currentIsEvent = useMemo(() => isEventShape(FORM_SHAPES[shapeIndex]?.id), [shapeIndex]);
 
   // Toggle time selection
   const toggleTime = (time: string) => {
@@ -125,18 +140,38 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
 
   // Save handler
   const handleSave = () => {
-    const startDate = medication.startDate || format(new Date(), "yyyy-MM-dd");
-
+    let startDate: string;
     let endDate: string | undefined;
-    if (durationIndex === -1 && customEndDate) {
-      endDate = customEndDate;
-    } else if (durationIndex > -1 && durationIndex < 3 && FORM_DURATIONS[durationIndex].days > 0) {
-      const start = medication.startDate ? new Date(medication.startDate) : new Date();
-      endDate = format(addDays(start, FORM_DURATIONS[durationIndex].days), "yyyy-MM-dd");
-    }
-    // durationIndex === 3 means "Ongoing" -> no endDate
+    let daysOfWeek: number[] | undefined;
 
-    const currentIsEvent = isEventShape(FORM_SHAPES[shapeIndex]?.id);
+    if (currentIsEvent) {
+      // Events: use event schedule (one-time or recurring)
+      if (!isRecurring) {
+        // One-time event: startDate = endDate = eventDate
+        startDate = eventDate;
+        endDate = eventDate;
+        daysOfWeek = undefined;
+      } else {
+        // Recurring event: startDate = eventDate, no endDate, daysOfWeek = [recurringDay]
+        startDate = eventDate;
+        endDate = undefined;
+        daysOfWeek = [recurringDay];
+      }
+    } else {
+      // Medicines: use duration-based logic
+      startDate = medication.startDate || format(new Date(), "yyyy-MM-dd");
+
+      if (durationIndex === -1 && customEndDate) {
+        endDate = customEndDate;
+      } else if (durationIndex > -1 && durationIndex < 3 && FORM_DURATIONS[durationIndex].days > 0) {
+        const start = medication.startDate ? new Date(medication.startDate) : new Date();
+        endDate = format(addDays(start, FORM_DURATIONS[durationIndex].days), "yyyy-MM-dd");
+      }
+      // durationIndex === 3 means "Ongoing" -> no endDate
+
+      daysOfWeek = selectedDays.length > 0 ? selectedDays : undefined;
+    }
+
     const updates: Partial<Medication> = {
       name: name.trim(),
       strength: currentIsEvent ? "" : `${strengthValue} ${strengthUnit}`,
@@ -144,7 +179,7 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
       timesOfDay: selectedTimes,
       startDate,
       endDate: endDate || undefined,
-      daysOfWeek: selectedDays.length > 0 ? selectedDays : undefined,
+      daysOfWeek,
       color: FORM_COLORS[colorIndex].class,
       shape: FORM_SHAPES[shapeIndex].id,
     };
@@ -154,15 +189,28 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
   };
 
   // Detect changes
-  const hasChanges =
-    name.trim() !== medication.name ||
-    `${strengthValue} ${strengthUnit}` !== medication.strength ||
-    JSON.stringify(selectedTimes) !== JSON.stringify(medication.timesOfDay || []) ||
-    JSON.stringify(selectedDays) !== JSON.stringify(medication.daysOfWeek || []) ||
-    durationIndex !== findDurationIndex(medication.startDate, medication.endDate) ||
-    (durationIndex === -1 && customEndDate !== (medication.endDate || "")) ||
-    FORM_COLORS[colorIndex].class !== medication.color ||
-    FORM_SHAPES[shapeIndex].id !== (medication.shape || "capsule");
+  const hasChanges = (() => {
+    const baseChanges =
+      name.trim() !== medication.name ||
+      JSON.stringify(selectedTimes) !== JSON.stringify(medication.timesOfDay || []) ||
+      FORM_COLORS[colorIndex].class !== medication.color ||
+      FORM_SHAPES[shapeIndex].id !== (medication.shape || "capsule");
+
+    if (currentIsEvent) {
+      // Event-specific change detection
+      return baseChanges ||
+        eventDate !== (medication.startDate || "") ||
+        isRecurring !== initIsRecurring ||
+        (isRecurring && recurringDay !== (medication.daysOfWeek?.[0] ?? -1));
+    } else {
+      // Medicine-specific change detection
+      return baseChanges ||
+        `${strengthValue} ${strengthUnit}` !== medication.strength ||
+        JSON.stringify(selectedDays) !== JSON.stringify(medication.daysOfWeek || []) ||
+        durationIndex !== findDurationIndex(medication.startDate, medication.endDate) ||
+        (durationIndex === -1 && customEndDate !== (medication.endDate || ""));
+    }
+  })();
 
   const isValid = name.trim().length >= 2 && selectedTimes.length > 0;
 
@@ -324,95 +372,168 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
           </div>
         </div>
 
-        {/* Days of Week */}
-        <div className="med-edit-form__field">
-          <label className="med-edit-form__label">Which days?</label>
-          <p className="med-edit-form__hint">Leave empty for every day</p>
-          <div className="med-edit-form__day-picker">
-            {DAY_LABELS.map((label, index) => (
-              <button
-                key={index}
-                className={`med-edit-form__day-btn ${selectedDays.includes(index) ? "med-edit-form__day-btn--active" : ""}`}
-                onClick={() => toggleDay(index)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          <div className="med-edit-form__day-summary">
-            {selectedDays.length === 0 ? (
-              <span className="med-edit-form__day-chip med-edit-form__day-chip--every">Every day</span>
-            ) : (
-              selectedDays.map(d => (
-                <span key={d} className="med-edit-form__day-chip">
-                  {DAY_NAMES[d]}
-                </span>
-              ))
-            )}
-          </div>
-        </div>
+        {/* === EVENT SCHEDULE (events only) === */}
+        {currentIsEvent && (
+          <div className="med-edit-form__field">
+            <label className="med-edit-form__label">Schedule</label>
 
-        {/* Duration */}
-        <div className="med-edit-form__field">
-          <label className="med-edit-form__label">For how long?</label>
-          <div className="med-edit-form__duration-grid">
-            {FORM_DURATIONS.map((duration, index) => (
+            {/* One-time vs Recurring toggle */}
+            <div className="med-edit-form__schedule-toggle">
               <button
-                key={duration.label}
-                className={`med-edit-form__duration-btn ${durationIndex === index && !showCalendar ? "med-edit-form__duration-btn--active" : ""}`}
-                onClick={() => handleDurationSelect(index)}
+                type="button"
+                className={`med-edit-form__toggle-btn ${!isRecurring ? "med-edit-form__toggle-btn--active" : ""}`}
+                onClick={() => setIsRecurring(false)}
               >
-                {duration.label}
+                {"\u{1F4C5}"} One-time
               </button>
-            ))}
-          </div>
-          {/* Calendar option */}
-          <div className="med-edit-form__date-section">
-            <button
-              className={`med-edit-form__calendar-btn ${showCalendar ? "med-edit-form__calendar-btn--active" : ""}`}
-              onClick={() => {
-                if (!showCalendar) {
-                  setShowCalendar(true);
-                  setDurationIndex(-1);
-                  setTimeout(() => {
-                    const dateInput = document.querySelector('.med-edit-form__date-input') as HTMLInputElement;
-                    if (dateInput) {
-                      try {
-                        dateInput.showPicker();
-                      } catch {
-                        dateInput.focus();
-                      }
-                    }
-                  }, 0);
-                } else {
-                  setShowCalendar(false);
-                }
-              }}
-            >
-              <span>{"\u{1F4C5}"}</span>
-              <span>{showCalendar ? "Hide date picker" : "Pick end date"}</span>
-            </button>
+              <button
+                type="button"
+                className={`med-edit-form__toggle-btn ${isRecurring ? "med-edit-form__toggle-btn--active" : ""}`}
+                onClick={() => setIsRecurring(true)}
+              >
+                {"\u{1F504}"} Recurring
+              </button>
+            </div>
 
-            {showCalendar && (
-              <div className="med-edit-form__date-input-wrapper">
+            {/* One-time: just date picker */}
+            {!isRecurring && (
+              <div className="med-edit-form__event-date">
+                <p className="med-edit-form__hint">When is your appointment?</p>
                 <input
                   type="date"
                   className="med-edit-form__date-input"
-                  value={customEndDate}
-                  onChange={(e) => setCustomEndDate(e.target.value)}
-                  min={format(new Date(), "yyyy-MM-dd")}
-                  autoFocus
+                  value={eventDate}
+                  onChange={(e) => setEventDate(e.target.value)}
                 />
               </div>
             )}
 
-            {(durationIndex < 3 || (showCalendar && customEndDate)) && (
-              <p className="med-edit-form__end-date">
-                Ends: {getEndDateDisplay()}
-              </p>
+            {/* Recurring: day picker + start date */}
+            {isRecurring && (
+              <div className="med-edit-form__recurring-schedule">
+                <p className="med-edit-form__hint">Which day of the week?</p>
+                <div className="med-edit-form__day-picker">
+                  {DAY_LABELS.map((label, index) => (
+                    <button
+                      key={index}
+                      className={`med-edit-form__day-btn ${recurringDay === index ? "med-edit-form__day-btn--active" : ""}`}
+                      onClick={() => setRecurringDay(index)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <div className="med-edit-form__day-summary">
+                  <span className="med-edit-form__day-chip">
+                    Every {DAY_NAMES[recurringDay]}
+                  </span>
+                </div>
+
+                <p className="med-edit-form__hint" style={{ marginTop: "0.75rem" }}>Starting from</p>
+                <input
+                  type="date"
+                  className="med-edit-form__date-input"
+                  value={eventDate}
+                  onChange={(e) => setEventDate(e.target.value)}
+                />
+              </div>
             )}
           </div>
-        </div>
+        )}
+
+        {/* === DAYS OF WEEK (medicines only) === */}
+        {!currentIsEvent && (
+          <div className="med-edit-form__field">
+            <label className="med-edit-form__label">Which days?</label>
+            <p className="med-edit-form__hint">Leave empty for every day</p>
+            <div className="med-edit-form__day-picker">
+              {DAY_LABELS.map((label, index) => (
+                <button
+                  key={index}
+                  className={`med-edit-form__day-btn ${selectedDays.includes(index) ? "med-edit-form__day-btn--active" : ""}`}
+                  onClick={() => toggleDay(index)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="med-edit-form__day-summary">
+              {selectedDays.length === 0 ? (
+                <span className="med-edit-form__day-chip med-edit-form__day-chip--every">Every day</span>
+              ) : (
+                selectedDays.map(d => (
+                  <span key={d} className="med-edit-form__day-chip">
+                    {DAY_NAMES[d]}
+                  </span>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* === DURATION (medicines only) === */}
+        {!currentIsEvent && (
+          <div className="med-edit-form__field">
+            <label className="med-edit-form__label">For how long?</label>
+            <div className="med-edit-form__duration-grid">
+              {FORM_DURATIONS.map((duration, index) => (
+                <button
+                  key={duration.label}
+                  className={`med-edit-form__duration-btn ${durationIndex === index && !showCalendar ? "med-edit-form__duration-btn--active" : ""}`}
+                  onClick={() => handleDurationSelect(index)}
+                >
+                  {duration.label}
+                </button>
+              ))}
+            </div>
+            {/* Calendar option */}
+            <div className="med-edit-form__date-section">
+              <button
+                className={`med-edit-form__calendar-btn ${showCalendar ? "med-edit-form__calendar-btn--active" : ""}`}
+                onClick={() => {
+                  if (!showCalendar) {
+                    setShowCalendar(true);
+                    setDurationIndex(-1);
+                    setTimeout(() => {
+                      const dateInput = document.querySelector('.med-edit-form__date-input') as HTMLInputElement;
+                      if (dateInput) {
+                        try {
+                          dateInput.showPicker();
+                        } catch {
+                          dateInput.focus();
+                        }
+                      }
+                    }, 0);
+                  } else {
+                    setShowCalendar(false);
+                  }
+                }}
+              >
+                <span>{"\u{1F4C5}"}</span>
+                <span>{showCalendar ? "Hide date picker" : "Pick end date"}</span>
+              </button>
+
+              {showCalendar && (
+                <div className="med-edit-form__date-input-wrapper">
+                  <input
+                    type="date"
+                    className="med-edit-form__date-input"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    min={format(new Date(), "yyyy-MM-dd")}
+                    autoFocus
+                  />
+                </div>
+              )}
+
+              {(durationIndex < 3 || (showCalendar && customEndDate)) && (
+                <p className="med-edit-form__end-date">
+                  Ends: {getEndDateDisplay()}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Icon / Shape */}
         <div className="med-edit-form__field">

@@ -1,0 +1,213 @@
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(170deg, #ffffff 0%, #f0f7ff 40%, #e8f4f8 100%);
+  transition: opacity 0.6s ease-out;
+}
+
+.splash--fading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Pharmacy cross icon */
+.splash__cross {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 28px;
+  animation: splash-cross-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+
+.splash__cross-bg {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3), 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.splash__cross-shape {
+  position: relative;
+  width: 36px;
+  height: 36px;
+}
+
+.splash__cross-h,
+.splash__cross-v {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 3px;
+}
+
+.splash__cross-h {
+  width: 36px;
+  height: 10px;
+  top: 13px;
+  left: 0;
+}
+
+.splash__cross-v {
+  width: 10px;
+  height: 36px;
+  top: 0;
+  left: 13px;
+}
+
+/* Floating pills around the cross */
+.splash__pill {
+  position: absolute;
+  border-radius: 50px;
+  opacity: 0;
+}
+
+.splash__pill--1 {
+  width: 28px;
+  height: 14px;
+  background: linear-gradient(90deg, #f87171 50%, #fbbf24 50%);
+  top: -12px;
+  right: -18px;
+  animation: splash-pill-float 2.5s ease-in-out 0.4s infinite, splash-pill-in 0.5s ease-out 0.4s forwards;
+}
+
+.splash__pill--2 {
+  width: 22px;
+  height: 11px;
+  background: linear-gradient(90deg, #34d399 50%, #a7f3d0 50%);
+  bottom: -8px;
+  left: -16px;
+  animation: splash-pill-float 3s ease-in-out 0.6s infinite, splash-pill-in 0.5s ease-out 0.6s forwards;
+}
+
+.splash__pill--3 {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #c084fc, #a855f7);
+  top: 4px;
+  left: -20px;
+  border-radius: 50%;
+  animation: splash-pill-float 2.8s ease-in-out 0.8s infinite, splash-pill-in 0.5s ease-out 0.8s forwards;
+}
+
+/* App name */
+.splash__title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.5px;
+  margin: 0;
+  opacity: 0;
+  animation: splash-text-in 0.7s ease-out 0.3s forwards;
+}
+
+.splash__title-accent {
+  color: #3b82f6;
+}
+
+/* Tagline */
+.splash__tagline {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-top: 8px;
+  font-weight: 400;
+  opacity: 0;
+  animation: splash-text-in 0.7s ease-out 0.5s forwards;
+}
+
+/* Progress bar */
+.splash__progress {
+  width: 160px;
+  height: 3px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  margin-top: 40px;
+  overflow: hidden;
+  opacity: 0;
+  animation: splash-text-in 0.5s ease-out 0.7s forwards;
+}
+
+.splash__progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 3px;
+  animation: splash-progress 2.2s ease-in-out 0.8s forwards;
+  width: 0%;
+}
+
+/* Decorative dots */
+.splash__dots {
+  position: absolute;
+  bottom: 60px;
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  animation: splash-text-in 0.5s ease-out 0.9s forwards;
+}
+
+.splash__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  animation: splash-dot-pulse 1.2s ease-in-out infinite;
+}
+
+.splash__dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.splash__dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Animations */
+@keyframes splash-cross-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-15deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes splash-pill-in {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 0.85; transform: scale(1); }
+}
+
+@keyframes splash-pill-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes splash-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes splash-progress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+@keyframes splash-dot-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}

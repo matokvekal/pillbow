@@ -7,7 +7,8 @@ import {
   DAYS_BACK,
   DAYS_FORWARD,
   TOTAL_DAYS,
-  MOCK_VITAMINS
+  MOCK_VITAMINS,
+  SHOW_SPLASH_SCREEN
 } from "./constants";
 import { AppHeader } from "./components/AppHeader/AppHeader";
 import { TimelineContainer } from "./components/TimelineContainer/TimelineContainer";
@@ -18,6 +19,7 @@ import { TermsModal } from "./components/TermsModal/TermsModal";
 import { UpdateBanner } from "./components/UpdateBanner/UpdateBanner";
 import { ReminderModal } from "./components/ReminderModal/ReminderModal";
 import { ReminderToast } from "./components/ReminderToast/ReminderToast";
+import { SplashScreen } from "./components/SplashScreen/SplashScreen";
 import { useModalStore } from "./store/useModalStore";
 import { useUserStore } from "./store/useUserStore";
 import { useDayCardStore } from "./store/useDayCardStore";
@@ -34,6 +36,7 @@ import {
 } from "./services/dataService";
 import { playNotificationSound } from "./utils/audioAndFileUtils";
 import { useReminderScheduler } from "./hooks/useReminderScheduler";
+import { onAuthChanged } from "./services/googleAuthService";
 import "./styles/med-colors.css";
 import "./App.css";
 
@@ -41,6 +44,7 @@ import "./App.css";
 // DAYS_BACK, DAYS_FORWARD, and TOTAL_DAYS are now imported from constants
 
 const ONBOARDING_DISMISSED_KEY = "pillbow_onboarding_dismissed";
+const SPLASH_SHOWN_KEY = "pillbow_splash_shown";
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>("timeline");
@@ -50,6 +54,9 @@ const App: React.FC = () => {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [updateKey, setUpdateKey] = useState(0); // Force re-render on dose status change
+  const [showSplash, setShowSplash] = useState(() => {
+    return SHOW_SPLASH_SCREEN && localStorage.getItem(SPLASH_SHOWN_KEY) !== "true";
+  });
   const { pushModal } = useModalStore();
 
   // Medication reminder scheduler
@@ -97,6 +104,16 @@ const App: React.FC = () => {
     if (data.medications.length === 0 && !wasDismissed) {
       setShowOnboarding(true);
     }
+  }, []);
+
+  // Sync Firebase auth state → user store
+  useEffect(() => {
+    const unsubscribe = onAuthChanged((googleUser) => {
+      if (googleUser) {
+        useUserStore.getState().syncGoogleUser(googleUser);
+      }
+    });
+    return unsubscribe;
   }, []);
 
   const handleLoadSampleVitamins = () => {

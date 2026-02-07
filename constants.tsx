@@ -439,6 +439,9 @@ export const getLabelForTime = (time: string): string => {
   return "Evening";
 };
 
+// Feature Flags
+export const SHOW_SPLASH_SCREEN = true;
+
 // App Configuration Constants
 export const INITIAL_SCROLL_DELAY = 100; // Delay to ensure DOM is ready before scrolling
 export const NOTIFICATION_SOUND_URL =
