@@ -12,6 +12,7 @@ import {
   DAY_NAMES,
   isEventShape,
 } from "../../constants/medFormConfig";
+import { MedIcon } from "../MedIcons";
 
 // Extract just the unit strings for the picker
 const UNITS = FORM_UNITS.map(u => u.unit);
@@ -236,7 +237,7 @@ export const ManualAddFlow: React.FC<ManualAddFlowProps> = ({
                 onClick={() => setShapeIndex(index)}
                 title={shape.label}
               >
-                {shape.icon}
+                <MedIcon shapeId={shape.id} size={22} />
               </button>
             ))}
           </div>

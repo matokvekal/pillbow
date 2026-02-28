@@ -1,17 +1,16 @@
-/* App Header - Pastel Rainbow Theme */
+/* App Header - Professional Pastel Rainbow Theme */
 .app-header {
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1.125rem;
   padding-top: 2.25rem;
   background: linear-gradient(135deg, #f0fdf4 0%, #ecfeff 50%, #fdf4ff 100%);
   width: 100%;
   z-index: 30;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  border-bottom: 2px solid rgba(167, 139, 250, 0.2);
+  gap: 0.875rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid rgba(167, 139, 250, 0.12);
   position: relative;
-  /* Allow dropdown to overflow header */
 }
 
 .app-header__logo-container {
@@ -26,35 +25,30 @@
 
 /* Capsule container with gradient border */
 .app-header__capsule-logo {
-  /* Capsule shape - rounded like a pill */
-  padding: 0.35rem 1rem;
+  padding: 0.375rem 1.125rem;
   border-radius: 2rem;
-
-  /* Rainbow gradient border effect using background */
   background: linear-gradient(
     90deg,
-    /* Left half - cool colors (blue → cyan → green) */ #3b82f6 0%,
+    #3b82f6 0%,
     #06b6d4 15%,
     #22c55e 35%,
-    /* Right half - warm colors (yellow → orange → pink → purple) */ #eab308 50%,
+    #eab308 50%,
     #f97316 65%,
     #ec4899 80%,
     #a855f7 100%
   );
-
-  /* Inner white background for text */
   position: relative;
-
-  /* Shadow for depth */
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-
-  /* Flexbox */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(99, 102, 241, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* Enable overflow hidden for light sweep effect */
   overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-header__capsule-logo:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 6px 20px rgba(99, 102, 241, 0.2);
+  transform: translateY(-1px);
 }
 
 /* White inner background (creates border effect) */
@@ -188,7 +182,7 @@
 /* Today Button - compact pill in header, matched height */
 .app-header__today-btn {
   height: 2.5rem;
-  padding: 0 1rem;
+  padding: 0 1.125rem;
   border-radius: 2rem;
   border: none;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
@@ -196,27 +190,43 @@
   font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: inherit;
   white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25), 0 4px 12px rgba(99, 102, 241, 0.15);
   display: flex;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glossy effect */
+.app-header__today-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+  border-radius: 2rem 2rem 0 0;
+  pointer-events: none;
 }
 
 .app-header__today-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 3px 10px rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35), 0 6px 20px rgba(99, 102, 241, 0.2);
 }
 
 .app-header__today-btn:active {
-  transform: scale(0.95);
+  transform: translateY(0) scale(0.98);
 }
 
 /* Settings Button */
 .app-header__menu-btn {
   background: white;
-  border: 2px solid #e2e8f0;
+  background-image: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.5) 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 50%;
   cursor: pointer;
   padding: 0;
@@ -224,21 +234,23 @@
   align-items: center;
   justify-content: center;
   color: #64748b;
-  transition: all 0.2s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   width: 2.5rem;
   height: 2.5rem;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .app-header__menu-btn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: #fafbfc;
+  border-color: rgba(0, 0, 0, 0.1);
   color: #334155;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
 }
 
 .app-header__menu-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.95) translateY(0);
 }
 
 .app-header__menu-icon {

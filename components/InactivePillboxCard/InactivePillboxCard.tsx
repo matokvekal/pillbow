@@ -1,9 +1,10 @@
 import React from "react";
 import { format, isToday as checkIsToday, isPast, isFuture, startOfDay, differenceInDays, parseISO } from "date-fns";
 import classNames from "classnames";
-import { Medication, DoseStatus, DayLog, getShapeIcon } from "../../types";
+import { Medication, DoseStatus, DayLog } from "../../types";
 import { isEventShape } from "../../constants/medFormConfig";
 import { useReminderStore } from "../../store/useReminderStore";
+import { MedIcon } from "../MedIcons";
 import "./InactivePillboxCard.css";
 
 // Check medication status for a given date
@@ -157,22 +158,22 @@ export const InactivePillboxCard: React.FC<InactivePillboxCardProps> = ({
               {/* Unique type icons row - above the bars, left-aligned */}
               {(() => {
                 const seen = new Set<string>();
-                const typeIcons: { shape: string; icon: string; isEvent: boolean }[] = [];
+                const typeIcons: { shape: string; isEvent: boolean }[] = [];
                 for (const med of medications) {
                   const shape = med.shape || "capsule";
                   if (!seen.has(shape)) {
                     seen.add(shape);
-                    typeIcons.push({ shape, icon: getShapeIcon(shape), isEvent: isEventShape(shape) });
+                    typeIcons.push({ shape, isEvent: isEventShape(shape) });
                   }
                 }
                 if (typeIcons.length === 0) return null;
                 return (
                   <div className="inactive-pillbox-card__type-icons">
-                    {typeIcons.map(({ shape, icon, isEvent }) => (
+                    {typeIcons.map(({ shape, isEvent }) => (
                       <span key={shape} className={classNames("inactive-pillbox-card__type-icon", {
                         "inactive-pillbox-card__type-icon--event": isEvent,
                       })}>
-                        {icon}
+                        <MedIcon shapeId={shape} size={12} />
                       </span>
                     ))}
                   </div>

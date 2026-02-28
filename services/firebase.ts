@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyANeb1W-FlUQflpCGAcFXBzwr1vL_hxivg",
@@ -14,3 +15,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+export const db = getFirestore(app);
+
+// Enable offline persistence for Firestore
+enableIndexedDbPersistence(db).catch((err) => {
+  if (err.code === 'failed-precondition') {
+    console.warn('Firestore persistence failed: multiple tabs open');
+  } else if (err.code === 'unimplemented') {
+    console.warn('Firestore persistence not supported in this browser');
+  }
+});

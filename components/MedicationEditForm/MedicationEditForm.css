@@ -623,31 +623,48 @@
 }
 
 .med-edit-form__shape {
-  width: 3rem;
-  height: 3rem;
-  min-width: 3rem;
-  border-radius: 0.75rem;
-  border: 2px solid #e2e8f0;
-  background: white;
-  color: #475569;
-  font-size: 1.5rem;
+  width: 3.25rem;
+  height: 3.25rem;
+  min-width: 3.25rem;
+  border-radius: 0.875rem;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #64748b;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.15s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.med-edit-form__shape:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .med-edit-form__shape:active {
   transform: scale(0.95);
 }
 
+/* Different color accents for shape types */
+.med-edit-form__shape:nth-child(1) { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #2563eb; }
+.med-edit-form__shape:nth-child(2) { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); color: #db2777; }
+.med-edit-form__shape:nth-child(3) { background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%); color: #0891b2; }
+.med-edit-form__shape:nth-child(4) { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #059669; }
+.med-edit-form__shape:nth-child(5) { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
+.med-edit-form__shape:nth-child(6) { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #dc2626; }
+.med-edit-form__shape:nth-child(7) { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color: #4f46e5; }
+.med-edit-form__shape:nth-child(8) { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); color: #be185d; }
+.med-edit-form__shape:nth-child(9) { background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%); color: #ea580c; }
+.med-edit-form__shape:nth-child(10) { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); color: #9333ea; }
+
 .med-edit-form__shape--active {
-  border-color: #3b82f6;
-  background: #eff6ff;
-  color: #1d4ed8;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+  border-color: #1e293b;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(30, 41, 59, 0.4);
 }
 
 /* ========== COLOR PICKER ========== */

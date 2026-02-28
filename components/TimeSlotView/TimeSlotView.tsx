@@ -1,7 +1,8 @@
 import React from "react";
-import { Medication, DoseStatus, DayLog, getShapeIcon } from "../../types";
+import { Medication, DoseStatus, DayLog } from "../../types";
 import { getIconForTime, getLabelForTime } from "../../constants";
 import { useDayCardStore } from "../../store/useDayCardStore";
+import { MedIcon } from "../MedIcons";
 import "./TimeSlotView.css";
 
 // Time-based colors: Morning=green, Mid-morning=yellow, Noon=orange, Afternoon=purple, Evening=blue
@@ -103,7 +104,7 @@ export const TimeSlotView: React.FC<TimeSlotViewProps> = ({
                 {slotMeds.length > 0 && (
                   <>
                     <div className={`tsv-slot-header__pill ${slotMeds[0].color}`}>
-                      <span>{getShapeIcon(slotMeds[0].shape)}</span>
+                      <MedIcon shapeId={slotMeds[0].shape || 'capsule'} size={14} color="white" />
                     </div>
                     <span className="tsv-slot-header__pills-count">{slotMeds.length}X</span>
                   </>
@@ -147,7 +148,7 @@ export const TimeSlotView: React.FC<TimeSlotViewProps> = ({
                       className={`tsv-med-card ${isTaken ? 'tsv-med-card--taken' : ''}`}
                     >
                       <div className={`tsv-med-card__icon ${med.color}`} data-count={pillCount}>
-                        <span>{getShapeIcon(med.shape)}</span>
+                        <MedIcon shapeId={med.shape || 'capsule'} size={18} color="white" />
                       </div>
                       <div className="tsv-med-card__info">
                         <span className="tsv-med-card__name">{med.name}</span>

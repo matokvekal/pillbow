@@ -1,19 +1,30 @@
 /**
  * Data Service for pillbow
  *
- * This service handles all data persistence using localStorage.
- * It's designed to be easily portable to React Native by replacing
- * localStorage with AsyncStorage.
+ * This service handles all data persistence using localStorage with
+ * optional cloud sync to Firebase Firestore.
+ * 
+ * Offline-first strategy:
+ * 1. All reads/writes go to localStorage first (instant)
+ * 2. Changes are queued for cloud sync
+ * 3. Sync happens automatically when online and authenticated
  *
  * For React Native migration:
  * 1. Replace localStorage.getItem with AsyncStorage.getItem
- * 2. Replace localStorage.setItem with Asy
- * ncStorage.setItem
+ * 2. Replace localStorage.setItem with AsyncStorage.setItem
  * 3. Make all methods async (they already return promises-compatible values)
  */
 
 import { AppData, Medication, DayLog, DoseRecord, DoseStatus, AppSettings, ExportedData, ExportMetadata, UserProfile } from '../types';
 import { differenceInDays, startOfDay, parseISO } from 'date-fns';
+import {
+  queueMedicationAdd,
+  queueMedicationUpdate,
+  queueMedicationDelete,
+  queueDayLogUpdate,
+  queueSettingsUpdate,
+  canSync,
+} from './syncService';
 
 const STORAGE_KEY = 'pillbow_app_data';
 
@@ -103,6 +114,8 @@ export const addMedication = (medication: Medication): void => {
   const data = loadAppData();
   data.medications.push(medication);
   saveAppData(data);
+  // Queue for cloud sync
+  queueMedicationAdd(medication);
 };
 
 // Update a medication
@@ -112,6 +125,8 @@ export const updateMedication = (id: string, updates: Partial<Medication>): void
   if (index !== -1) {
     data.medications[index] = { ...data.medications[index], ...updates };
     saveAppData(data);
+    // Queue for cloud sync
+    queueMedicationUpdate(id, updates);
   }
 };
 
@@ -120,6 +135,8 @@ export const deleteMedication = (id: string): void => {
   const data = loadAppData();
   data.medications = data.medications.filter(m => m.id !== id);
   saveAppData(data);
+  // Queue for cloud sync
+  queueMedicationDelete(id);
 };
 
 // Get day log for a specific date
@@ -201,6 +218,8 @@ export const updateDoseStatus = (
   }
 
   saveAppData(data);
+  // Queue day log for cloud sync
+  queueDayLogUpdate(dayLog);
 };
 
 // Get dose status for a specific medication/time on a date
@@ -243,6 +262,8 @@ export const updateSettings = (updates: Partial<AppSettings>): void => {
   const data = loadAppData();
   data.settings = { ...data.settings, ...updates };
   saveAppData(data);
+  // Queue settings for cloud sync
+  queueSettingsUpdate(data.settings);
 };
 
 // Export data as JSON string with metadata (for backup)

@@ -25,26 +25,26 @@ export interface Medication {
   refillDismissed?: boolean;  // User dismissed the refill alert
 }
 
-// Shape definitions with icons - clear medical emojis
+// Shape definitions - professional medical icons (use MedIcon component for SVG rendering)
 export const PILL_SHAPES = {
-  "capsule": { label: "Capsule", icon: "💊", css: "pill-shape--capsule" },
-  "syringe": { label: "Injection", icon: "💉", css: "pill-shape--syringe" },
-  "drops": { label: "Drops", icon: "💧", css: "pill-shape--drops" },
-  "vitamin": { label: "Vitamin", icon: "🧴", css: "pill-shape--vitamin" },
-  "stethoscope": { label: "Doctor", icon: "🩺", css: "pill-shape--stethoscope" },
-  "hospital": { label: "Hospital", icon: "🚑", css: "pill-shape--hospital" },
-  "tooth": { label: "Dental", icon: "🪥", css: "pill-shape--tooth" },
-  "heart": { label: "Heart", icon: "❤️", css: "pill-shape--heart" },
-  "veterinar": { label: "Veterinar", icon: "🐕", css: "pill-shape--veterinar" },
-  "physiotherapy": { label: "Physiotherapy", icon: "💆", css: "pill-shape--physiotherapy" },
-  "vet": { label: "Vet", icon: "🐾", css: "pill-shape--vet" },
+  "capsule": { label: "Pill", icon: "pill", css: "pill-shape--capsule" },
+  "syringe": { label: "Injection", icon: "syringe", css: "pill-shape--syringe" },
+  "drops": { label: "Drops", icon: "drops", css: "pill-shape--drops" },
+  "vitamin": { label: "Supplement", icon: "vitamin", css: "pill-shape--vitamin" },
+  "stethoscope": { label: "Checkup", icon: "stethoscope", css: "pill-shape--stethoscope" },
+  "hospital": { label: "Hospital", icon: "hospital", css: "pill-shape--hospital" },
+  "tooth": { label: "Dental", icon: "tooth", css: "pill-shape--tooth" },
+  "heart": { label: "Cardio", icon: "heart", css: "pill-shape--heart" },
+  "veterinar": { label: "Pet Care", icon: "veterinar", css: "pill-shape--veterinar" },
+  "physiotherapy": { label: "Therapy", icon: "physiotherapy", css: "pill-shape--physiotherapy" },
+  "vet": { label: "Vet", icon: "vet", css: "pill-shape--vet" },
 } as const;
 
 export type PillShape = keyof typeof PILL_SHAPES;
 
-// Helper to get shape icon
+// Helper to get shape icon ID (for use with MedIcon component)
 export const getShapeIcon = (shape?: string): string => {
-  if (!shape || !(shape in PILL_SHAPES)) return "💊"; // Default to capsule
+  if (!shape || !(shape in PILL_SHAPES)) return "capsule";
   return PILL_SHAPES[shape as PillShape].icon;
 };
 

@@ -1,7 +1,8 @@
 import React from "react";
-import { Medication, DoseStatus, DayLog, getShapeIcon } from "../../types";
+import { Medication, DoseStatus, DayLog } from "../../types";
 import { getIconForTime, getLabelForTime } from "../../constants";
 import { useDayCardStore } from "../../store/useDayCardStore";
+import { MedIcon } from "../MedIcons";
 import "./ListView.css";
 
 // Time-based colors: Morning=green, Mid-morning=yellow, Noon=orange, Afternoon=purple, Evening=blue
@@ -114,7 +115,7 @@ export const ListView: React.FC<ListViewProps> = ({
               <div className="lv-slot-header__pills">
                 {slotMeds.slice(0, 5).map((m) => (
                   <div key={m.id} className={`lv-slot-header__pill ${m.color}`}>
-                    <span>{getShapeIcon(m.shape)}</span>
+                    <MedIcon shapeId={m.shape || 'capsule'} size={14} color="white" />
                   </div>
                 ))}
                 {slotMeds.length > 5 && (
@@ -151,7 +152,7 @@ export const ListView: React.FC<ListViewProps> = ({
                       onClick={() => onMedicationClick(med)}
                     >
                       <div className={`lv-med-card__icon ${med.color}`}>
-                        <span>{getShapeIcon(med.shape)}</span>
+                        <MedIcon shapeId={med.shape || 'capsule'} size={18} color="white" />
                       </div>
                       <div className="lv-med-card__info">
                         <span className="lv-med-card__name">{med.name}</span>

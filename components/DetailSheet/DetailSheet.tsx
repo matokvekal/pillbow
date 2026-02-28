@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { format, parseISO, differenceInDays, startOfDay } from "date-fns";
-import { Medication, getShapeIcon } from "../../types";
+import { Medication } from "../../types";
 import { useModalStore } from "../../store/useModalStore";
 import { MedicationEditForm } from "../MedicationEditForm/MedicationEditForm";
 import { updateMedication } from "../../services/dataService";
+import { MedIcon } from "../MedIcons";
 import "./DetailSheet.css";
 
 interface DetailSheetProps {
@@ -147,7 +148,7 @@ export const DetailSheet: React.FC<DetailSheetProps> = ({
               />
             ) : (
               <span className="detail-sheet-icon-emoji">
-                {getShapeIcon(currentMed.shape)}
+                <MedIcon shapeId={currentMed.shape || 'capsule'} size={32} color="white" />
               </span>
             )}
           </div>

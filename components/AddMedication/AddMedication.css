@@ -1,4 +1,4 @@
-/* Add Medication - Elderly-Friendly Design */
+/* Add Medication - Professional NYC Studio Design */
 /* Single page, no scroll, large touch targets, high contrast */
 
 .add-med {
@@ -7,7 +7,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
   z-index: 300;
   display: flex;
   flex-direction: column;
@@ -32,21 +32,29 @@
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
-  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.06);
   background: white;
+  background-image: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.5) 100%);
   color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
+}
+
+.add-med__close:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.2);
+  transform: scale(1.05);
 }
 
 .add-med__close:active {
   transform: scale(0.95);
-  background: #f1f5f9;
+  background: #fecaca;
 }
 
 .add-med__close svg {

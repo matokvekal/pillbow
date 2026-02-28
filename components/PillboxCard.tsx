@@ -1,9 +1,10 @@
 
 import React, { useState, useMemo } from 'react';
 import { format, isToday, isPast, isFuture } from 'date-fns';
-import { Medication, DoseStatus, DayLog, getShapeIcon } from '../types';
+import { Medication, DoseStatus, DayLog } from '../types';
 import { getIconForTime, getLabelForTime } from '../constants';
 import { useTimeSlotStore } from '../store/useTimeSlotStore';
+import { MedIcon } from './MedIcons';
 import './PillboxCard.css';
 
 interface PillboxCardProps {
@@ -157,7 +158,7 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
                 return (
                   <div key={`${m.id}-${idx}`} className="pillbox-card-pill-preview">
                     <div className={`pillbox-card-pill-preview-circle ${m.color}`}>
-                      <span className="pillbox-card-pill-preview-shape">{getShapeIcon(m.shape)}</span>
+                      <span className="pillbox-card-pill-preview-shape"><MedIcon shapeId={m.shape || 'capsule'} size={14} color="white" /></span>
                     </div>
                     {isTaken && (
                       <div className="pillbox-card-pill-preview-check">
@@ -251,7 +252,7 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
                       <div className="slot-compact__pills">
                         {slotMeds.slice(0, 2).map((m) => (
                           <div key={m.id} className={`slot-compact__pill ${m.color}`}>
-                            <span className="slot-compact__pill-shape">{getShapeIcon(m.shape)}</span>
+                            <span className="slot-compact__pill-shape"><MedIcon shapeId={m.shape || 'capsule'} size={12} color="white" /></span>
                           </div>
                         ))}
                         {slotMeds.length > 2 && (
@@ -320,7 +321,7 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
                                 />
                               ) : (
                                 <div className={`slot-expanded__med-icon-large ${m.color}`}>
-                                  <span className="slot-expanded__med-shape-large">{getShapeIcon(m.shape)}</span>
+                                  <span className="slot-expanded__med-shape-large"><MedIcon shapeId={m.shape || 'capsule'} size={24} color="white" /></span>
                                 </div>
                               )}
                             </div>
@@ -410,7 +411,7 @@ export const PillboxCard: React.FC<PillboxCardProps> = ({
                     className="pillbox-card-med-item"
                   >
                     <div className={`pillbox-card-med-icon ${m.color}`}>
-                      <span className="pillbox-card-med-icon-shape">{getShapeIcon(m.shape)}</span>
+                      <span className="pillbox-card-med-icon-shape"><MedIcon shapeId={m.shape || 'capsule'} size={18} color="white" /></span>
                     </div>
                     <div className="pillbox-card-med-info">
                       <p className="pillbox-card-med-name">{m.name}</p>

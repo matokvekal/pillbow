@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { format, addDays } from "date-fns";
-import { Medication, getShapeIcon } from "../../types";
+import { Medication } from "../../types";
 import { useModalStore } from "../../store/useModalStore";
 import {
   FORM_COLORS,
@@ -12,6 +12,7 @@ import {
   DAY_NAMES,
   isEventShape,
 } from "../../constants/medFormConfig";
+import { MedIcon } from "../MedIcons";
 import "./MedicationEditForm.css";
 
 interface MedicationEditFormProps {
@@ -224,7 +225,7 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
           </svg>
         </button>
         <div className={`med-edit-form__med-icon ${medication.color}`}>
-          <span>{getShapeIcon(FORM_SHAPES[shapeIndex]?.id)}</span>
+          <MedIcon shapeId={FORM_SHAPES[shapeIndex]?.id || 'capsule'} size={18} color="white" />
         </div>
         <div className="med-edit-form__med-details">
           <h3 className="med-edit-form__med-name">{medication.name}</h3>
@@ -546,7 +547,7 @@ export const MedicationEditForm: React.FC<MedicationEditFormProps> = ({
                 onClick={() => setShapeIndex(index)}
                 title={shape.label}
               >
-                {shape.icon}
+                <MedIcon shapeId={shape.id} size={22} />
               </button>
             ))}
           </div>

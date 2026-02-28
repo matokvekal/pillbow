@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { format, addDays } from "date-fns";
-import { Medication, getShapeIcon } from "../../types";
+import { Medication } from "../../types";
+import { MedIcon } from "../MedIcons";
 import "./ChangeFlow.css";
 
 interface ChangeFlowProps {
@@ -92,7 +93,7 @@ export const ChangeFlow: React.FC<ChangeFlowProps> = ({
       <div className="change-flow__content">
         {/* Icon */}
         <div className={`change-flow__icon ${medication.color}`}>
-          <span>{getShapeIcon(medication.shape)}</span>
+          <MedIcon shapeId={medication.shape || 'capsule'} size={28} color="white" />
         </div>
 
         {/* Title */}

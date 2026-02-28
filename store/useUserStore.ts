@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { UserProfile, AppData } from '../types';
 import { loadAppData, saveAppData } from '../services/dataService';
+import { fullSyncFromCloud, uploadLocalToCloud, startAutoSync, stopAutoSync, processSyncQueue } from '../services/syncService';
+import { auth } from '../services/firebase';
 
 interface UserStore {
     currentUserId: string;
@@ -168,7 +170,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
         localStorage.removeItem(`pillbow_data_${userId}`);
     },
 
-    syncGoogleUser: (googleProfile: any) => {
+    syncGoogleUser: async (googleProfile: any) => {
         set(state => {
             const { users, currentUserId } = state;
             const updatedUsers = users.map(user => {
@@ -178,7 +180,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
                         name: googleProfile.name,
                         email: googleProfile.email,
                         photoURL: googleProfile.photoURL,
-                        avatar: googleProfile.photoURL, // Overwrite avatar with Google photo
+                        avatar: googleProfile.photoURL,
                         isGoogleUser: true,
                         googleId: googleProfile.id
                     };
@@ -188,9 +190,29 @@ export const useUserStore = create<UserStore>((set, get) => ({
             localStorage.setItem('pillbow_users', JSON.stringify(updatedUsers));
             return { users: updatedUsers };
         });
+
+        // Sync data with Firestore after Google login
+        try {
+            console.log('Starting cloud sync after Google login...');
+            const synced = await fullSyncFromCloud();
+            if (synced) {
+                console.log('Cloud sync completed successfully');
+                startAutoSync(60000); // Auto-sync every 60 seconds
+            } else {
+                // If no cloud data, upload local data
+                console.log('No cloud data found, uploading local data...');
+                await uploadLocalToCloud();
+                startAutoSync(60000);
+            }
+        } catch (error) {
+            console.error('Cloud sync failed:', error);
+        }
     },
 
     clearGoogleUser: () => {
+        // Stop auto-sync when signing out
+        stopAutoSync();
+        
         set(state => {
             const { users, currentUserId } = state;
             const updatedUsers = users.map(user => {
@@ -208,3 +230,15 @@ export const useUserStore = create<UserStore>((set, get) => ({
         });
     }
 }));
+
+// Listen for auth state changes to resume sync
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        console.log('Auth state: User signed in, starting auto-sync');
+        processSyncQueue();
+        startAutoSync(60000);
+    } else {
+        console.log('Auth state: User signed out, stopping auto-sync');
+        stopAutoSync();
+    }
+});

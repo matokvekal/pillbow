@@ -1,8 +1,9 @@
 import React from "react";
 import { format, parseISO, differenceInDays, startOfDay } from "date-fns";
 import classNames from "classnames";
-import { Medication, getShapeIcon } from "../../types";
+import { Medication } from "../../types";
 import { isEventShape } from "../../constants/medFormConfig";
+import { MedIcon } from "../MedIcons";
 import "./ManageView.css";
 
 interface ManageViewProps {
@@ -76,7 +77,7 @@ export const ManageView: React.FC<ManageViewProps> = ({
         onClick={() => onMedicationClick(med)}
       >
         <div className={classNames("manage-med-card__icon", med.color)}>
-          <span>{getShapeIcon(med.shape)}</span>
+          <MedIcon shapeId={med.shape || 'capsule'} size={20} color="white" />
         </div>
 
         <div className="manage-med-card__info">

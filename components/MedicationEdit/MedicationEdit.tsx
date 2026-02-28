@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Medication, getShapeIcon } from "../../types";
+import { Medication } from "../../types";
 import { StopFlow } from "./StopFlow";
 import { ChangeFlow } from "./ChangeFlow";
 import { SuccessScreen } from "./SuccessScreen";
+import { MedIcon } from "../MedIcons";
 import "./MedicationEdit.css";
 
 interface MedicationEditProps {
@@ -62,7 +63,7 @@ export const MedicationEdit: React.FC<MedicationEditProps> = ({
         <div className="med-edit__content">
           {/* Medication Icon */}
           <div className={`med-edit__icon ${medication.color}`}>
-            <span>{getShapeIcon(medication.shape)}</span>
+            <MedIcon shapeId={medication.shape || 'capsule'} size={28} color="white" />
           </div>
 
           {/* Medication Name */}

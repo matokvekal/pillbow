@@ -2,31 +2,33 @@
 // Single source of truth - do NOT duplicate these in component files
 
 // Colors: id, name, class (for CSS), hex (for inline styles)
+// Professional refined palette - softer, elegant tones
 export const FORM_COLORS = [
-  { id: "blue", name: "Blue", class: "bg-blue-300", hex: "#93c5fd" },
-  { id: "green", name: "Green", class: "bg-green-300", hex: "#86efac" },
-  { id: "yellow", name: "Yellow", class: "bg-yellow-300", hex: "#fcd34d" },
-  { id: "red", name: "Red", class: "bg-red-300", hex: "#fca5a5" },
-  { id: "purple", name: "Purple", class: "bg-purple-300", hex: "#d8b4fe" },
-  { id: "orange", name: "Orange", class: "bg-orange-300", hex: "#fdba74" },
-  { id: "pink", name: "Pink", class: "bg-pink-300", hex: "#f9a8d4" },
-  { id: "cyan", name: "Cyan", class: "bg-cyan-300", hex: "#67e8f9" },
-  { id: "gray", name: "Gray", class: "bg-gray-300", hex: "#d1d5db" },
-  { id: "white", name: "White", class: "bg-white", hex: "#ffffff" },
+  { id: "blue", name: "Blue", class: "bg-blue-300", hex: "#7dd3fc" },
+  { id: "green", name: "Green", class: "bg-green-300", hex: "#6ee7b7" },
+  { id: "yellow", name: "Yellow", class: "bg-yellow-300", hex: "#fde68a" },
+  { id: "red", name: "Red", class: "bg-red-300", hex: "#fda4af" },
+  { id: "purple", name: "Purple", class: "bg-purple-300", hex: "#c4b5fd" },
+  { id: "orange", name: "Orange", class: "bg-orange-300", hex: "#fed7aa" },
+  { id: "pink", name: "Pink", class: "bg-pink-300", hex: "#fbcfe8" },
+  { id: "cyan", name: "Cyan", class: "bg-cyan-300", hex: "#a5f3fc" },
+  { id: "gray", name: "Gray", class: "bg-gray-300", hex: "#cbd5e1" },
+  { id: "white", name: "White", class: "bg-white", hex: "#f8fafc" },
 ];
 
-// Shapes/Icons: id, label, icon emoji
+// Shapes/Icons: id, label, icon (now references SVG icon ID)
+// Use MedIcon component to render: <MedIcon shapeId={shape.id} />
 export const FORM_SHAPES = [
-  { id: "capsule", label: "Capsule", icon: "💊" },
-  { id: "syringe", label: "Injection", icon: "💉" },
-  { id: "drops", label: "Drops", icon: "💧" },
-  { id: "vitamin", label: "Vitamin", icon: "🧴" },
-  { id: "stethoscope", label: "Doctor", icon: "🩺" },
-  { id: "hospital", label: "Hospital", icon: "🚑" },
-  { id: "tooth", label: "Dental", icon: "🪥" },
-  { id: "veterinar", label: "Veterinar", icon: "🐕" },
-  { id: "physiotherapy", label: "Physiotherapy", icon: "💆" },
-  { id: "vet", label: "Vet", icon: "🐾" },
+  { id: "capsule", label: "Pill" },
+  { id: "syringe", label: "Injection" },
+  { id: "drops", label: "Drops" },
+  { id: "vitamin", label: "Supplement" },
+  { id: "stethoscope", label: "Checkup" },
+  { id: "hospital", label: "Hospital" },
+  { id: "tooth", label: "Dental" },
+  { id: "heart", label: "Cardio" },
+  { id: "veterinar", label: "Pet Care" },
+  { id: "physiotherapy", label: "Therapy" },
 ];
 
 // Strength units with smart defaults
